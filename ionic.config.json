@@ -1,0 +1,7 @@
+{
+  "name": "modo-playa-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
