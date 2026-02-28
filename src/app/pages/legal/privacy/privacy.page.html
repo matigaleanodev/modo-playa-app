@@ -1,14 +1,75 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
+<ion-header class="app-page-header">
+  <ion-toolbar class="app-page-toolbar">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/info"></ion-back-button>
+      <ion-back-button defaultHref="/info" />
     </ion-buttons>
-    <ion-title>Privacidad</ion-title>
+    <ion-title>Politica de privacidad</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <section class="page">
-    <p>Contenido legal placeholder de politica de privacidad.</p>
-  </section>
+<ion-content class="legal-content">
+  <div class="privacy-wrapper">
+    <section class="privacy-section">
+      <h2>Introduccion</h2>
+      <p>
+        En Modo Playa App valoramos la privacidad. Esta politica describe como se
+        maneja la informacion dentro de la aplicacion.
+      </p>
+    </section>
+
+    <section class="privacy-section">
+      <h2>Datos que se procesan</h2>
+      <ul>
+        <li>Datos tecnicos minimos necesarios para funcionamiento y seguridad.</li>
+        <li>Preferencias locales como tema y configuraciones de uso.</li>
+        <li>Datos de consulta de alojamientos provistos por los servicios de Modo Playa.</li>
+      </ul>
+    </section>
+
+    <section class="privacy-section">
+      <h2>Uso de la informacion</h2>
+      <p>
+        La informacion se utiliza para operar el catalogo publico, mejorar la
+        experiencia de usuario y mantener la estabilidad del producto.
+      </p>
+    </section>
+
+    <section class="privacy-section">
+      <h2>Almacenamiento y seguridad</h2>
+      <p>
+        Se aplican medidas tecnicas y organizativas para proteger la informacion frente
+        a accesos no autorizados, alteracion o perdida.
+      </p>
+    </section>
+
+    <section class="privacy-section">
+      <h2>Terceros</h2>
+      <p>
+        Algunas funcionalidades pueden depender de servicios de terceros. Cada servicio
+        mantiene sus propias politicas y condiciones.
+      </p>
+    </section>
+
+    <section class="privacy-section">
+      <h2>Cambios en esta politica</h2>
+      <p>
+        Esta politica puede actualizarse periodicamente. Los cambios se consideraran
+        vigentes desde su publicacion.
+      </p>
+    </section>
+
+    <section class="privacy-section">
+      <h2>Contacto</h2>
+      <p>
+        Para consultas sobre privacidad o tratamiento de datos puedes escribir a
+        {{ contactEmail }}.
+      </p>
+    </section>
+  </div>
 </ion-content>
+
+<ion-footer class="app-page-footer">
+  <ion-toolbar class="app-page-toolbar">
+    <div class="app-page-footer-note">Modo Playa App</div>
+  </ion-toolbar>
+</ion-footer>

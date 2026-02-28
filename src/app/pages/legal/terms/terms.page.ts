@@ -3,6 +3,7 @@ import {
   IonBackButton,
   IonButtons,
   IonContent,
+  IonFooter,
   IonHeader,
   IonTitle,
   IonToolbar,
@@ -13,12 +14,15 @@ import {
   templateUrl: './terms.page.html',
   styleUrls: ['./terms.page.scss'],
   imports: [
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonButtons,
     IonBackButton,
     IonContent,
+    IonFooter,
+    IonHeader,
+    IonTitle,
+    IonToolbar,
   ],
 })
-export class TermsPage {}
+export class TermsPage {
+  readonly contactEmail = 'contacto@modoplaya.app';
+}

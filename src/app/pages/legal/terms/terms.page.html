@@ -1,14 +1,74 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
+<ion-header class="app-page-header">
+  <ion-toolbar class="app-page-toolbar">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/info"></ion-back-button>
+      <ion-back-button defaultHref="/info" />
     </ion-buttons>
-    <ion-title>Terminos</ion-title>
+    <ion-title>Terminos y condiciones</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <section class="page">
-    <p>Contenido legal placeholder de terminos y condiciones.</p>
-  </section>
+<ion-content class="legal-content">
+  <div class="terms-wrapper">
+    <section class="terms-section">
+      <h2>Introduccion</h2>
+      <p>
+        Estos terminos regulan el uso de la aplicacion Modo Playa App. Al usar la
+        aplicacion, aceptas estas condiciones.
+      </p>
+    </section>
+
+    <section class="terms-section">
+      <h2>Aceptacion de uso</h2>
+      <p>
+        El acceso a la aplicacion implica la lectura y aceptacion de estos terminos por parte
+        del usuario.
+      </p>
+    </section>
+
+    <section class="terms-section">
+      <h2>Uso permitido</h2>
+      <ul>
+        <li>Utilizar la aplicacion para la consulta publica de alojamientos.</li>
+        <li>No realizar acciones que afecten la seguridad o disponibilidad del sistema.</li>
+        <li>Respetar los flujos definidos por la plataforma.</li>
+      </ul>
+    </section>
+
+    <section class="terms-section">
+      <h2>Contenido y datos</h2>
+      <p>
+        La informacion publicada proviene de los sistemas de Modo Playa y puede
+        actualizarse sin aviso previo.
+      </p>
+    </section>
+
+    <section class="terms-section">
+      <h2>Limitacion de responsabilidad</h2>
+      <p>
+        La aplicacion se provee para facilitar la exploracion de alojamientos y puede
+        requerir mantenimiento, actualizaciones o correcciones.
+      </p>
+    </section>
+
+    <section class="terms-section">
+      <h2>Modificaciones</h2>
+      <p>
+        Estos terminos pueden actualizarse. Los cambios aplican desde su publicacion
+        dentro de la aplicacion o canales oficiales del proyecto.
+      </p>
+    </section>
+
+    <section class="terms-section">
+      <h2>Contacto</h2>
+      <p>
+        Para consultas sobre estos terminos puedes escribir a {{ contactEmail }}.
+      </p>
+    </section>
+  </div>
 </ion-content>
+
+<ion-footer class="app-page-footer">
+  <ion-toolbar class="app-page-toolbar">
+    <div class="app-page-footer-note">Modo Playa App</div>
+  </ion-toolbar>
+</ion-footer>

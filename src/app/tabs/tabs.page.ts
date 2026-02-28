@@ -1,4 +1,9 @@
-import { Component, EnvironmentInjector, computed, inject } from '@angular/core';
+import {
+  Component,
+  EnvironmentInjector,
+  computed,
+  inject,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   ActionSheetController,
@@ -15,6 +20,7 @@ import {
   IonNote,
   IonHeader,
   IonRouterOutlet,
+  IonRouterLink,
   IonTabBar,
   IonTabButton,
   IonTabs,
@@ -24,13 +30,11 @@ import {
 import { addIcons } from 'ionicons';
 import {
   cloudyNightOutline,
-  documentTextOutline,
   heartOutline,
   homeOutline,
   informationCircleOutline,
   moonOutline,
   phonePortraitOutline,
-  settingsOutline,
   sunnyOutline,
 } from 'ionicons/icons';
 import { ThemeService } from '../shared/services/theme/theme.service';
@@ -82,6 +86,7 @@ interface NavigationSection {
     IonIcon,
     IonNote,
     RouterLink,
+    IonRouterLink,
   ],
 })
 export class TabsPage {
@@ -97,7 +102,13 @@ export class TabsPage {
   });
 
   readonly tabItems: NavigationLinkItem[] = [
-    { id: 'tab-home', type: 'link', label: 'Home', path: '/home', icon: 'home-outline' },
+    {
+      id: 'tab-home',
+      type: 'link',
+      label: 'Home',
+      path: '/home',
+      icon: 'home-outline',
+    },
     {
       id: 'tab-favorites',
       type: 'link',
@@ -118,7 +129,13 @@ export class TabsPage {
     {
       title: 'Rutas',
       items: [
-        { id: 'menu-home', type: 'link', label: 'Home', path: '/home', icon: 'home-outline' },
+        {
+          id: 'menu-home',
+          type: 'link',
+          label: 'Home',
+          path: '/home',
+          icon: 'home-outline',
+        },
         {
           id: 'menu-favorites',
           type: 'link',
@@ -139,20 +156,6 @@ export class TabsPage {
           label: 'Info',
           path: '/info',
           icon: 'information-circle-outline',
-        },
-        {
-          id: 'menu-terms',
-          type: 'link',
-          label: 'Terminos',
-          path: '/terms',
-          icon: 'document-text-outline',
-        },
-        {
-          id: 'menu-privacy',
-          type: 'link',
-          label: 'Privacidad',
-          path: '/privacy',
-          icon: 'document-text-outline',
         },
       ],
     },
@@ -176,11 +179,9 @@ export class TabsPage {
       heartOutline,
       cloudyNightOutline,
       informationCircleOutline,
-      documentTextOutline,
       moonOutline,
       sunnyOutline,
       phonePortraitOutline,
-      settingsOutline,
     });
   }
 

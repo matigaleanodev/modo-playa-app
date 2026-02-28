@@ -3,6 +3,7 @@ import {
   IonBackButton,
   IonButtons,
   IonContent,
+  IonFooter,
   IonHeader,
   IonTitle,
   IonToolbar,
@@ -13,12 +14,15 @@ import {
   templateUrl: './privacy.page.html',
   styleUrls: ['./privacy.page.scss'],
   imports: [
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonButtons,
     IonBackButton,
     IonContent,
+    IonFooter,
+    IonHeader,
+    IonTitle,
+    IonToolbar,
   ],
 })
-export class PrivacyPage {}
+export class PrivacyPage {
+  readonly contactEmail = 'contacto@modoplaya.app';
+}
