@@ -1,18 +1,52 @@
-<ion-tabs>
+<ion-menu menuId="main-menu" side="end" contentId="tabs-content">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Menu</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+    @for (section of menuSections; track section.title) {
+      <ion-list>
+        <ion-list-header>{{ section.title }}</ion-list-header>
+
+        @for (item of section.items; track item.id) {
+          @if (item.type === 'link') {
+            <ion-menu-toggle autoHide="true">
+              <ion-item
+                button
+                class="menu-item"
+                [routerLink]="item.path"
+                routerDirection="root"
+                routerLinkActive="selected"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                <ion-icon aria-hidden="true" [name]="item.icon" slot="start"></ion-icon>
+                <ion-label>{{ item.label }}</ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+          } @else {
+            <ion-item button (click)="onMenuAction(item.action)">
+              <ion-icon aria-hidden="true" [name]="item.icon" slot="start"></ion-icon>
+              <ion-label>{{ item.label }}</ion-label>
+              @if (item.action === 'theme') {
+                <ion-note slot="end">{{ currentThemeLabel() }}</ion-note>
+              }
+            </ion-item>
+          }
+        }
+      </ion-list>
+    }
+  </ion-content>
+</ion-menu>
+
+<ion-tabs id="tabs-content">
   <ion-tab-bar slot="bottom">
-    <ion-tab-button tab="tab1" href="/tabs/tab1">
-      <ion-icon aria-hidden="true" name="triangle"></ion-icon>
-      <ion-label>Tab 1</ion-label>
-    </ion-tab-button>
-
-    <ion-tab-button tab="tab2" href="/tabs/tab2">
-      <ion-icon aria-hidden="true" name="ellipse"></ion-icon>
-      <ion-label>Tab 2</ion-label>
-    </ion-tab-button>
-
-    <ion-tab-button tab="tab3" href="/tabs/tab3">
-      <ion-icon aria-hidden="true" name="square"></ion-icon>
-      <ion-label>Tab 3</ion-label>
-    </ion-tab-button>
+    @for (tab of tabItems; track tab.id) {
+      <ion-tab-button [tab]="tab.path" [routerLink]="tab.path">
+        <ion-icon aria-hidden="true" [name]="tab.icon"></ion-icon>
+        <ion-label>{{ tab.label }}</ion-label>
+      </ion-tab-button>
+    }
   </ion-tab-bar>
 </ion-tabs>

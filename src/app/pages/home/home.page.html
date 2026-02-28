@@ -1,0 +1,21 @@
+<ion-header class="app-page-header">
+  <ion-toolbar class="app-page-toolbar">
+    <ion-title>Modo Playa</ion-title>
+    <ion-buttons slot="end">
+      <ion-menu-button menu="main-menu"></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <section class="page">
+    <h1>Home</h1>
+    <p>Listado y busqueda de alojamientos (placeholder).</p>
+
+    <div class="cards">
+      @for (lodging of lodgings; track lodging.id) {
+        <app-lodging-card [lodging]="lodging"></app-lodging-card>
+      }
+    </div>
+  </section>
+</ion-content>
