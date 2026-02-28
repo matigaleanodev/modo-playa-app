@@ -1,0 +1,12 @@
+<ion-content [fullscreen]="true">
+  <section class="page">
+    <h1>Home</h1>
+    <p>Listado y busqueda de alojamientos (placeholder).</p>
+
+    <div class="cards">
+      @for (lodging of lodgings; track lodging.id) {
+        <app-lodging-card [lodging]="lodging"></app-lodging-card>
+      }
+    </div>
+  </section>
+</ion-content>
