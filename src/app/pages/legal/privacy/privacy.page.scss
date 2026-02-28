@@ -45,3 +45,20 @@ ion-header {
 ion-footer.app-page-footer {
   z-index: 10;
 }
+.legal-page-title {
+  margin-bottom: 1.25rem;
+}
+
+.legal-page-title h1 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--ion-color-dark);
+}
+
+.legal-page-title p {
+  margin: 0.35rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--ion-color-medium);
+}

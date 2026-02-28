@@ -11,6 +11,7 @@ import {
   IonLabel,
   IonList,
   IonListHeader,
+  IonMenuButton,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
@@ -35,6 +36,7 @@ import {
     IonTitle,
     IonButtons,
     IonBackButton,
+    IonMenuButton,
     IonContent,
     IonFooter,
     IonList,

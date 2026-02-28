@@ -4,10 +4,9 @@ import {
   computed,
   inject,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import {
   ActionSheetController,
-  IonButtons,
   IonContent,
   IonIcon,
   IonItem,
@@ -15,11 +14,9 @@ import {
   IonList,
   IonListHeader,
   IonMenu,
-  IonMenuButton,
   IonMenuToggle,
   IonNote,
   IonHeader,
-  IonRouterOutlet,
   IonRouterLink,
   IonTabBar,
   IonTabButton,
@@ -29,15 +26,15 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
-  cloudyNightOutline,
-  heartOutline,
-  homeOutline,
-  informationCircleOutline,
-  moonOutline,
-  phonePortraitOutline,
-  sunnyOutline,
+  cloudyNight,
+  heart,
+  home,
+  informationCircle,
+  moon,
+  phonePortrait,
+  sunny,
 } from 'ionicons/icons';
-import { ThemeService } from '../shared/services/theme/theme.service';
+import { ThemeService } from '@shared/services/theme/theme.service';
 
 interface NavigationLinkItem {
   id: string;
@@ -70,8 +67,6 @@ interface NavigationSection {
     IonHeader,
     IonToolbar,
     IonTitle,
-    IonButtons,
-    IonMenuButton,
     IonMenu,
     IonContent,
     IonList,
@@ -80,13 +75,13 @@ interface NavigationSection {
     IonLabel,
     IonMenuToggle,
     IonTabs,
-    IonRouterOutlet,
     IonTabBar,
     IonTabButton,
     IonIcon,
     IonNote,
     RouterLink,
     IonRouterLink,
+    RouterLinkActive,
   ],
 })
 export class TabsPage {
@@ -103,25 +98,25 @@ export class TabsPage {
 
   readonly tabItems: NavigationLinkItem[] = [
     {
-      id: 'tab-home',
-      type: 'link',
-      label: 'Home',
-      path: '/home',
-      icon: 'home-outline',
-    },
-    {
       id: 'tab-favorites',
       type: 'link',
       label: 'Favoritos',
-      path: '/favoritos',
-      icon: 'heart-outline',
+      path: 'favoritos',
+      icon: 'heart',
+    },
+    {
+      id: 'tab-home',
+      type: 'link',
+      label: 'Home',
+      path: 'home',
+      icon: 'home',
     },
     {
       id: 'tab-context',
       type: 'link',
       label: 'Contexto',
-      path: '/contexto',
-      icon: 'cloudy-night-outline',
+      path: 'contexto',
+      icon: 'cloudy-night',
     },
   ];
 
@@ -134,28 +129,28 @@ export class TabsPage {
           type: 'link',
           label: 'Home',
           path: '/home',
-          icon: 'home-outline',
+          icon: 'home',
         },
         {
           id: 'menu-favorites',
           type: 'link',
           label: 'Favoritos',
           path: '/favoritos',
-          icon: 'heart-outline',
+          icon: 'heart',
         },
         {
           id: 'menu-context',
           type: 'link',
           label: 'Contexto',
           path: '/contexto',
-          icon: 'cloudy-night-outline',
+          icon: 'cloudy-night',
         },
         {
           id: 'menu-info',
           type: 'link',
           label: 'Info',
           path: '/info',
-          icon: 'information-circle-outline',
+          icon: 'information-circle',
         },
       ],
     },
@@ -166,7 +161,7 @@ export class TabsPage {
           id: 'menu-theme',
           type: 'action',
           label: 'Tema',
-          icon: 'phone-portrait-outline',
+          icon: 'phone-portrait',
           action: 'theme',
         },
       ],
@@ -175,13 +170,13 @@ export class TabsPage {
 
   constructor() {
     addIcons({
-      homeOutline,
-      heartOutline,
-      cloudyNightOutline,
-      informationCircleOutline,
-      moonOutline,
-      sunnyOutline,
-      phonePortraitOutline,
+      home,
+      heart,
+      cloudyNight,
+      informationCircle,
+      moon,
+      sunny,
+      phonePortrait,
     });
   }
 
@@ -197,17 +192,17 @@ export class TabsPage {
       buttons: [
         {
           text: 'Claro',
-          icon: 'sunny-outline',
+          icon: 'sunny',
           handler: () => this.themeService.setTheme('light'),
         },
         {
           text: 'Oscuro',
-          icon: 'moon-outline',
+          icon: 'moon',
           handler: () => this.themeService.setTheme('dark'),
         },
         {
           text: 'Sistema',
-          icon: 'phone-portrait-outline',
+          icon: 'phone-portrait',
           handler: () => this.themeService.setTheme('system'),
         },
         {

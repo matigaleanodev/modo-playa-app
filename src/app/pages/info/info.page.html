@@ -3,11 +3,14 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home" />
     </ion-buttons>
-    <ion-title>Informacion</ion-title>
+    <ion-title>Modo Playa</ion-title>
+    <ion-buttons slot="end">
+      <ion-menu-button menu="main-menu"></ion-menu-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content>
   <div class="info-hero">
     <div class="info-hero-inner">
       <h1>{{ appName }}</h1>

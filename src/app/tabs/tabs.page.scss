@@ -1,3 +1,14 @@
 ion-list + ion-list {
   margin-top: 20px;
 }
+
+.menu-item.selected {
+  --background: rgba(var(--ion-color-primary-rgb), 0.14);
+  --color: var(--ion-color-primary);
+  --border-radius: 10px;
+  font-weight: 600;
+}
+
+.menu-item.selected ion-icon {
+  color: var(--ion-color-primary);
+}

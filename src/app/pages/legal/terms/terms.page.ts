@@ -5,6 +5,7 @@ import {
   IonContent,
   IonFooter,
   IonHeader,
+  IonMenuButton,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
@@ -19,6 +20,7 @@ import {
     IonContent,
     IonFooter,
     IonHeader,
+    IonMenuButton,
     IonTitle,
     IonToolbar,
   ],
