@@ -4,7 +4,6 @@ import {
   IonContent,
   IonHeader,
   IonMenuButton,
-  NavController,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
@@ -14,6 +13,7 @@ import {
   LodgingType,
   PriceUnit,
 } from 'src/app/lodgings/models/lodging.model';
+import { NavService } from '@shared/services/nav/nav.service';
 
 @Component({
   selector: 'app-home',
@@ -30,7 +30,7 @@ import {
   ],
 })
 export class HomePage {
-  private readonly navCtrl = inject(NavController);
+  private readonly navService = inject(NavService);
 
   readonly lodgings: Lodging[] = [
     {
@@ -72,9 +72,6 @@ export class HomePage {
   ];
 
   toLodgingDetail({ id }: Lodging): void {
-    void this.navCtrl.navigateForward(`/lodging/${id}`, {
-      animated: true,
-      animationDirection: 'forward',
-    });
+    this.navService.forward(`/lodging/${id}`);
   }
 }

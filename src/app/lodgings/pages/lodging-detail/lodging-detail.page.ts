@@ -1,6 +1,5 @@
-import { CurrencyPipe, Location } from '@angular/common';
-import { Component, computed, inject, input } from '@angular/core';
-import { Router } from '@angular/router';
+import { CurrencyPipe } from '@angular/common';
+import { Component, computed, input } from '@angular/core';
 import {
   IonBackButton,
   IonButton,
