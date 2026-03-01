@@ -1,7 +1,307 @@
-.page {
-  padding: 16px;
+:host {
+  display: block;
+  height: 100%;
 }
 
-h1 {
-  margin: 0 0 8px;
+.detail-page {
+  height: 100%;
+}
+
+ion-content.detail-content {
+  --background: var(--ion-background-color);
+}
+
+.detail-header {
+  background: transparent;
+  box-shadow: none;
+}
+
+.detail-header::after {
+  display: none;
+}
+
+.detail-toolbar {
+  --background: transparent;
+  --border-color: transparent;
+  --color: var(--ion-color-primary-contrast);
+  --padding-start: 10px;
+  --padding-end: 10px;
+  --min-height: calc(56px + var(--ion-safe-area-top, 0px));
+  box-shadow: none;
+}
+
+.hero {
+  position: relative;
+  margin: 0;
+}
+
+.hero img {
+  width: 100%;
+  height: clamp(260px, 45vh, 380px);
+  object-fit: cover;
+  display: block;
+  border-radius: 0 0 34px 34px;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 0 0 34px 34px;
+  background: linear-gradient(
+    180deg,
+    rgba(var(--ion-color-dark-rgb), 0.22) 0%,
+    rgba(var(--ion-color-dark-rgb), 0.08) 38%,
+    rgba(var(--ion-color-dark-rgb), 0.28) 100%
+  );
+  pointer-events: none;
+}
+
+.hero-control {
+  --background: rgba(var(--ion-color-light-rgb), 0.52);
+  --color: var(--ion-color-primary-contrast);
+  --border-radius: 999px;
+  --padding-start: 8px;
+  --padding-end: 8px;
+  --box-shadow: var(--app-shadow-card-soft);
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: rgba(var(--ion-color-light-rgb), 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.content-shell {
+  margin-top: -34px;
+  position: relative;
+  z-index: 3;
+  padding: 0 16px calc(18px + var(--ion-safe-area-bottom, 0px));
+  display: grid;
+  gap: 14px;
+}
+
+.detail-card {
+  background: var(--ion-card-background);
+  border: 1px solid var(--app-border-faint);
+  box-shadow: var(--app-shadow-card);
+  border-radius: 24px;
+  padding: 18px 16px;
+}
+
+.intro-card {
+  padding-top: 20px;
+}
+
+.detail-card h1,
+.detail-card h2 {
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.detail-card h1 {
+  font-size: 1.36rem;
+  font-weight: 700;
+  color: var(--ion-text-color);
+}
+
+.intro-card p {
+  margin: 7px 0 0;
+  color: var(--ion-color-medium);
+  font-size: 0.93rem;
+}
+
+.detail-card h2 {
+  font-size: 1.02rem;
+  font-weight: 650;
+  color: var(--ion-text-color);
+}
+
+.description-copy {
+  margin: 10px 0 0;
+  color: var(--ion-color-medium);
+  font-size: 0.94rem;
+  line-height: 1.46;
+}
+
+.facilities-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.meta-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.facility-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 11px;
+  border-radius: 14px;
+  background: var(--app-surface-soft-muted);
+  border: 1px solid var(--app-border-faint);
+}
+
+.facility-item ion-icon {
+  font-size: 1.06rem;
+  color: var(--ion-color-secondary);
+}
+
+.facility-item span {
+  font-size: 0.84rem;
+  color: var(--ion-text-color);
+}
+
+.image-carousel {
+  margin-top: 12px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(72%, 1fr);
+  gap: 10px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 4px;
+}
+
+.image-carousel::-webkit-scrollbar {
+  height: 6px;
+}
+
+.image-carousel::-webkit-scrollbar-thumb {
+  background: rgba(var(--ion-color-medium-rgb), 0.36);
+  border-radius: 999px;
+}
+
+.carousel-item {
+  margin: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--app-border-faint);
+  box-shadow: var(--app-shadow-card-soft);
+  scroll-snap-align: start;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: 170px;
+  display: block;
+  object-fit: cover;
+}
+
+.detail-footer ion-toolbar {
+  --background: var(--ion-card-background);
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 8px;
+  --padding-bottom: calc(8px + var(--ion-safe-area-bottom, 0px));
+  --min-height: calc(64px + var(--ion-safe-area-bottom, 0px));
+  border-top: 1px solid var(--app-border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.price-box {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.price-caption {
+  color: var(--ion-color-medium);
+  font-size: 0.78rem;
+}
+
+.price-value {
+  margin-top: 2px;
+  color: var(--ion-text-color);
+  font-weight: 700;
+  font-size: 1.18rem;
+}
+
+.contact-button {
+  --background: linear-gradient(
+    145deg,
+    rgba(var(--ion-color-primary-rgb), 1) 0%,
+    rgba(var(--ion-color-secondary-rgb), 0.96) 100%
+  );
+  --color: var(--ion-color-secondary-contrast);
+  --border-radius: 999px;
+  --box-shadow: var(--app-shadow-card);
+  --padding-start: 16px;
+  --padding-end: 16px;
+  margin: 0;
+  font-weight: 650;
+  font-size: 0.86rem;
+  text-transform: none;
+}
+
+.contact-actions {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.contact-button-email {
+  --background: linear-gradient(
+    145deg,
+    rgba(var(--ion-color-primary-rgb), 1) 0%,
+    rgba(var(--ion-color-secondary-rgb), 0.96) 100%
+  );
+}
+
+.contact-button-whatsapp {
+  --background: rgba(var(--ion-color-secondary-rgb), 0.14);
+  --color: var(--ion-text-color);
+  --box-shadow: var(--app-shadow-card-soft);
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: var(--app-border-subtle);
+}
+
+.contact-button ion-icon {
+  font-size: 0.95rem;
+}
+
+@media (min-width: 480px) {
+  .content-shell {
+    padding-left: 22px;
+    padding-right: 22px;
+  }
+
+  .meta-grid,
+  .facilities-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .image-carousel {
+    grid-auto-columns: minmax(46%, 1fr);
+  }
+
+  .contact-actions {
+    grid-template-columns: max-content max-content;
+    justify-content: flex-start;
+  }
+}
+
+:host-context(.ion-palette-dark) .hero-control {
+  --background: rgba(var(--ion-background-color-rgb), 0.44);
+  --color: var(--ion-text-color);
+  --border-color: rgba(var(--ion-color-medium-rgb), 0.34);
+}
+
+:host-context(.ion-palette-dark) .hero::after {
+  background: linear-gradient(
+    180deg,
+    rgba(var(--ion-color-tertiary-rgb), 0.34) 0%,
+    rgba(var(--ion-color-tertiary-rgb), 0.16) 40%,
+    rgba(var(--ion-color-tertiary-rgb), 0.46) 100%
+  );
 }

@@ -1,18 +1,133 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Modo Playa</ion-title>
-    <ion-buttons slot="end">
-      <ion-menu-button menu="main-menu"></ion-menu-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<div class="ion-page detail-page">
+  <ion-header class="detail-header">
+    <ion-toolbar class="detail-toolbar">
+      <ion-buttons slot="start">
+        <ion-button
+          class="hero-control"
+          fill="clear"
+          shape="round"
+          aria-label="Volver"
+          (click)="onBack()"
+        >
+          <ion-icon slot="icon-only" name="chevron-back"></ion-icon>
+        </ion-button>
+      </ion-buttons>
 
-<ion-content>
-  <section class="page">
-    <h1>Lodging {{ lodgingId }}</h1>
-    <p>Placeholder para detalle de alojamiento.</p>
-  </section>
-</ion-content>
+      <ion-buttons slot="end">
+        <ion-button
+          class="hero-control"
+          fill="clear"
+          shape="round"
+          aria-label="Opciones"
+        >
+          <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content class="detail-content">
+    <section class="hero">
+      <img [src]="lodging().mainImage" [alt]="lodging().title" />
+    </section>
+
+    <section class="content-shell">
+      <article class="detail-card intro-card">
+        <h1>{{ lodging().title }}</h1>
+        <p>{{ lodging().city }} · {{ lodging().location }}</p>
+      </article>
+
+      <article class="detail-card">
+        <h2>Description</h2>
+        <p class="description-copy">{{ lodging().description }}</p>
+      </article>
+
+      <article class="detail-card">
+        <h2>Datos del hospedaje</h2>
+        <div class="meta-grid">
+          <div class="facility-item">
+            <ion-icon name="home-outline"></ion-icon>
+            <span>{{ lodgingTypeLabel }}</span>
+          </div>
+
+          @for (meta of lodgingMeta(); track meta.label) {
+            <div class="facility-item">
+              <ion-icon [name]="meta.icon"></ion-icon>
+              <span>{{ meta.label }}</span>
+            </div>
+          }
+
+          @if (lodging().distanceToBeach) {
+            <div class="facility-item">
+              <ion-icon name="leaf-outline"></ion-icon>
+              <span>{{ lodging().distanceToBeach }} m de la playa</span>
+            </div>
+          }
+        </div>
+      </article>
+
+      <article class="detail-card">
+        <h2>Facilities</h2>
+        <div class="facilities-grid">
+          @for (facility of facilities(); track facility.label) {
+            <div class="facility-item">
+              <ion-icon [name]="facility.icon"></ion-icon>
+              <span>{{ facility.label }}</span>
+            </div>
+          }
+      </div>
+    </article>
+
+    @if (galleryImages.length) {
+      <article class="detail-card">
+        <h2>Galeria</h2>
+        <div class="image-carousel" role="region" aria-label="Galeria de imagenes">
+          @for (image of galleryImages; track image) {
+            <figure class="carousel-item">
+              <img [src]="image" alt="Imagen del hospedaje" loading="lazy" />
+            </figure>
+          }
+        </div>
+      </article>
+    }
+
+    <article class="detail-card contact-card">
+      <h2>Contacto</h2>
+      <div class="contact-actions">
+          <ion-button
+            class="contact-button contact-button-email"
+            shape="round"
+            [href]="emailHref ?? undefined"
+            target="_blank"
+            [disabled]="!emailHref"
+          >
+            <ion-icon slot="start" name="mail-outline"></ion-icon>
+            Email
+          </ion-button>
+
+          <ion-button
+            class="contact-button contact-button-whatsapp"
+            shape="round"
+            [href]="whatsappHref ?? undefined"
+            target="_blank"
+            [disabled]="!whatsappHref"
+          >
+            <ion-icon slot="start" name="logo-whatsapp"></ion-icon>
+            WhatsApp
+          </ion-button>
+        </div>
+      </article>
+    </section>
+  </ion-content>
+
+  <ion-footer class="detail-footer">
+    <ion-toolbar>
+      <div class="price-box">
+        <span class="price-caption">{{ priceUnitLabel }}</span>
+        <ion-text class="price-value">
+          {{ lodging().price | currency: 'ARS':'symbol':'1.0-0' }}
+        </ion-text>
+      </div>
+    </ion-toolbar>
+  </ion-footer>
+</div>
