@@ -14,7 +14,10 @@
 
     <div class="cards">
       @for (lodging of lodgings; track lodging.id) {
-        <app-lodging-card [lodging]="lodging"></app-lodging-card>
+        <app-lodging-card
+          [lodging]="lodging"
+          (lodgingDetail)="toLodgingDetail($event)"
+        ></app-lodging-card>
       }
     </div>
   </section>

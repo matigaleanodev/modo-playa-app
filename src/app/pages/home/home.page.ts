@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   IonButtons,
   IonContent,
   IonHeader,
   IonMenuButton,
+  NavController,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
@@ -29,6 +30,8 @@ import {
   ],
 })
 export class HomePage {
+  private readonly navCtrl = inject(NavController);
+
   readonly lodgings: Lodging[] = [
     {
       id: 'placeholder-1',
@@ -44,7 +47,8 @@ export class HomePage {
       bathrooms: 1,
       minNights: 2,
       amenities: [],
-      mainImage: '',
+      mainImage:
+        'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1400&q=80',
       images: [],
     },
     {
@@ -61,8 +65,16 @@ export class HomePage {
       bathrooms: 2,
       minNights: 3,
       amenities: [],
-      mainImage: '',
+      mainImage:
+        'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=80',
       images: [],
     },
   ];
+
+  toLodgingDetail({ id }: Lodging): void {
+    void this.navCtrl.navigateForward(`/lodging/${id}`, {
+      animated: true,
+      animationDirection: 'forward',
+    });
+  }
 }

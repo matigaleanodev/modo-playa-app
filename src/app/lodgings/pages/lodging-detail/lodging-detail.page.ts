@@ -2,19 +2,20 @@ import { CurrencyPipe, Location } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import {
+  IonBackButton,
   IonButton,
   IonButtons,
   IonContent,
   IonFooter,
   IonHeader,
   IonIcon,
+  IonMenuButton,
   IonText,
   IonToolbar,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   carSportOutline,
-  chevronBack,
   ellipsisHorizontal,
   flameOutline,
   homeOutline,
@@ -57,6 +58,8 @@ type LodgingDetailInput = Lodging & {
     IonHeader,
     IonToolbar,
     IonButtons,
+    IonBackButton,
+    IonMenuButton,
     IonContent,
     IonFooter,
     IonIcon,
@@ -65,9 +68,6 @@ type LodgingDetailInput = Lodging & {
   ],
 })
 export class LodgingDetailPage {
-  private readonly location = inject(Location);
-  private readonly router = inject(Router);
-
   readonly lodging = input.required<LodgingDetailInput>();
 
   readonly facilities = computed<LodgingFacility[]>(() =>
@@ -87,11 +87,12 @@ export class LodgingDetailPage {
     ];
   });
 
-  readonly contact = computed<LodgingContact>(() => this.lodging().contact ?? {});
+  readonly contact = computed<LodgingContact>(
+    () => this.lodging().contact ?? {},
+  );
 
   constructor() {
     addIcons({
-      chevronBack,
       ellipsisHorizontal,
       homeOutline,
       waterOutline,
@@ -144,15 +145,6 @@ export class LodgingDetailPage {
     return labels[priceUnit] ?? 'Precio';
   }
 
-  onBack(): void {
-    if (window.history.length > 1) {
-      this.location.back();
-      return;
-    }
-
-    void this.router.navigateByUrl('/home');
-  }
-
   private mapAmenity(amenity: LodgingAmenity): LodgingFacility | null {
     const map: Record<LodgingAmenity, LodgingFacility> = {
       [LodgingAmenity.POOL]: { icon: 'water-outline', label: 'Piscina' },
@@ -160,7 +152,10 @@ export class LodgingDetailPage {
         icon: 'leaf-outline',
         label: 'Acceso a playa',
       },
-      [LodgingAmenity.GARAGE]: { icon: 'car-sport-outline', label: 'Estacionamiento' },
+      [LodgingAmenity.GARAGE]: {
+        icon: 'car-sport-outline',
+        label: 'Estacionamiento',
+      },
       [LodgingAmenity.WIFI]: { icon: 'wifi-outline', label: 'Wifi' },
       [LodgingAmenity.PARRILLA]: { icon: 'flame-outline', label: 'Parrilla' },
       [LodgingAmenity.AIR_CONDITIONING]: {

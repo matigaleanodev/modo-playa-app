@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { NavController } from '@ionic/angular/standalone';
 import { HomePage } from './home.page';
 
 describe('HomePage', () => {
@@ -9,7 +10,15 @@ describe('HomePage', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HomePage],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        {
+          provide: NavController,
+          useValue: {
+            navigateForward: jasmine.createSpy('navigateForward'),
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HomePage);

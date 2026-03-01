@@ -30,6 +30,12 @@ ion-content.detail-content {
   box-shadow: none;
 }
 
+.detail-toolbar ion-back-button,
+.detail-toolbar ion-menu-button {
+  --color: var(--ion-color-primary-contrast);
+  --background: transparent;
+}
+
 .hero {
   position: relative;
   margin: 0;
@@ -55,20 +61,6 @@ ion-content.detail-content {
     rgba(var(--ion-color-dark-rgb), 0.28) 100%
   );
   pointer-events: none;
-}
-
-.hero-control {
-  --background: rgba(var(--ion-color-light-rgb), 0.52);
-  --color: var(--ion-color-primary-contrast);
-  --border-radius: 999px;
-  --padding-start: 8px;
-  --padding-end: 8px;
-  --box-shadow: var(--app-shadow-card-soft);
-  --border-width: 1px;
-  --border-style: solid;
-  --border-color: rgba(var(--ion-color-light-rgb), 0.45);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
 }
 
 .content-shell {
@@ -291,10 +283,9 @@ ion-content.detail-content {
   }
 }
 
-:host-context(.ion-palette-dark) .hero-control {
-  --background: rgba(var(--ion-background-color-rgb), 0.44);
+:host-context(.ion-palette-dark) .detail-toolbar ion-back-button,
+:host-context(.ion-palette-dark) .detail-toolbar ion-menu-button {
   --color: var(--ion-text-color);
-  --border-color: rgba(var(--ion-color-medium-rgb), 0.34);
 }
 
 :host-context(.ion-palette-dark) .hero::after {

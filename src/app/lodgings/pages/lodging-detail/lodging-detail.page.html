@@ -2,26 +2,11 @@
   <ion-header class="detail-header">
     <ion-toolbar class="detail-toolbar">
       <ion-buttons slot="start">
-        <ion-button
-          class="hero-control"
-          fill="clear"
-          shape="round"
-          aria-label="Volver"
-          (click)="onBack()"
-        >
-          <ion-icon slot="icon-only" name="chevron-back"></ion-icon>
-        </ion-button>
+        <ion-back-button defaultHref="/home" text="" fill="clear"></ion-back-button>
       </ion-buttons>
 
       <ion-buttons slot="end">
-        <ion-button
-          class="hero-control"
-          fill="clear"
-          shape="round"
-          aria-label="Opciones"
-        >
-          <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
-        </ion-button>
+        <ion-menu-button menu="main-menu" autoHide="false"></ion-menu-button>
       </ion-buttons>
     </ion-toolbar>
   </ion-header>
@@ -51,17 +36,15 @@
           </div>
 
           @for (meta of lodgingMeta(); track meta.label) {
-            <div class="facility-item">
-              <ion-icon [name]="meta.icon"></ion-icon>
-              <span>{{ meta.label }}</span>
-            </div>
-          }
-
-          @if (lodging().distanceToBeach) {
-            <div class="facility-item">
-              <ion-icon name="leaf-outline"></ion-icon>
-              <span>{{ lodging().distanceToBeach }} m de la playa</span>
-            </div>
+          <div class="facility-item">
+            <ion-icon [name]="meta.icon"></ion-icon>
+            <span>{{ meta.label }}</span>
+          </div>
+          } @if (lodging().distanceToBeach) {
+          <div class="facility-item">
+            <ion-icon name="leaf-outline"></ion-icon>
+            <span>{{ lodging().distanceToBeach }} m de la playa</span>
+          </div>
           }
         </div>
       </article>
@@ -70,30 +53,34 @@
         <h2>Facilities</h2>
         <div class="facilities-grid">
           @for (facility of facilities(); track facility.label) {
-            <div class="facility-item">
-              <ion-icon [name]="facility.icon"></ion-icon>
-              <span>{{ facility.label }}</span>
-            </div>
-          }
-      </div>
-    </article>
-
-    @if (galleryImages.length) {
-      <article class="detail-card">
-        <h2>Galeria</h2>
-        <div class="image-carousel" role="region" aria-label="Galeria de imagenes">
-          @for (image of galleryImages; track image) {
-            <figure class="carousel-item">
-              <img [src]="image" alt="Imagen del hospedaje" loading="lazy" />
-            </figure>
+          <div class="facility-item">
+            <ion-icon [name]="facility.icon"></ion-icon>
+            <span>{{ facility.label }}</span>
+          </div>
           }
         </div>
       </article>
-    }
 
-    <article class="detail-card contact-card">
-      <h2>Contacto</h2>
-      <div class="contact-actions">
+      @if (galleryImages.length) {
+      <article class="detail-card">
+        <h2>Galeria</h2>
+        <div
+          class="image-carousel"
+          role="region"
+          aria-label="Galeria de imagenes"
+        >
+          @for (image of galleryImages; track image) {
+          <figure class="carousel-item">
+            <img [src]="image" alt="Imagen del hospedaje" loading="lazy" />
+          </figure>
+          }
+        </div>
+      </article>
+      }
+
+      <article class="detail-card contact-card">
+        <h2>Contacto</h2>
+        <div class="contact-actions">
           <ion-button
             class="contact-button contact-button-email"
             shape="round"
