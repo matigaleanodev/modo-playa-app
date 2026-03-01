@@ -1,13 +1,97 @@
 .lodging-card {
-  padding: 12px;
-  border-radius: 12px;
-  background: var(--ion-color-light);
-}
-
-h3 {
-  margin: 0 0 6px;
-}
-
-p {
   margin: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--ion-card-background);
+  border: 1px solid var(--app-border-faint);
+  box-shadow: var(--app-shadow-card);
+  transition:
+    transform 160ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.lodging-card:active {
+  transform: scale(0.985);
+}
+
+@media (hover: hover) {
+  .lodging-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--app-shadow-card-hover);
+    border-color: var(--app-border-subtle);
+  }
+}
+
+.lodging-card-image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.lodging-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lodging-card-content {
+  padding: 14px 14px 16px;
+  display: grid;
+  gap: 6px;
+}
+
+.lodging-card-title {
+  margin: 0;
+  color: var(--ion-text-color);
+  font-size: 1.05rem;
+  line-height: 1.24;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+.lodging-card-location {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ion-color-medium);
+  font-size: 0.86rem;
+}
+
+.lodging-card-location ion-icon {
+  font-size: 0.95rem;
+  color: var(--ion-color-secondary);
+}
+
+.lodging-card-description {
+  margin: 0;
+  color: var(--ion-color-medium);
+  font-size: 0.87rem;
+  line-height: 1.35;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.lodging-card-price {
+  margin: 2px 0 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.lodging-card-price-value {
+  color: var(--ion-text-color);
+  font-size: 1.03rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.lodging-card-price-unit {
+  color: var(--ion-color-medium);
+  font-size: 0.84rem;
+  font-weight: 600;
 }

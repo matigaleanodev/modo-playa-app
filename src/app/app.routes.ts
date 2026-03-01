@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { lodgingResolver } from './lodgings/resolvers/lodging.resolver';
 
 export const routes: Routes = [
   {
@@ -7,6 +8,9 @@ export const routes: Routes = [
   },
   {
     path: 'lodging/:id',
+    resolve: {
+      lodging: lodgingResolver,
+    },
     loadComponent: () =>
       import('./lodgings/pages/lodging-detail/lodging-detail.page').then(
         (m) => m.LodgingDetailPage,

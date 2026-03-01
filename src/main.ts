@@ -6,8 +6,12 @@ import {
   provideRouter,
   withPreloading,
   PreloadAllModules,
+  withComponentInputBinding,
 } from '@angular/router';
-import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
+import {
+  IonicRouteStrategy,
+  provideIonicAngular,
+} from '@ionic/angular/standalone';
 import { IonicStorageModule } from '@ionic/storage-angular';
 
 import { routes } from './app/app.routes';
@@ -24,6 +28,10 @@ bootstrapApplication(AppComponent, {
     provideHttpClient(),
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular(),
-    provideRouter(routes, withPreloading(PreloadAllModules)),
+    provideRouter(
+      routes,
+      withPreloading(PreloadAllModules),
+      withComponentInputBinding(),
+    ),
   ],
 });

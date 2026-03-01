@@ -1,5 +1,28 @@
-<article class="lodging-card">
-  <h3>{{ lodging().title }}</h3>
-  <p>{{ lodging().city }}, {{ lodging().location }}</p>
-  <p>{{ lodging().price | currency: 'ARS' }} / {{ lodging().priceUnit }}</p>
-</article>
+<ion-card class="lodging-card" [button]="true" (click)="toLodgingDetail($event)">
+  <div class="lodging-card-image-wrap">
+    <ion-img
+      class="lodging-card-image"
+      [src]="imageUrl()"
+      [alt]="lodging().title"
+      (ionError)="onImageError($event)"
+    ></ion-img>
+  </div>
+
+  <ion-card-content class="lodging-card-content">
+    <h3 class="lodging-card-title">{{ lodging().title }}</h3>
+
+    <p class="lodging-card-location">
+      <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+      <span>{{ locationLabel() }}</span>
+    </p>
+
+    <p class="lodging-card-description">{{ lodging().description }}</p>
+
+    <p class="lodging-card-price">
+      <span class="lodging-card-price-value">
+        {{ lodging().price | currency: 'ARS':'symbol':'1.0-0' }}
+      </span>
+      <span class="lodging-card-price-unit">/ {{ priceUnitLabel() }}</span>
+    </p>
+  </ion-card-content>
+</ion-card>

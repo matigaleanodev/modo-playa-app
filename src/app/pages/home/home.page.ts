@@ -1,18 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import {
   IonButtons,
   IonContent,
   IonHeader,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
   IonMenuButton,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
 import { LodgingCardComponent } from 'src/app/lodgings/components/lodging-card/lodging-card.component';
-import {
-  Lodging,
-  LodgingType,
-  PriceUnit,
-} from 'src/app/lodgings/models/lodging.model';
+import { Lodging } from 'src/app/lodgings/models/lodging.model';
+import { LodgingsResourceService } from 'src/app/lodgings/services/lodgings-resource.service';
+import { LodgingCardSkeletonComponent } from 'src/app/lodgings/components/lodging-card-skeleton/lodging-card-skeleton.component';
+import { InfiniteScrollCustomEvent } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
@@ -25,44 +26,39 @@ import {
     IonButtons,
     IonMenuButton,
     IonContent,
+    IonInfiniteScroll,
+    IonInfiniteScrollContent,
     LodgingCardComponent,
+    LodgingCardSkeletonComponent,
   ],
 })
 export class HomePage {
-  readonly lodgings: Lodging[] = [
-    {
-      id: 'placeholder-1',
-      title: 'Cabana frente al mar',
-      description: 'Placeholder Home',
-      location: 'Paseo 111 y Playa',
-      city: 'Villa Gesell',
-      type: LodgingType.CABIN,
-      price: 85000,
-      priceUnit: PriceUnit.NIGHT,
-      maxGuests: 4,
-      bedrooms: 2,
-      bathrooms: 1,
-      minNights: 2,
-      amenities: [],
-      mainImage: '',
-      images: [],
-    },
-    {
-      id: 'placeholder-2',
-      title: 'Departamento bosque',
-      description: 'Placeholder Home',
-      location: 'Alameda 203',
-      city: 'Mar de las Pampas',
-      type: LodgingType.APARTMENT,
-      price: 94000,
-      priceUnit: PriceUnit.NIGHT,
-      maxGuests: 5,
-      bedrooms: 2,
-      bathrooms: 2,
-      minNights: 3,
-      amenities: [],
-      mainImage: '',
-      images: [],
-    },
-  ];
+  private readonly lodgingsResource = inject(LodgingsResourceService);
+
+  readonly lodgings = computed(() => this.lodgingsResource.lodgings());
+  readonly isLoading = computed(() => this.lodgingsResource.isLoading());
+  readonly isLoadingMore = computed(() => this.lodgingsResource.isLoadingMore());
+  readonly hasMore = computed(() => this.lodgingsResource.hasMore());
+  readonly skeletonCards = Array.from({ length: 4 });
+
+  async ionViewWillEnter(): Promise<void> {
+    await this.lodgingsResource.loadFavorites();
+
+    if (this.lodgings().length === 0) {
+      await this.lodgingsResource.loadInitialLodgings();
+    }
+  }
+
+  toLodgingDetail(lodging: Lodging): void {
+    this.lodgingsResource.toLodgingDetail(lodging);
+  }
+
+  async onInfiniteScroll(event: InfiniteScrollCustomEvent): Promise<void> {
+    try {
+      await this.lodgingsResource.loadNextLodgingsPage();
+    } finally {
+      event.target.disabled = !this.hasMore();
+      await event.target.complete();
+    }
+  }
 }

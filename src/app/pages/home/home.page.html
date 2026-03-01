@@ -10,12 +10,32 @@
 <ion-content>
   <section class="page">
     <h1>Home</h1>
-    <p>Listado y busqueda de alojamientos (placeholder).</p>
+    <p>Listado y busqueda de alojamientos.</p>
 
     <div class="cards">
-      @for (lodging of lodgings; track lodging.id) {
-        <app-lodging-card [lodging]="lodging"></app-lodging-card>
+      @if (isLoading()) {
+        @for (_item of skeletonCards; track $index) {
+          <app-lodging-card-skeleton></app-lodging-card-skeleton>
+        }
+      } @else {
+        @for (lodging of lodgings(); track lodging.id) {
+          <app-lodging-card
+            [lodging]="lodging"
+            (lodgingDetail)="toLodgingDetail($event)"
+          ></app-lodging-card>
+        }
       }
     </div>
+
+    <ion-infinite-scroll
+      threshold="120px"
+      [disabled]="!hasMore()"
+      (ionInfinite)="onInfiniteScroll($event)"
+    >
+      <ion-infinite-scroll-content
+        loadingSpinner="crescent"
+        loadingText="Cargando alojamientos..."
+      ></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
   </section>
 </ion-content>
