@@ -7,10 +7,12 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <section class="page">
-    <h1>Home</h1>
-    <p>Listado y busqueda de alojamientos.</p>
+<ion-content class="home-content">
+  <section class="page home-page">
+    <header class="home-copy">
+      <h1>Home</h1>
+      <p>Listado y busqueda de alojamientos.</p>
+    </header>
 
     <div class="cards">
       @if (isLoading()) {
@@ -21,7 +23,9 @@
         @for (lodging of lodgings(); track lodging.id) {
           <app-lodging-card
             [lodging]="lodging"
+            [isFavorite]="isFavorite(lodging.id)"
             (lodgingDetail)="toLodgingDetail($event)"
+            (favoriteToggled)="toggleFavorite($event)"
           ></app-lodging-card>
         }
       }

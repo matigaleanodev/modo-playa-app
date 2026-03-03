@@ -1,24 +1,27 @@
 import { Component, computed, input, output } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import {
+  IonButton,
   IonCard,
   IonCardContent,
   IonIcon,
   IonImg,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { locationOutline } from 'ionicons/icons';
+import { heart, locationOutline } from 'ionicons/icons';
 import { Lodging, PriceUnit } from '../../models/lodging.model';
 
 @Component({
   selector: 'app-lodging-card',
   templateUrl: './lodging-card.component.html',
   styleUrls: ['./lodging-card.component.scss'],
-  imports: [CurrencyPipe, IonCard, IonImg, IonCardContent, IonIcon],
+  imports: [CurrencyPipe, IonCard, IonImg, IonCardContent, IonIcon, IonButton],
 })
 export class LodgingCardComponent {
   readonly lodging = input.required<Lodging>();
+  readonly isFavorite = input(false);
   readonly lodgingDetail = output<Lodging>();
+  readonly favoriteToggled = output<Lodging>();
 
   readonly fallbackImage = 'assets/icon/favicon.png';
 
@@ -44,6 +47,7 @@ export class LodgingCardComponent {
   constructor() {
     addIcons({
       locationOutline,
+      heart,
     });
   }
 
@@ -55,5 +59,10 @@ export class LodgingCardComponent {
   toLodgingDetail(event: Event): void {
     event.stopPropagation();
     this.lodgingDetail.emit(this.lodging());
+  }
+
+  toggleFavorite(event: Event): void {
+    event.stopPropagation();
+    this.favoriteToggled.emit(this.lodging());
   }
 }

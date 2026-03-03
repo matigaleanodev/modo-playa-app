@@ -1,3 +1,74 @@
-.page {
-  padding: 16px;
+ion-content.favorites-content {
+  --background: var(--ion-background-color);
+}
+
+.favorites-page {
+  width: min(100%, 1140px);
+  margin: 0 auto;
+  padding: 16px 16px calc(18px + var(--ion-safe-area-bottom, 0px));
+}
+
+.favorites-copy {
+  margin-bottom: 14px;
+}
+
+.favorites-copy h1 {
+  margin: 0 0 6px;
+  font-size: 1.32rem;
+  letter-spacing: -0.02em;
+}
+
+.favorites-copy p {
+  margin: 0;
+  color: var(--ion-color-medium);
+  font-size: 0.92rem;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.empty-state {
+  border-radius: 18px;
+  border: 1px solid var(--app-border-faint);
+  background: var(--ion-card-background);
+  padding: 18px 16px;
+}
+
+.empty-state h2 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+@media (min-width: 640px) {
+  .favorites-page {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .favorites-page {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
 }
