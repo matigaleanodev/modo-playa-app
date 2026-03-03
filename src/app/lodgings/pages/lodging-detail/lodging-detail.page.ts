@@ -1,5 +1,6 @@
 import { CurrencyPipe } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import {
   IonBackButton,
   IonButton,
@@ -8,8 +9,14 @@ import {
   IonFooter,
   IonHeader,
   IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonMenu,
   IonMenuButton,
+  IonMenuToggle,
   IonText,
+  IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -17,7 +24,9 @@ import {
   carSportOutline,
   ellipsisHorizontal,
   flameOutline,
+  heartOutline,
   homeOutline,
+  informationCircleOutline,
   leafOutline,
   logoWhatsapp,
   mailOutline,
@@ -53,14 +62,21 @@ type LodgingDetailInput = Lodging & {
   templateUrl: './lodging-detail.page.html',
   styleUrls: ['./lodging-detail.page.scss'],
   imports: [
+    RouterLink,
     CurrencyPipe,
+    IonMenu,
     IonHeader,
     IonToolbar,
+    IonTitle,
     IonButtons,
     IonBackButton,
     IonMenuButton,
+    IonMenuToggle,
     IonContent,
     IonFooter,
+    IonList,
+    IonItem,
+    IonLabel,
     IonIcon,
     IonButton,
     IonText,
@@ -94,6 +110,8 @@ export class LodgingDetailPage {
     addIcons({
       ellipsisHorizontal,
       homeOutline,
+      heartOutline,
+      informationCircleOutline,
       waterOutline,
       leafOutline,
       carSportOutline,

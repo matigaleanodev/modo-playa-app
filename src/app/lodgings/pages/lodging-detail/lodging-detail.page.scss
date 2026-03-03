@@ -283,6 +283,68 @@ ion-content.detail-content {
   }
 }
 
+@media (min-width: 768px) {
+  .hero,
+  .content-shell {
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero img {
+    height: clamp(320px, 46vh, 440px);
+    border-radius: 0 0 40px 40px;
+  }
+
+  .hero::after {
+    border-radius: 0 0 40px 40px;
+  }
+
+  .content-shell {
+    margin-top: -42px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .intro-card,
+  .description-card,
+  .gallery-card,
+  .contact-card {
+    grid-column: 1 / -1;
+  }
+
+  .meta-grid,
+  .facilities-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .image-carousel {
+    grid-auto-columns: minmax(40%, 1fr);
+  }
+}
+
+@media (min-width: 1080px) {
+  .hero,
+  .content-shell {
+    max-width: 1120px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .content-shell {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 18px;
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+
+  .image-carousel {
+    grid-auto-columns: minmax(31%, 1fr);
+  }
+}
+
 :host-context(.ion-palette-dark) .detail-toolbar ion-back-button,
 :host-context(.ion-palette-dark) .detail-toolbar ion-menu-button {
   --color: var(--ion-text-color);

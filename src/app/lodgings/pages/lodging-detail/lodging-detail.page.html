@@ -1,4 +1,44 @@
 <div class="ion-page detail-page">
+  <ion-menu menuId="main-menu" side="end" contentId="detail-content">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Menu</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content>
+      <ion-list>
+        <ion-menu-toggle autoHide="true">
+          <ion-item button routerLink="/home" routerDirection="root">
+            <ion-icon aria-hidden="true" name="home-outline" slot="start"></ion-icon>
+            <ion-label>Home</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+
+        <ion-menu-toggle autoHide="true">
+          <ion-item button routerLink="/favoritos" routerDirection="root">
+            <ion-icon aria-hidden="true" name="heart-outline" slot="start"></ion-icon>
+            <ion-label>Favoritos</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+
+        <ion-menu-toggle autoHide="true">
+          <ion-item button routerLink="/contexto" routerDirection="root">
+            <ion-icon aria-hidden="true" name="moon-outline" slot="start"></ion-icon>
+            <ion-label>Contexto</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+
+        <ion-menu-toggle autoHide="true">
+          <ion-item button routerLink="/info" routerDirection="root">
+            <ion-icon aria-hidden="true" name="information-circle-outline" slot="start"></ion-icon>
+            <ion-label>Info</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+
   <ion-header class="detail-header">
     <ion-toolbar class="detail-toolbar">
       <ion-buttons slot="start">
@@ -11,7 +51,7 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-content class="detail-content">
+  <ion-content id="detail-content" class="detail-content">
     <section class="hero">
       <img [src]="lodging().mainImage" [alt]="lodging().title" />
     </section>
@@ -22,12 +62,12 @@
         <p>{{ lodging().city }} · {{ lodging().location }}</p>
       </article>
 
-      <article class="detail-card">
+      <article class="detail-card description-card">
         <h2>Description</h2>
         <p class="description-copy">{{ lodging().description }}</p>
       </article>
 
-      <article class="detail-card">
+      <article class="detail-card details-card">
         <h2>Datos del hospedaje</h2>
         <div class="meta-grid">
           <div class="facility-item">
@@ -49,7 +89,7 @@
         </div>
       </article>
 
-      <article class="detail-card">
+      <article class="detail-card amenities-card">
         <h2>Facilities</h2>
         <div class="facilities-grid">
           @for (facility of facilities(); track facility.label) {
@@ -62,7 +102,7 @@
       </article>
 
       @if (galleryImages.length) {
-      <article class="detail-card">
+      <article class="detail-card gallery-card">
         <h2>Galeria</h2>
         <div
           class="image-carousel"
