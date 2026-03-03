@@ -26,6 +26,7 @@ export class LodgingsResourceService {
 
   private readonly currentPage = signal(1);
   private readonly total = signal(0);
+  private readonly favoritesLoaded = signal(false);
 
   readonly favoriteIds = computed(
     () => new Set(this.favorites().map((lodging) => lodging.id)),
@@ -94,13 +95,22 @@ export class LodgingsResourceService {
     return this.favoriteIds().has(lodgingId);
   }
 
-  async loadFavorites(): Promise<void> {
+  async loadFavorites(force = false): Promise<void> {
+    if (this.favoritesLoaded() && !force) {
+      return;
+    }
+
     const stored =
       (await this.storage.getItem<Lodging[]>(FAVORITE_LODGINGS_KEY)) ?? [];
     this.favorites.set(stored);
+    this.favoritesLoaded.set(true);
   }
 
   async toggleFavorite(lodging: Lodging): Promise<void> {
+    if (!this.favoritesLoaded()) {
+      await this.loadFavorites();
+    }
+
     const current = this.favorites();
     const exists = current.some((item) => item.id === lodging.id);
     const next = exists

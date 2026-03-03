@@ -83,6 +83,13 @@
   gap: 6px;
 }
 
+.lodging-card-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .lodging-card-price-value {
   color: var(--ion-text-color);
   font-size: 1.03rem;
@@ -94,4 +101,20 @@
   color: var(--ion-color-medium);
   font-size: 0.84rem;
   font-weight: 600;
+}
+
+.favorite-button {
+  margin: 0 -4px -6px 0;
+  min-height: 32px;
+  --padding-start: 6px;
+  --padding-end: 6px;
+  --color: var(--ion-color-medium);
+}
+
+.favorite-button ion-icon {
+  font-size: 1.35rem;
+}
+
+.favorite-button.is-favorite {
+  --color: var(--ion-color-danger);
 }

@@ -36,6 +36,7 @@ export class HomePage {
   private readonly lodgingsResource = inject(LodgingsResourceService);
 
   readonly lodgings = computed(() => this.lodgingsResource.lodgings());
+  readonly favoriteIds = computed(() => this.lodgingsResource.favoriteIds());
   readonly isLoading = computed(() => this.lodgingsResource.isLoading());
   readonly isLoadingMore = computed(() => this.lodgingsResource.isLoadingMore());
   readonly hasMore = computed(() => this.lodgingsResource.hasMore());
@@ -51,6 +52,14 @@ export class HomePage {
 
   toLodgingDetail(lodging: Lodging): void {
     this.lodgingsResource.toLodgingDetail(lodging);
+  }
+
+  isFavorite(lodgingId: string): boolean {
+    return this.favoriteIds().has(lodgingId);
+  }
+
+  async toggleFavorite(lodging: Lodging): Promise<void> {
+    await this.lodgingsResource.toggleFavorite(lodging);
   }
 
   async onInfiniteScroll(event: InfiniteScrollCustomEvent): Promise<void> {

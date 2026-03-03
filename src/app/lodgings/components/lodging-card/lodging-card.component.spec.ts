@@ -44,4 +44,30 @@ describe('LodgingCardComponent', () => {
     expect(text).toContain('Cabana Sur');
     expect(text).toContain('Villa Gesell');
   });
+
+  it('deberia emitir lodgingDetail al invocar toLodgingDetail', () => {
+    const emitSpy = spyOn(component.lodgingDetail, 'emit');
+    const event = new Event('click');
+    spyOn(event, 'stopPropagation');
+
+    component.toLodgingDetail(event);
+
+    expect(event.stopPropagation).toHaveBeenCalled();
+    expect(emitSpy).toHaveBeenCalledWith(lodgingMock);
+  });
+
+  it('deberia emitir favoriteToggled al invocar toggleFavorite', () => {
+    const emitSpy = spyOn(component.favoriteToggled, 'emit');
+    const event = new Event('click');
+    spyOn(event, 'stopPropagation');
+
+    component.toggleFavorite(event);
+
+    expect(event.stopPropagation).toHaveBeenCalled();
+    expect(emitSpy).toHaveBeenCalledWith(lodgingMock);
+  });
+
+  it('deberia usar imagen fallback cuando mainImage esta vacia', () => {
+    expect(component.imageUrl()).toBe(component.fallbackImage);
+  });
 });

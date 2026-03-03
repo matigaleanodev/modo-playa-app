@@ -18,11 +18,23 @@
 
     <p class="lodging-card-description">{{ lodging().description }}</p>
 
-    <p class="lodging-card-price">
-      <span class="lodging-card-price-value">
-        {{ lodging().price | currency: 'ARS':'symbol':'1.0-0' }}
-      </span>
-      <span class="lodging-card-price-unit">/ {{ priceUnitLabel() }}</span>
-    </p>
+    <div class="lodging-card-footer">
+      <p class="lodging-card-price">
+        <span class="lodging-card-price-value">
+          {{ lodging().price | currency: 'ARS':'symbol':'1.0-0' }}
+        </span>
+        <span class="lodging-card-price-unit">/ {{ priceUnitLabel() }}</span>
+      </p>
+
+      <ion-button
+        class="favorite-button"
+        [class.is-favorite]="isFavorite()"
+        fill="clear"
+        aria-label="Agregar o quitar de favoritos"
+        (click)="toggleFavorite($event)"
+      >
+        <ion-icon slot="icon-only" name="heart" aria-hidden="true"></ion-icon>
+      </ion-button>
+    </div>
   </ion-card-content>
 </ion-card>

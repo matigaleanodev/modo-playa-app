@@ -123,7 +123,31 @@ describe('LodgingsResourceService', () => {
     expect(service.isFavorite(lodgingA.id)).toBeTrue();
   });
 
+  it('no deberia recargar favoritos si ya fueron cargados', async () => {
+    storageServiceMock.getItem.and.resolveTo([lodgingA]);
+
+    await service.loadFavorites();
+    await service.loadFavorites();
+
+    expect(storageServiceMock.getItem).toHaveBeenCalledTimes(1);
+  });
+
+  it('deberia forzar recarga de favoritos cuando force es true', async () => {
+    storageServiceMock.getItem.and.returnValues(
+      Promise.resolve([lodgingA]),
+      Promise.resolve([lodgingB]),
+    );
+
+    await service.loadFavorites();
+    await service.loadFavorites(true);
+
+    expect(storageServiceMock.getItem).toHaveBeenCalledTimes(2);
+    expect(service.favorites()).toEqual([lodgingB]);
+  });
+
   it('deberia alternar favorito y persistirlo', async () => {
+    storageServiceMock.getItem.and.resolveTo([]);
+
     await service.toggleFavorite(lodgingA);
     expect(service.favoritesCount()).toBe(1);
     expect(storageServiceMock.setItem).toHaveBeenCalledTimes(1);
@@ -131,5 +155,14 @@ describe('LodgingsResourceService', () => {
     await service.toggleFavorite(lodgingA);
     expect(service.favoritesCount()).toBe(0);
     expect(storageServiceMock.setItem).toHaveBeenCalledTimes(2);
+  });
+
+  it('deberia cargar favoritos antes de alternar si aun no se cargaron', async () => {
+    storageServiceMock.getItem.and.resolveTo([lodgingB]);
+
+    await service.toggleFavorite(lodgingA);
+
+    expect(storageServiceMock.getItem).toHaveBeenCalledTimes(1);
+    expect(service.favorites()).toEqual([lodgingA, lodgingB]);
   });
 });

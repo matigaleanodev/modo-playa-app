@@ -28,6 +28,7 @@ describe('HomePage', () => {
   };
   const lodgingsResourceMock = {
     lodgings: signal<Lodging[]>([lodgingMock]),
+    favoriteIds: signal<Set<string>>(new Set()),
     isLoading: signal(false),
     isLoadingMore: signal(false),
     hasMore: signal(false),
@@ -38,6 +39,7 @@ describe('HomePage', () => {
     loadNextLodgingsPage: jasmine
       .createSpy('loadNextLodgingsPage')
       .and.resolveTo(undefined),
+    toggleFavorite: jasmine.createSpy('toggleFavorite').and.resolveTo(undefined),
     toLodgingDetail: jasmine.createSpy('toLodgingDetail'),
   };
 
@@ -56,6 +58,9 @@ describe('HomePage', () => {
     fixture = TestBed.createComponent(HomePage);
     component = fixture.componentInstance;
     lodgingsResourceMock.toLodgingDetail.calls.reset();
+    lodgingsResourceMock.toggleFavorite.calls.reset();
+    lodgingsResourceMock.loadFavorites.calls.reset();
+    lodgingsResourceMock.loadInitialLodgings.calls.reset();
     lodgingsResourceMock.loadNextLodgingsPage.calls.reset();
     fixture.detectChanges();
   });
@@ -86,15 +91,40 @@ describe('HomePage', () => {
     expect(lodgingsResourceMock.loadInitialLodgings).toHaveBeenCalled();
   });
 
+  it('no deberia recargar primera pagina si ya hay alojamientos', async () => {
+    lodgingsResourceMock.lodgings.set([lodgingMock]);
+
+    await component.ionViewWillEnter();
+
+    expect(lodgingsResourceMock.loadFavorites).toHaveBeenCalled();
+    expect(lodgingsResourceMock.loadInitialLodgings).not.toHaveBeenCalled();
+  });
+
+  it('deberia informar favorito segun favoriteIds', () => {
+    lodgingsResourceMock.favoriteIds.set(new Set([lodgingMock.id]));
+
+    expect(component.isFavorite(lodgingMock.id)).toBeTrue();
+    expect(component.isFavorite('otro-id')).toBeFalse();
+  });
+
+  it('deberia delegar toggleFavorite al recurso', async () => {
+    await component.toggleFavorite(lodgingMock);
+
+    expect(lodgingsResourceMock.toggleFavorite).toHaveBeenCalledWith(
+      lodgingMock,
+    );
+  });
+
   it('deberia cargar siguiente pagina en infinite scroll', async () => {
     const completeSpy = jasmine.createSpy('complete').and.resolveTo(undefined);
     const event = {
-      target: { complete: completeSpy },
+      target: { complete: completeSpy, disabled: false },
     } as unknown as InfiniteScrollCustomEvent;
 
     await component.onInfiniteScroll(event);
 
     expect(lodgingsResourceMock.loadNextLodgingsPage).toHaveBeenCalled();
+    expect(event.target.disabled).toBeTrue();
     expect(completeSpy).toHaveBeenCalled();
   });
 });
