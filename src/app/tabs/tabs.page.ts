@@ -112,10 +112,10 @@ export class TabsPage {
       icon: 'home',
     },
     {
-      id: 'tab-context',
+      id: 'tab-destinations',
       type: 'link',
-      label: 'Contexto',
-      path: 'contexto',
+      label: 'Destinos',
+      path: 'destinos',
       icon: 'cloudy-night',
     },
   ];
@@ -139,10 +139,10 @@ export class TabsPage {
           icon: 'heart',
         },
         {
-          id: 'menu-context',
+          id: 'menu-destinations',
           type: 'link',
-          label: 'Contexto',
-          path: '/contexto',
+          label: 'Destinos',
+          path: '/destinos',
           icon: 'cloudy-night',
         },
         {

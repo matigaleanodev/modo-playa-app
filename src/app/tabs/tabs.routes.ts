@@ -19,9 +19,11 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'contexto',
+        path: 'destinos',
         loadComponent: () =>
-          import('../pages/context/context.page').then((m) => m.ContextPage),
+          import('../pages/destinations/destinations.page').then(
+            (m) => m.DestinationsPage,
+          ),
       },
       {
         path: '',

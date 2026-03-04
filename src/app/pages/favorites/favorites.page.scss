@@ -1,5 +1,12 @@
 ion-content.favorites-content {
-  --background: var(--ion-background-color);
+  --background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--ion-color-primary) 38%, transparent) 0%,
+      color-mix(in srgb, var(--ion-background-color) 82%, transparent) 58%,
+      color-mix(in srgb, var(--ion-background-color) 92%, transparent) 100%
+    ),
+    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1500&q=80');
 }
 
 .favorites-page {
@@ -71,4 +78,15 @@ ion-content.favorites-content {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
   }
+}
+
+:host-context(.ion-palette-dark) ion-content.favorites-content {
+  --background:
+    linear-gradient(
+      180deg,
+      rgba(6, 24, 43, 0.62) 0%,
+      rgba(6, 18, 31, 0.84) 60%,
+      rgba(4, 12, 22, 0.94) 100%
+    ),
+    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1500&q=80');
 }
