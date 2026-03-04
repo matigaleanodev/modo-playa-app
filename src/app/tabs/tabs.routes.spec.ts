@@ -8,7 +8,7 @@ describe('tabs.routes', () => {
 
     expect(paths).toContain('home');
     expect(paths).toContain('favoritos');
-    expect(paths).toContain('contexto');
+    expect(paths).toContain('destinos');
     expect(paths).toContain('');
   });
 });

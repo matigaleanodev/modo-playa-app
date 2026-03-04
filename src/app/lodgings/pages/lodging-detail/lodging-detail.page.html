@@ -23,9 +23,9 @@
         </ion-menu-toggle>
 
         <ion-menu-toggle autoHide="true">
-          <ion-item button routerLink="/contexto" routerDirection="root">
-            <ion-icon aria-hidden="true" name="moon-outline" slot="start"></ion-icon>
-            <ion-label>Contexto</ion-label>
+          <ion-item button routerLink="/destinos" routerDirection="root">
+            <ion-icon aria-hidden="true" name="cloudy-night-outline" slot="start"></ion-icon>
+            <ion-label>Destinos</ion-label>
           </ion-item>
         </ion-menu-toggle>
 
@@ -155,6 +155,18 @@
           {{ lodging().price | currency: 'ARS':'symbol':'1.0-0' }}
         </ion-text>
       </div>
+
+      <ion-buttons slot="end">
+        <ion-button
+          class="favorite-button"
+          [class.is-favorite]="isFavorite()"
+          fill="clear"
+          aria-label="Agregar o quitar de favoritos"
+          (click)="toggleFavorite()"
+        >
+          <ion-icon slot="icon-only" name="heart" aria-hidden="true"></ion-icon>
+        </ion-button>
+      </ion-buttons>
     </ion-toolbar>
   </ion-footer>
 </div>

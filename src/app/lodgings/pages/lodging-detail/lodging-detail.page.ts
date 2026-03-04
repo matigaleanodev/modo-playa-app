@@ -1,5 +1,5 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   IonBackButton,
@@ -21,9 +21,11 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
+  cloudyNightOutline,
   carSportOutline,
   ellipsisHorizontal,
   flameOutline,
+  heart,
   heartOutline,
   homeOutline,
   informationCircleOutline,
@@ -42,6 +44,7 @@ import {
   LodgingType,
   PriceUnit,
 } from '../../models/lodging.model';
+import { LodgingsResourceService } from '../../services/lodgings-resource.service';
 
 interface LodgingFacility {
   icon: string;
@@ -83,6 +86,8 @@ type LodgingDetailInput = Lodging & {
   ],
 })
 export class LodgingDetailPage {
+  private readonly lodgingsResource = inject(LodgingsResourceService);
+
   readonly lodging = input.required<LodgingDetailInput>();
 
   readonly facilities = computed<LodgingFacility[]>(() =>
@@ -105,12 +110,17 @@ export class LodgingDetailPage {
   readonly contact = computed<LodgingContact>(
     () => this.lodging().contact ?? {},
   );
+  readonly isFavorite = computed(() =>
+    this.lodgingsResource.isFavorite(this.lodging().id),
+  );
 
   constructor() {
     addIcons({
       ellipsisHorizontal,
       homeOutline,
+      heart,
       heartOutline,
+      cloudyNightOutline,
       informationCircleOutline,
       waterOutline,
       leafOutline,
@@ -123,6 +133,10 @@ export class LodgingDetailPage {
       mailOutline,
       logoWhatsapp,
     });
+  }
+
+  async ionViewWillEnter(): Promise<void> {
+    await this.lodgingsResource.loadFavorites();
   }
 
   get emailHref(): string | null {
@@ -160,6 +174,10 @@ export class LodgingDetailPage {
 
     const priceUnit = this.lodging().priceUnit;
     return labels[priceUnit] ?? 'Precio';
+  }
+
+  async toggleFavorite(): Promise<void> {
+    await this.lodgingsResource.toggleFavorite(this.lodging());
   }
 
   private mapAmenity(amenity: LodgingAmenity): LodgingFacility | null {

@@ -1,3 +1,17 @@
+ion-menu ion-content {
+  --background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--ion-color-primary) 38%, transparent) 0%,
+      color-mix(in srgb, var(--ion-background-color) 82%, transparent) 58%,
+      color-mix(in srgb, var(--ion-background-color) 92%, transparent) 100%
+    );
+}
+
+ion-menu ion-header ion-toolbar {
+  --background: color-mix(in srgb, var(--ion-color-primary) 18%, var(--ion-background-color));
+}
+
 ion-list + ion-list {
   margin-top: 20px;
 }
@@ -11,4 +25,18 @@ ion-list + ion-list {
 
 .menu-item.selected ion-icon {
   color: var(--ion-color-primary);
+}
+
+:host-context(.ion-palette-dark) ion-menu ion-content {
+  --background:
+    linear-gradient(
+      180deg,
+      rgba(8, 27, 47, 0.42) 0%,
+      rgba(7, 19, 33, 0.74) 62%,
+      rgba(5, 14, 24, 0.88) 100%
+    );
+}
+
+:host-context(.ion-palette-dark) ion-menu ion-header ion-toolbar {
+  --background: rgba(11, 34, 56, 0.9);
 }
