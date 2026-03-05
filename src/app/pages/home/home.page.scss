@@ -1,0 +1,67 @@
+ion-content.home-content {
+  --background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--ion-color-primary) 38%, transparent) 0%,
+      color-mix(in srgb, var(--ion-background-color) 82%, transparent) 58%,
+      color-mix(in srgb, var(--ion-background-color) 92%, transparent) 100%
+    ),
+    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2400&q=80');
+}
+
+ion-content.home-content::part(background) {
+  background-size: 100% 100%, cover;
+  background-position: 0 0, center;
+  background-repeat: no-repeat, no-repeat;
+}
+
+.home-page {
+  width: min(100%, 1140px);
+  margin: 0 auto;
+  padding: 16px 16px calc(18px + var(--ion-safe-area-bottom, 0px));
+}
+
+.home-copy {
+  margin-bottom: 14px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .home-page {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .home-page {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+:host-context(.ion-palette-dark) ion-content.home-content {
+  --background:
+    linear-gradient(
+      180deg,
+      rgba(6, 24, 43, 0.62) 0%,
+      rgba(6, 18, 31, 0.84) 60%,
+      rgba(4, 12, 22, 0.94) 100%
+    ),
+    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2400&q=80');
+}

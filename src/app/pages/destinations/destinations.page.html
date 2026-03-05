@@ -1,0 +1,145 @@
+<ion-header class="app-page-header">
+  <ion-toolbar class="app-page-toolbar">
+    <ion-title>Modo Playa</ion-title>
+    <ion-buttons slot="end">
+      <ion-menu-button menu="main-menu"></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content
+  class="destinations-content"
+  [attr.data-weather-bg]="backgroundClass()"
+>
+  <div class="weather-backdrop" aria-hidden="true"></div>
+  <div class="weather-overlay" aria-hidden="true"></div>
+
+  <section class="page destinations-page">
+    <header class="destinations-copy app-section-copy content-fade-in">
+      <h1>Destinos</h1>
+      <p>Elige un destino y consulta su clima al instante.</p>
+    </header>
+
+    @if (destinations().length > 0) {
+    <ion-segment
+      class="destinations-selector"
+      [value]="selectedDestinationId() ?? undefined"
+      (ionChange)="onDestinationChange($event)"
+    >
+      @for (destination of destinations(); track destination.id) {
+      <ion-segment-button [value]="destination.id">
+        <ion-label>{{ destination.name }}</ion-label>
+      </ion-segment-button>
+      }
+    </ion-segment>
+    } @if (loading()) {
+    <section
+      class="status-block content-fade-in"
+      role="status"
+      aria-live="polite"
+    >
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando datos del destino...</p>
+    </section>
+    } @else if (error()) {
+    <section
+      class="status-block status-block-error content-fade-in"
+      role="alert"
+    >
+      <p>{{ error() }}</p>
+      <ion-button size="small" fill="outline" (click)="retry()">
+        Reintentar
+      </ion-button>
+    </section>
+    } @else if (context()) {
+    <div class="cards content-fade-in" [class.cards-transitioning]="loading()">
+      <ion-card class="hero-weather-card">
+        <ion-card-content>
+          <div class="hero-meta">
+            <span class="weather-chip">
+              <ion-icon [name]="weatherIcon()"></ion-icon>
+              {{ weatherLabel() }}
+            </span>
+          </div>
+          <p class="hero-temperature">
+            {{ context()!.weather.temperature }}<span>°</span>
+          </p>
+          <h2>{{ context()!.destination }}</h2>
+          <p class="hero-wind">
+            Viento {{ context()!.weather.windSpeed }} km/h
+          </p>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="forecast-card">
+        <ion-card-header>
+          <ion-card-title>Pronóstico</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-grid class="forecast-grid">
+            <ion-row class="forecast-row">
+              <ion-col size="6">
+                <article class="forecast-item">
+                  <p class="forecast-day">Hoy</p>
+                  @if (todayForecast()) {
+                  <p class="forecast-value">Max {{ todayForecast()!.max }}°</p>
+                  <p class="forecast-min">Min {{ todayForecast()!.min }}°</p>
+                  } @else {
+                  <p class="forecast-empty">Sin datos</p>
+                  }
+                </article>
+              </ion-col>
+
+              <ion-col size="6">
+                <article class="forecast-item">
+                  <p class="forecast-day">Mañana</p>
+                  @if (tomorrowForecast()) {
+                  <p class="forecast-value">
+                    Max {{ tomorrowForecast()!.max }}°
+                  </p>
+                  <p class="forecast-min">Min {{ tomorrowForecast()!.min }}°</p>
+                  } @else {
+                  <p class="forecast-empty">Sin datos</p>
+                  }
+                </article>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-grid class="sun-grid">
+        <ion-row class="sun-row">
+          <ion-col size="6">
+            <ion-card class="sun-card sunrise-card">
+              <ion-card-header>
+                <ion-card-title>
+                  <ion-icon name="sunny-outline"></ion-icon>
+                  Amanecer
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <p class="sun-time">{{ context()!.sun.sunrise }}</p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <ion-col size="6">
+            <ion-card class="sun-card sunset-card">
+              <ion-card-header>
+                <ion-card-title>
+                  <ion-icon name="moon-outline"></ion-icon>
+                  Atardecer
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <p class="sun-time">{{ context()!.sun.sunset }}</p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+    }
+  </section>
+</ion-content>

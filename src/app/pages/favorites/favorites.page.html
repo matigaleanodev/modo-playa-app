@@ -1,0 +1,35 @@
+<ion-header class="app-page-header">
+  <ion-toolbar class="app-page-toolbar">
+    <ion-title>Modo Playa</ion-title>
+    <ion-buttons slot="end">
+      <ion-menu-button menu="main-menu"></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="favorites-content">
+  <section class="page favorites-page">
+    <header class="favorites-copy app-section-copy">
+      <h1>Favoritos</h1>
+      <p>Accede rapido a los alojamientos que mas te gustaron.</p>
+    </header>
+
+    @if (hasFavorites()) {
+      <div class="cards">
+        @for (lodging of favorites(); track lodging.id) {
+          <app-lodging-card
+            [lodging]="lodging"
+            [isFavorite]="true"
+            (lodgingDetail)="toLodgingDetail($event)"
+            (favoriteToggled)="toggleFavorite($event)"
+          ></app-lodging-card>
+        }
+      </div>
+    } @else {
+      <section class="empty-state">
+        <h2>Sin favoritos por ahora</h2>
+        <p>Marca un alojamiento con el corazon para guardarlo aqui.</p>
+      </section>
+    }
+  </section>
+</ion-content>

@@ -3,6 +3,14 @@
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
+    "paths": {
+      "@lodgings": ["src/app/lodgings"],
+      "@lodgings/*": ["src/app/lodgings/*"],
+
+      "@shared": ["src/app/shared"],
+      "@shared/*": ["src/app/shared/*"]
+    },
+    "types": ["jasmine"],
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,

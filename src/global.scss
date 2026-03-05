@@ -33,5 +33,193 @@
  */
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+@import "@ionic/angular/css/palettes/dark.class.css";
+/*  @import "@ionic/angular/css/palettes/dark.system.css";*/
+
+ion-app,
+ion-content,
+ion-router-outlet {
+  background: var(--ion-background-color);
+}
+
+ion-modal,
+ion-popover,
+ion-alert,
+ion-action-sheet {
+  --background: var(--ion-modal-background, var(--ion-card-background));
+}
+
+ion-action-sheet {
+  --button-background: var(--ion-item-background);
+  --button-background-selected: rgba(var(--ion-color-primary-rgb), 0.12);
+  --button-color: var(--ion-text-color);
+}
+
+ion-tab-bar {
+  --background: var(--app-tabbar-surface);
+  --border: 1px solid var(--app-tabbar-border);
+  --color: var(--app-tabbar-color);
+  --color-selected: var(--app-tabbar-color-active);
+  background: var(--app-tabbar-surface);
+  border-top: 1px solid var(--app-tabbar-border);
+}
+
+ion-tab-button {
+  color: var(--app-tabbar-color);
+}
+
+ion-tab-button.tab-selected {
+  color: var(--app-tabbar-color-active);
+}
+
+:root:not(.ion-palette-dark) ion-header {
+  background: linear-gradient(
+    180deg,
+    rgba(var(--ion-color-primary-rgb), 0.96) 0%,
+    rgba(var(--ion-color-primary-rgb), 0.9) 42%,
+    rgba(var(--ion-color-secondary-rgb), 0.88) 100%
+  );
+  box-shadow: 0 6px 18px rgba(var(--ion-color-primary-rgb), 0.2);
+}
+
+:root.ion-palette-dark ion-header {
+  background: linear-gradient(
+    180deg,
+    rgba(var(--ion-color-primary-rgb), 0.34) 0%,
+    rgba(var(--ion-color-secondary-rgb), 0.58) 46%,
+    rgba(var(--ion-color-tertiary-rgb), 0.82) 100%
+  );
+  box-shadow: 0 8px 22px rgba(var(--ion-color-tertiary-rgb), 0.38);
+}
+
+ion-header::after {
+  display: none;
+}
+
+ion-header ion-toolbar {
+  --background: transparent;
+  --color: var(--ion-color-primary-contrast);
+  --border-color: rgba(var(--ion-color-primary-contrast-rgb), 0.22);
+}
+
+ion-header ion-title,
+ion-header ion-back-button,
+ion-header ion-menu-button,
+ion-header ion-button,
+ion-header ion-icon {
+  color: var(--ion-color-primary-contrast);
+}
+
+ion-header.app-page-header,
+ion-footer.app-page-footer {
+  background: var(--app-surface-toolbar);
+  box-shadow: var(--app-shadow-toolbar-top);
+  backdrop-filter: saturate(140%) blur(14px);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
+}
+
+ion-header.app-page-header::after,
+ion-footer.app-page-footer::before {
+  display: none;
+}
+
+.app-page-toolbar {
+  --background: var(--app-surface-toolbar);
+  --border-color: var(--app-border-faint);
+  box-shadow: none;
+  min-height: 56px;
+}
+
+ion-header.app-page-header .app-page-toolbar,
+ion-footer.app-page-footer .app-page-toolbar {
+  border-color: var(--app-border-faint);
+}
+
+:root:not(.ion-palette-dark) ion-header.app-page-header {
+  background: linear-gradient(
+    180deg,
+    rgba(var(--ion-color-primary-rgb), 0.96) 0%,
+    rgba(var(--ion-color-primary-rgb), 0.9) 42%,
+    rgba(var(--ion-color-secondary-rgb), 0.88) 100%
+  );
+  box-shadow: 0 6px 18px rgba(var(--ion-color-primary-rgb), 0.2);
+}
+
+:root.ion-palette-dark ion-header.app-page-header {
+  background: linear-gradient(
+    180deg,
+    rgba(var(--ion-color-primary-rgb), 0.34) 0%,
+    rgba(var(--ion-color-secondary-rgb), 0.58) 46%,
+    rgba(var(--ion-color-tertiary-rgb), 0.82) 100%
+  );
+  box-shadow: 0 8px 22px rgba(var(--ion-color-tertiary-rgb), 0.38);
+}
+
+ion-header.app-page-header .app-page-toolbar {
+  --background: transparent;
+  --color: var(--ion-color-primary-contrast);
+  --border-color: rgba(var(--ion-color-primary-contrast-rgb), 0.22);
+}
+
+ion-header.app-page-header .app-page-toolbar {
+  --min-height: 56px;
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
+ion-menu ion-header ion-toolbar {
+  --min-height: calc(56px + var(--ion-safe-area-top, 0px));
+  --padding-top: var(--ion-safe-area-top, 0px);
+  --padding-bottom: 0;
+}
+
+ion-header.app-page-header ion-title {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+ion-footer.app-page-footer .app-page-toolbar {
+  --min-height: 40px;
+  --padding-top: 0;
+  --padding-bottom: 0px;
+}
+
+ion-footer.app-page-footer {
+  box-shadow: var(--app-shadow-toolbar-bottom);
+}
+
+.app-page-footer-note {
+  width: 100%;
+  text-align: center;
+  color: var(--ion-color-medium);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+}
+
+.app-section-copy {
+  margin-bottom: 14px;
+}
+
+.app-section-copy h1 {
+  margin: 0 0 6px;
+  font-size: 1.32rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: rgba(var(--ion-color-primary-contrast-rgb), 0.96);
+  text-shadow: 0 6px 18px rgba(6, 23, 41, 0.38);
+}
+
+.app-section-copy p {
+  margin: 0;
+  color: rgba(var(--ion-color-primary-contrast-rgb), 0.84);
+  font-size: 0.92rem;
+}
+
+:root.ion-palette-dark .app-section-copy h1 {
+  color: rgba(214, 230, 245, 0.96);
+}
+
+:root.ion-palette-dark .app-section-copy p {
+  color: rgba(198, 214, 228, 0.82);
+}

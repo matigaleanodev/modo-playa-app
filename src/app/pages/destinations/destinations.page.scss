@@ -1,0 +1,471 @@
+ion-content.destinations-content {
+  --background: transparent;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --overflow: hidden;
+}
+
+.weather-backdrop,
+.weather-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.weather-backdrop {
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.04);
+  transition: background-image 360ms ease, filter 360ms ease;
+}
+
+.weather-overlay {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--ion-color-primary) 48%, transparent) 0%,
+    color-mix(in srgb, var(--ion-background-color) 80%, transparent) 60%,
+    color-mix(in srgb, var(--ion-background-color) 92%, transparent) 100%
+  );
+}
+
+.destinations-content[data-weather-bg='weather-bg-default'] .weather-backdrop,
+.destinations-content[data-weather-bg='weather-bg-cloudy'] .weather-backdrop {
+  background-image:
+    linear-gradient(170deg, rgba(95, 138, 178, 0.6), rgba(37, 74, 116, 0.6)),
+    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1500&q=80');
+}
+
+.destinations-content[data-weather-bg='weather-bg-sunny'] .weather-backdrop {
+  background-image:
+    linear-gradient(170deg, rgba(91, 167, 214, 0.5), rgba(56, 109, 160, 0.58)),
+    url('https://images.unsplash.com/photo-1473116763249-2faaef81ccda?auto=format&fit=crop&w=1500&q=80');
+}
+
+.destinations-content[data-weather-bg='weather-bg-rainy'] .weather-backdrop {
+  background-image:
+    linear-gradient(175deg, rgba(41, 69, 107, 0.72), rgba(18, 38, 64, 0.8)),
+    url('https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1500&q=80');
+  filter: saturate(0.86) brightness(0.82);
+}
+
+.destinations-content[data-weather-bg='weather-bg-night'] .weather-backdrop {
+  background-image:
+    linear-gradient(175deg, rgba(12, 34, 62, 0.82), rgba(5, 14, 31, 0.9)),
+    url('https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1500&q=80');
+  filter: saturate(0.76) brightness(0.74);
+}
+
+.destinations-page {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 780px);
+  margin: 0 auto;
+  min-height: calc(100dvh - 56px - env(safe-area-inset-top));
+  padding: 10px 14px max(8px, env(safe-area-inset-bottom));
+  --card-text-strong: rgba(39, 54, 71, 0.96);
+  --card-text-medium: rgba(68, 86, 106, 0.9);
+  --card-text-soft: rgba(90, 108, 128, 0.86);
+}
+
+.destinations-copy {
+  margin-bottom: 10px;
+}
+
+.destinations-selector {
+  margin-bottom: 10px;
+  padding: 3px;
+  border-radius: 12px;
+  --background: color-mix(in srgb, var(--ion-color-light) 22%, transparent);
+  --color: rgba(18, 53, 84, 0.9);
+  --color-checked: rgba(12, 44, 72, 0.96);
+  --indicator-color: rgba(12, 79, 127, 0.98);
+  --indicator-height: 100%;
+  --indicator-box-shadow: none;
+  border: 1px solid color-mix(in srgb, var(--ion-color-light) 36%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+.destinations-selector ion-segment-button {
+  min-height: 38px;
+  font-size: 0.8rem;
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+
+.destinations-selector ion-segment-button::part(indicator) {
+  border-radius: 10px;
+}
+
+.destinations-selector ion-segment-button.segment-button-checked {
+  color: rgba(12, 44, 72, 0.96);
+  --color: rgba(12, 44, 72, 0.96);
+  --color-checked: rgba(12, 44, 72, 0.96);
+  font-weight: 600;
+}
+
+.status-block {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 16px 12px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--ion-color-light) 20%, transparent);
+  color: var(--ion-color-light);
+  backdrop-filter: blur(8px);
+}
+
+.status-block p {
+  margin: 0;
+  text-align: center;
+}
+
+.status-block-error {
+  background: color-mix(in srgb, var(--ion-color-danger) 20%, transparent);
+}
+
+.cards {
+  display: grid;
+  gap: 10px;
+  transition: opacity 220ms ease;
+}
+
+.cards-transitioning {
+  opacity: 0.68;
+}
+
+ion-card {
+  margin: 0;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+ion-card-header {
+  padding: 12px 12px 6px;
+}
+
+ion-card-content {
+  padding: 10px 12px 12px;
+}
+
+.hero-weather-card {
+  --background:
+    linear-gradient(140deg, rgba(37, 102, 170, 0.9), rgba(71, 136, 184, 0.86));
+  color: var(--ion-color-light);
+  box-shadow: 0 14px 28px rgba(7, 26, 47, 0.32);
+}
+
+.hero-weather-card ion-card-content {
+  padding: 12px 14px 14px;
+}
+
+.hero-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.weather-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  background: color-mix(in srgb, var(--ion-color-light) 18%, transparent);
+}
+
+.weather-code {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.hero-temperature {
+  margin: 8px 0 2px;
+  font-size: clamp(2.24rem, 10vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.hero-temperature span {
+  font-size: 0.48em;
+  opacity: 0.9;
+}
+
+.hero-weather-card h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  letter-spacing: -0.015em;
+}
+
+.hero-wind {
+  margin: 4px 0 0;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.86rem;
+}
+
+.forecast-card {
+  --background: color-mix(in srgb, var(--ion-color-light) 90%, transparent);
+  box-shadow: 0 10px 24px rgba(7, 26, 47, 0.14);
+}
+
+.forecast-card ion-card-title {
+  color: var(--ion-color-secondary);
+  font-size: 0.95rem;
+}
+
+.forecast-grid {
+  padding: 0;
+  --ion-grid-padding: 0;
+}
+
+.forecast-grid ion-col {
+  padding: 4px;
+}
+
+.forecast-row,
+.sun-row {
+  margin: 0;
+}
+
+.forecast-item {
+  border-radius: 12px;
+  padding: 9px;
+  background: color-mix(in srgb, var(--ion-color-primary) 10%, transparent);
+  min-height: 78px;
+}
+
+.forecast-day {
+  margin: 0;
+  color: var(--ion-color-medium);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+
+.forecast-value {
+  margin: 4px 0 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.forecast-min,
+.forecast-empty {
+  margin: 2px 0 0;
+  color: var(--ion-color-medium);
+  font-size: 0.8rem;
+}
+
+.sun-grid {
+  padding: 0;
+  --ion-grid-padding: 0;
+  width: 100%;
+  margin: 0;
+}
+
+.sun-grid ion-col {
+  padding: 0 4px;
+}
+
+.sun-grid ion-col:first-child {
+  padding-left: 0;
+}
+
+.sun-grid ion-col:last-child {
+  padding-right: 0;
+}
+
+.sun-card {
+  box-shadow: 0 10px 22px rgba(7, 26, 47, 0.18);
+  min-height: 128px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sun-card ion-card-header {
+  padding-bottom: 4px;
+}
+
+.sun-card ion-card-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ion-color-light);
+  font-size: 0.95rem;
+}
+
+.sunrise-card {
+  --background:
+    linear-gradient(150deg, rgba(225, 137, 115, 0.86), rgba(232, 176, 145, 0.78));
+}
+
+.sunset-card {
+  --background:
+    linear-gradient(150deg, rgba(183, 109, 149, 0.88), rgba(126, 96, 169, 0.8));
+}
+
+.sun-time {
+  margin: 0;
+  color: var(--ion-color-light);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.content-fade-in {
+  animation: fade-up 320ms ease both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 640px) {
+  .destinations-page {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .cards {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  .destinations-page {
+    padding: 8px 10px max(8px, env(safe-area-inset-bottom));
+  }
+
+  .hero-temperature {
+    font-size: clamp(2rem, 9vw, 2.4rem);
+  }
+
+  .sun-time {
+    font-size: 1.42rem;
+  }
+}
+
+@media (min-width: 900px) {
+  .destinations-page {
+    max-width: 940px;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+  }
+
+  .hero-weather-card {
+    grid-column: 1 / -1;
+  }
+
+  .sun-grid {
+    align-self: stretch;
+  }
+}
+
+:host-context(.ion-palette-dark) .weather-overlay {
+  background: linear-gradient(
+    180deg,
+    rgba(8, 27, 47, 0.46) 0%,
+    rgba(7, 19, 33, 0.74) 62%,
+    rgba(5, 14, 24, 0.88) 100%
+  );
+}
+
+:host-context(.ion-palette-dark) .destinations-selector {
+  --background: rgba(13, 36, 58, 0.6);
+  --color: rgba(214, 230, 245, 0.92);
+  --color-checked: var(--ion-color-light);
+  --indicator-color: rgba(var(--ion-color-secondary-rgb), 0.9);
+  border-color: rgba(147, 187, 218, 0.28);
+}
+
+:host-context(.ion-palette-dark)
+  .destinations-selector
+  ion-segment-button.segment-button-checked {
+  color: #ffffff;
+  --color: #ffffff;
+  --color-checked: #ffffff;
+}
+
+:host-context(.ion-palette-dark) .forecast-card {
+  --background: rgba(16, 37, 58, 0.8);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+
+:host-context(.ion-palette-dark) .forecast-card ion-card-title {
+  color: rgba(214, 230, 245, 0.96);
+}
+
+:host-context(.ion-palette-dark) .forecast-item {
+  background: rgba(56, 94, 130, 0.34);
+}
+
+:host-context(.ion-palette-dark) .forecast-day,
+:host-context(.ion-palette-dark) .forecast-min,
+:host-context(.ion-palette-dark) .forecast-empty {
+  color: rgba(198, 214, 228, 0.82);
+}
+
+:host-context(.ion-palette-dark) .destinations-page {
+  --card-text-strong: rgba(219, 231, 243, 0.96);
+  --card-text-medium: rgba(199, 214, 229, 0.9);
+  --card-text-soft: rgba(178, 195, 212, 0.84);
+}
+
+:host-context(.ion-palette-dark) .hero-weather-card {
+  --background: linear-gradient(140deg, rgba(20, 66, 112, 0.92), rgba(35, 97, 141, 0.9));
+}
+
+:host-context(.ion-palette-dark) .hero-weather-card,
+:host-context(.ion-palette-dark) .sunrise-card,
+:host-context(.ion-palette-dark) .sunset-card {
+  color: rgba(226, 236, 246, 0.96);
+}
+
+:host-context(.ion-palette-dark) .hero-weather-card h2,
+:host-context(.ion-palette-dark) .hero-temperature,
+:host-context(.ion-palette-dark) .hero-wind,
+:host-context(.ion-palette-dark) .weather-chip,
+:host-context(.ion-palette-dark) .weather-code,
+:host-context(.ion-palette-dark) .sun-card ion-card-title,
+:host-context(.ion-palette-dark) .sun-time {
+  color: rgba(226, 236, 246, 0.96);
+}
+
+:host-context(.ion-palette-dark) .sunrise-card {
+  --background: linear-gradient(150deg, rgba(181, 98, 84, 0.88), rgba(194, 137, 114, 0.8));
+}
+
+:host-context(.ion-palette-dark) .sunset-card {
+  --background: linear-gradient(150deg, rgba(128, 74, 112, 0.9), rgba(88, 69, 131, 0.84));
+}
+
+:host-context(.ion-palette-dark) .status-block {
+  background: rgba(188, 212, 235, 0.13);
+}
+
+:host-context(.ion-palette-dark) .status-block-error {
+  background: rgba(180, 78, 89, 0.28);
+}
+
+@media (max-height: 760px) {
+  .destinations-page {
+    padding-top: 8px;
+    padding-bottom: max(6px, env(safe-area-inset-bottom));
+  }
+
+  .cards {
+    gap: 8px;
+  }
+}

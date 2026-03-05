@@ -16,12 +16,17 @@ log.txt
 /.sourcemaps
 /.versions
 /coverage
+.firebase/
 
 # Ionic
 /.ionic
 /www
 /platforms
 /plugins
+android/.gradle/
+android/local.properties
+*.keystore
+*.jks
 
 # Compiled output
 /dist
