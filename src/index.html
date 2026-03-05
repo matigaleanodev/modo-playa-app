@@ -5,6 +5,18 @@
     <title>Modo Playa</title>
 
     <base href="/" />
+    <meta
+      name="description"
+      content="Modo Playa: catalogo publico para explorar alojamientos turisticos en la costa argentina, guardar favoritos y consultar destinos con contexto de clima."
+    />
+    <meta
+      name="keywords"
+      content="modo playa, alojamientos, costa argentina, villa gesell, mar de las pampas, mar azul, turismo, alquileres, cabanas, departamentos"
+    />
+    <meta name="author" content="Modo Playa" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="application-name" content="Modo Playa" />
+    <meta name="apple-mobile-web-app-title" content="Modo Playa" />
 
     <meta name="color-scheme" content="light dark" />
     <meta
@@ -23,6 +35,36 @@
       content="#111922"
       media="(prefers-color-scheme: dark)"
     />
+    <link rel="canonical" href="https://modo-playa-app.web.app/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_AR" />
+    <meta property="og:site_name" content="Modo Playa" />
+    <meta property="og:title" content="Modo Playa" />
+    <meta
+      property="og:description"
+      content="Catalogo publico de alojamientos en la costa argentina con favoritos y contexto de destinos."
+    />
+    <meta property="og:url" content="https://modo-playa-app.web.app/" />
+    <meta
+      property="og:image"
+      content="https://modo-playa-app.web.app/assets/icons/icon-512.webp"
+    />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta property="og:image:type" content="image/webp" />
+    <meta property="og:image:alt" content="Icono de Modo Playa" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Modo Playa" />
+    <meta
+      name="twitter:description"
+      content="Catalogo publico para descubrir alojamientos en la costa argentina."
+    />
+    <meta
+      name="twitter:image"
+      content="https://modo-playa-app.web.app/assets/icons/icon-512.webp"
+    />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -35,7 +77,35 @@
 
     <!-- add to homescreen for ios -->
     <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Modo Playa",
+        "url": "https://modo-playa-app.web.app/",
+        "inLanguage": "es-AR",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://modo-playa-app.web.app/home",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Modo Playa",
+        "applicationCategory": "TravelApplication",
+        "operatingSystem": "Android, Web",
+        "url": "https://modo-playa-app.web.app/",
+        "image": "https://modo-playa-app.web.app/assets/icons/icon-512.webp",
+        "description": "Aplicacion publica para explorar alojamientos en la costa argentina y consultar destinos."
+      }
+    </script>
   </head>
 
   <body>
