@@ -72,6 +72,7 @@ type LodgingDetailInput = Lodging & {
 })
 export class LodgingDetailPage {
   private readonly lodgingsResource = inject(LodgingsResourceService);
+  private readonly fallbackImage = 'assets/icons/icon-256.webp';
 
   readonly lodging = input.required<LodgingDetailInput>();
 
@@ -135,7 +136,37 @@ export class LodgingDetailPage {
 
   get galleryImages(): string[] {
     const lodging = this.lodging();
-    return lodging.images.filter((image) => image !== lodging.mainImage);
+    const mediaGallery = (lodging.mediaImages ?? [])
+      .filter((image) => !image.isDefault)
+      .map((image) => image.variants?.hero || image.variants?.card || image.url)
+      .filter((image): image is string => Boolean(image?.trim()))
+      .map((image) => image.trim());
+
+    if (mediaGallery.length > 0) {
+      return Array.from(new Set(mediaGallery));
+    }
+
+    return lodging.images.filter((image) => image && image !== lodging.mainImage);
+  }
+
+  get heroImage(): string {
+    const lodging = this.lodging();
+    const defaultMedia = lodging.mediaImages?.find((image) => image.isDefault);
+    const mediaHero =
+      defaultMedia?.variants?.hero ||
+      defaultMedia?.variants?.card ||
+      defaultMedia?.url;
+
+    if (mediaHero?.trim()) {
+      return mediaHero.trim();
+    }
+
+    if (lodging.mainImage?.trim()) {
+      return lodging.mainImage.trim();
+    }
+
+    const firstLegacyImage = lodging.images.find((image) => image?.trim());
+    return firstLegacyImage?.trim() || this.fallbackImage;
   }
 
   get lodgingTypeLabel(): string {

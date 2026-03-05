@@ -1,11 +1,11 @@
 <ion-card class="lodging-card" [button]="true" (click)="toLodgingDetail($event)">
   <div class="lodging-card-image-wrap">
-    <ion-img
+    <img
       class="lodging-card-image"
       [src]="imageUrl()"
       [alt]="lodging().title"
-      (ionError)="onImageError($event)"
-    ></ion-img>
+      (error)="onImageError()"
+    />
   </div>
 
   <ion-card-content class="lodging-card-content">
