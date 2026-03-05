@@ -48,7 +48,7 @@ import {
 })
 export class InfoPage {
   readonly appName = 'Modo Playa App';
-  readonly appVersion = 'N/D';
+  readonly appVersion = '1.0.0';
   readonly appStage = 'Produccion';
 
   readonly contactEmail = 'contacto@modoplaya.app';
