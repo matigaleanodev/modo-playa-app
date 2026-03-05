@@ -127,7 +127,7 @@ ion-footer.app-page-footer::before {
   --background: var(--app-surface-toolbar);
   --border-color: var(--app-border-faint);
   box-shadow: none;
-  min-height: calc(56px + var(--ion-safe-area-top, 0px));
+  min-height: 56px;
 }
 
 ion-header.app-page-header .app-page-toolbar,
@@ -162,6 +162,12 @@ ion-header.app-page-header .app-page-toolbar {
 }
 
 ion-header.app-page-header .app-page-toolbar {
+  --min-height: 56px;
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
+ion-menu ion-header ion-toolbar {
   --min-height: calc(56px + var(--ion-safe-area-top, 0px));
   --padding-top: var(--ion-safe-area-top, 0px);
   --padding-bottom: 0;
@@ -174,9 +180,9 @@ ion-header.app-page-header ion-title {
 }
 
 ion-footer.app-page-footer .app-page-toolbar {
-  --min-height: calc(40px + var(--ion-safe-area-bottom, 0px));
+  --min-height: 40px;
   --padding-top: 0;
-  --padding-bottom: var(--ion-safe-area-bottom, 0px);
+  --padding-bottom: 0px;
 }
 
 ion-footer.app-page-footer {
@@ -189,4 +195,31 @@ ion-footer.app-page-footer {
   color: var(--ion-color-medium);
   font-size: 0.82rem;
   letter-spacing: 0.04em;
+}
+
+.app-section-copy {
+  margin-bottom: 14px;
+}
+
+.app-section-copy h1 {
+  margin: 0 0 6px;
+  font-size: 1.32rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: rgba(var(--ion-color-primary-contrast-rgb), 0.96);
+  text-shadow: 0 6px 18px rgba(6, 23, 41, 0.38);
+}
+
+.app-section-copy p {
+  margin: 0;
+  color: rgba(var(--ion-color-primary-contrast-rgb), 0.84);
+  font-size: 0.92rem;
+}
+
+:root.ion-palette-dark .app-section-copy h1 {
+  color: rgba(214, 230, 245, 0.96);
+}
+
+:root.ion-palette-dark .app-section-copy p {
+  color: rgba(198, 214, 228, 0.82);
 }

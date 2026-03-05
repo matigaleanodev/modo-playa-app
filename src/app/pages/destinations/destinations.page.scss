@@ -71,19 +71,6 @@ ion-content.destinations-content {
   margin-bottom: 10px;
 }
 
-.destinations-copy h1 {
-  margin: 0 0 2px;
-  font-size: 1.3rem;
-  color: var(--ion-color-light);
-  text-shadow: 0 6px 20px rgba(6, 23, 41, 0.45);
-}
-
-.destinations-copy p {
-  margin: 0;
-  color: color-mix(in srgb, var(--ion-color-light) 88%, transparent);
-  font-size: 0.87rem;
-}
-
 .destinations-selector {
   margin-bottom: 10px;
   padding: 3px;
@@ -356,10 +343,6 @@ ion-card-content {
     padding: 8px 10px max(8px, env(safe-area-inset-bottom));
   }
 
-  .destinations-copy h1 {
-    font-size: 1.16rem;
-  }
-
   .hero-temperature {
     font-size: clamp(2rem, 9vw, 2.4rem);
   }
@@ -397,14 +380,6 @@ ion-card-content {
     rgba(7, 19, 33, 0.74) 62%,
     rgba(5, 14, 24, 0.88) 100%
   );
-}
-
-:host-context(.ion-palette-dark) .destinations-copy h1 {
-  text-shadow: 0 6px 18px rgba(0, 0, 0, 0.48);
-}
-
-:host-context(.ion-palette-dark) .destinations-copy p {
-  color: rgba(223, 234, 246, 0.9);
 }
 
 :host-context(.ion-palette-dark) .destinations-selector {

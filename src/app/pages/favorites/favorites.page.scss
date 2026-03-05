@@ -6,7 +6,13 @@ ion-content.favorites-content {
       color-mix(in srgb, var(--ion-background-color) 82%, transparent) 58%,
       color-mix(in srgb, var(--ion-background-color) 92%, transparent) 100%
     ),
-    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1500&q=80');
+    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2400&q=80');
+}
+
+ion-content.favorites-content::part(background) {
+  background-size: 100% 100%, cover;
+  background-position: 0 0, center;
+  background-repeat: no-repeat, no-repeat;
 }
 
 .favorites-page {
@@ -17,18 +23,6 @@ ion-content.favorites-content {
 
 .favorites-copy {
   margin-bottom: 14px;
-}
-
-.favorites-copy h1 {
-  margin: 0 0 6px;
-  font-size: 1.32rem;
-  letter-spacing: -0.02em;
-}
-
-.favorites-copy p {
-  margin: 0;
-  color: var(--ion-color-medium);
-  font-size: 0.92rem;
 }
 
 .cards {
@@ -88,5 +82,5 @@ ion-content.favorites-content {
       rgba(6, 18, 31, 0.84) 60%,
       rgba(4, 12, 22, 0.94) 100%
     ),
-    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1500&q=80');
+    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2400&q=80');
 }
