@@ -1,0 +1,202 @@
+:host {
+  display: block;
+}
+
+.availability-card {
+  background: var(--ion-card-background);
+  border: 1px solid var(--app-border-faint);
+  border-radius: 24px;
+  box-shadow: var(--app-shadow-card);
+  padding: 18px 16px;
+}
+
+.availability-header {
+  display: grid;
+  gap: 14px;
+}
+
+.availability-header h2 {
+  margin: 0;
+  color: var(--ion-text-color);
+  font-size: 1.02rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.availability-month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px;
+  border-radius: 18px;
+  background: rgba(var(--ion-color-tertiary-rgb), 0.16);
+  border: 1px solid var(--app-border-faint);
+}
+
+.availability-month-label {
+  min-width: 0;
+  text-align: center;
+  color: var(--ion-text-color);
+  font-size: 0.94rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-transform: capitalize;
+}
+
+.month-nav-button {
+  margin: 0;
+  min-height: 36px;
+  --border-radius: 12px;
+  --padding-start: 8px;
+  --padding-end: 8px;
+  --color: var(--ion-text-color);
+  --background-hover: rgba(var(--ion-color-primary-rgb), 0.14);
+}
+
+.month-nav-button ion-icon {
+  font-size: 1rem;
+}
+
+.calendar-weekdays {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.calendar-weekday {
+  text-align: center;
+  color: var(--ion-color-medium);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.calendar-grid {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  column-gap: 0;
+  row-gap: 8px;
+}
+
+.calendar-day-shell {
+  min-width: 0;
+}
+
+.calendar-day {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ion-text-color);
+  font-size: 0.84rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+  will-change: transform;
+  transition:
+    transform 160ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.calendar-day:active {
+  transform: scale(0.96);
+}
+
+.calendar-day__label {
+  position: relative;
+  z-index: 1;
+}
+
+.calendar-day--placeholder {
+  height: 38px;
+  visibility: hidden;
+}
+
+.calendar-day--available,
+.calendar-day--past {
+  margin-inline: 3px;
+  border-radius: 12px;
+}
+
+.calendar-day--available {
+  background: rgba(93, 194, 138, 0.18);
+  border-color: rgba(93, 194, 138, 0.35);
+  color: #398557;
+}
+
+.calendar-day--occupied {
+  background: rgba(214, 94, 94, 0.32);
+  color: #a24f4f;
+}
+
+.calendar-day--range-start {
+  border-radius: 12px 0 0 12px;
+}
+
+.calendar-day--range-middle {
+  margin-inline: 0;
+  border-radius: 0;
+}
+
+.calendar-day--range-end {
+  border-radius: 0 12px 12px 0;
+}
+
+.calendar-day--range-start.calendar-day--range-end {
+  border-radius: 12px;
+  margin-inline: 3px;
+}
+
+.calendar-day--past {
+  background: rgba(var(--ion-color-medium-rgb), 0.12);
+  border-color: rgba(var(--ion-color-medium-rgb), 0.16);
+  color: rgba(var(--ion-color-medium-rgb), 0.82);
+}
+
+@media (hover: hover) {
+  .month-nav-button:hover {
+    --background: rgba(var(--ion-color-primary-rgb), 0.12);
+  }
+
+  .calendar-day--available:hover,
+  .calendar-day--occupied:hover,
+  .calendar-day--past:hover {
+    transform: translateY(-1px) scale(1.02);
+  }
+
+  .calendar-day--available:hover {
+    border-color: rgba(93, 194, 138, 0.4);
+  }
+
+  .calendar-day--occupied:hover {
+    background: rgba(214, 94, 94, 0.34);
+  }
+
+  .calendar-day--past:hover {
+    border-color: rgba(var(--ion-color-medium-rgb), 0.24);
+  }
+}
+
+:host-context(.ion-palette-dark) .availability-month-nav {
+  background: rgba(var(--ion-color-primary-rgb), 0.12);
+}
+
+:host-context(.ion-palette-dark) .calendar-day--available {
+  background: rgba(93, 194, 138, 0.2);
+  border-color: rgba(93, 194, 138, 0.22);
+  color: #a6e2bf;
+}
+
+:host-context(.ion-palette-dark) .calendar-day--occupied {
+  background: rgba(196, 86, 86, 0.34);
+  color: #ffd3d3;
+}
+
+:host-context(.ion-palette-dark) .calendar-day--past {
+  background: rgba(var(--ion-color-tertiary-rgb), 0.46);
+  border-color: rgba(var(--ion-color-medium-rgb), 0.14);
+  color: rgba(233, 238, 244, 0.48);
+}
