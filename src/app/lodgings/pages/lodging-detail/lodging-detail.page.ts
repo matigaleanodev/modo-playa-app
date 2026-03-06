@@ -10,6 +10,7 @@ import {
   IonIcon,
   IonMenuButton,
   IonText,
+  IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -69,6 +70,7 @@ type LodgingDetailInput = Lodging & {
     IonIcon,
     IonButton,
     IonText,
+    IonTitle,
     LodgingAvailabilityCalendarComponent,
   ],
 })
@@ -133,7 +135,15 @@ export class LodgingDetailPage {
 
   get whatsappHref(): string | null {
     const whatsapp = this.contact().whatsapp?.replace(/\D/g, '') ?? '';
-    return whatsapp ? `https://wa.me/+549${whatsapp}` : null;
+    if (!whatsapp) {
+      return null;
+    }
+
+    const message = encodeURIComponent(
+      `Hola! vi ${this.lodging().title} en Modo Playa y me gustaria tener mas informacion`,
+    );
+
+    return `https://wa.me/+549${whatsapp}?text=${message}`;
   }
 
   get galleryImages(): string[] {
