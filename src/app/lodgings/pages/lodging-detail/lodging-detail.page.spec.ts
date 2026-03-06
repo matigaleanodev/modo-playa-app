@@ -1,6 +1,8 @@
 import { provideRouter } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { LodgingDetailPage } from './lodging-detail.page';
+import { LodgingAvailabilityCalendarComponent } from '../../components/lodging-availability-calendar/lodging-availability-calendar.component';
 import { LodgingsResourceService } from '../../services/lodgings-resource.service';
 import {
   Lodging,
@@ -34,6 +36,7 @@ describe('LodgingDetailPage', () => {
     amenities: [LodgingAmenity.WIFI, LodgingAmenity.POOL],
     mainImage: 'https://example.com/main.webp',
     images: ['https://example.com/1.webp', 'https://example.com/main.webp'],
+    occupiedRanges: [{ from: '2026-03-10', to: '2026-03-13' }],
   };
 
   beforeEach(async () => {
@@ -83,5 +86,18 @@ describe('LodgingDetailPage', () => {
     component.isFavorite();
 
     expect(lodgingsResourceMock.isFavorite).toHaveBeenCalledWith(lodgingMock.id);
+  });
+
+  it('deberia renderizar el calendario de disponibilidad', () => {
+    const calendarDebugElement = fixture.debugElement.query(
+      By.directive(LodgingAvailabilityCalendarComponent),
+    );
+    const calendarComponent =
+      calendarDebugElement.componentInstance as LodgingAvailabilityCalendarComponent;
+
+    expect(calendarDebugElement).not.toBeNull();
+    expect(calendarComponent.occupiedRanges()).toEqual(
+      lodgingMock.occupiedRanges ?? [],
+    );
   });
 });
