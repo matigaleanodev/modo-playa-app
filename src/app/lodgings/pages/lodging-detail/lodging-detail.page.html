@@ -82,6 +82,11 @@
       </article>
       }
 
+      <app-lodging-availability-calendar
+        class="availability-card"
+        [occupiedRanges]="lodging().occupiedRanges"
+      ></app-lodging-availability-calendar>
+
       <article class="detail-card contact-card">
         <h2>Contacto</h2>
         <div class="contact-actions">

@@ -36,6 +36,7 @@ import {
   LodgingType,
   PriceUnit,
 } from '../../models/lodging.model';
+import { LodgingAvailabilityCalendarComponent } from '../../components/lodging-availability-calendar/lodging-availability-calendar.component';
 import { LodgingsResourceService } from '../../services/lodgings-resource.service';
 
 interface LodgingFacility {
@@ -68,6 +69,7 @@ type LodgingDetailInput = Lodging & {
     IonIcon,
     IonButton,
     IonText,
+    LodgingAvailabilityCalendarComponent,
   ],
 })
 export class LodgingDetailPage {
@@ -131,7 +133,7 @@ export class LodgingDetailPage {
 
   get whatsappHref(): string | null {
     const whatsapp = this.contact().whatsapp?.replace(/\D/g, '') ?? '';
-    return whatsapp ? `https://wa.me/${whatsapp}` : null;
+    return whatsapp ? `https://wa.me/+549${whatsapp}` : null;
   }
 
   get galleryImages(): string[] {
@@ -146,7 +148,9 @@ export class LodgingDetailPage {
       return Array.from(new Set(mediaGallery));
     }
 
-    return lodging.images.filter((image) => image && image !== lodging.mainImage);
+    return lodging.images.filter(
+      (image) => image && image !== lodging.mainImage,
+    );
   }
 
   get heroImage(): string {
