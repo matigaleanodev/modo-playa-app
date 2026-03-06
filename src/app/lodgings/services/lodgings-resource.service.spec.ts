@@ -84,6 +84,38 @@ describe('LodgingsResourceService', () => {
     });
   });
 
+  it('deberia reiniciar listado con search y reutilizarlo en la pagina siguiente', async () => {
+    lodgingsServiceMock.getPaginated.and.returnValues(
+      of({
+        data: [lodgingA],
+        total: 2,
+        page: 1,
+        limit: 8,
+      }),
+      of({
+        data: [lodgingB],
+        total: 2,
+        page: 2,
+        limit: 8,
+      }),
+    );
+
+    await service.setSearch('  mar azul  ');
+    await service.loadNextLodgingsPage();
+
+    expect(service.search()).toBe('mar azul');
+    expect(lodgingsServiceMock.getPaginated).toHaveBeenCalledWith({
+      page: 1,
+      limit: 8,
+      search: 'mar azul',
+    });
+    expect(lodgingsServiceMock.getPaginated).toHaveBeenCalledWith({
+      page: 2,
+      limit: 8,
+      search: 'mar azul',
+    });
+  });
+
   it('deberia cargar siguiente pagina y mergear resultados', async () => {
     lodgingsServiceMock.getPaginated.and.returnValues(
       of({

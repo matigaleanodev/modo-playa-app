@@ -25,10 +25,242 @@ ion-content.home-content::part(background) {
   margin-bottom: 14px;
 }
 
+.search-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: stretch;
+  margin-bottom: 12px;
+}
+
+.home-searchbar {
+  --background: color-mix(in srgb, var(--ion-background-color) 92%, white 8%);
+  --border-radius: 22px;
+  --box-shadow: 0 12px 32px rgba(23, 53, 88, 0.12);
+  --color: var(--ion-text-color);
+  --icon-color: color-mix(in srgb, var(--ion-color-secondary) 72%, white 28%);
+  --placeholder-color: color-mix(in srgb, var(--ion-text-color) 58%, transparent);
+  --min-height: 48px;
+  height: 48px;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  align-self: stretch;
+}
+
+.filters-button {
+  height: 48px;
+  min-width: 114px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --border-radius: 18px;
+  --box-shadow: 0 14px 28px rgba(23, 53, 88, 0.18);
+  font-weight: 700;
+  align-self: stretch;
+}
+
+.active-filters {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin-bottom: 14px;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.active-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.active-filter-chip {
+  flex: 0 0 auto;
+  --background: color-mix(in srgb, var(--ion-color-tertiary) 78%, white 22%);
+  --color: var(--ion-color-secondary);
+  border: 1px solid color-mix(in srgb, var(--ion-color-secondary) 18%, transparent);
+  font-weight: 700;
+}
+
+.chip-remove-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-left: 4px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+}
+
 .cards {
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
+}
+
+.empty-state {
+  padding: 24px 18px;
+  border: 1px solid color-mix(in srgb, var(--ion-color-secondary) 12%, transparent);
+  border-radius: 24px;
+  background:
+    linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--ion-color-primary) 14%, white 86%) 0%,
+      color-mix(in srgb, var(--ion-background-color) 94%, white 6%) 100%
+    );
+  text-align: center;
+  color: color-mix(in srgb, var(--ion-text-color) 86%, white 14%);
+}
+
+.empty-state h2 {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+}
+
+.empty-state p {
+  margin: 0;
+}
+
+.filters-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(5, 16, 28, 0.28);
+  backdrop-filter: blur(6px);
+  animation: filters-overlay-enter 180ms ease-out;
+}
+
+.filters-sheet {
+  position: fixed;
+  inset: auto 0 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 85dvh;
+  max-height: calc(85dvh + var(--ion-safe-area-top, 0px));
+  padding: calc(12px + var(--ion-safe-area-top, 0px)) 16px 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  border-radius: 28px 28px 0 0;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--ion-color-primary) 10%, white 90%) 0%,
+      color-mix(in srgb, var(--ion-background-color) 97%, white 3%) 100%
+    );
+  box-shadow: 0 -20px 60px rgba(8, 26, 44, 0.24);
+  animation: filters-sheet-enter 220ms ease-out;
+}
+
+.filters-sheet-handle {
+  width: 44px;
+  height: 5px;
+  margin: 0 auto 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ion-text-color) 18%, transparent);
+}
+
+.filters-sheet-header,
+.filter-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.filters-sheet-header {
+  margin-bottom: 18px;
+}
+
+.filters-sheet-header h2,
+.filter-section-heading h3 {
+  margin: 0;
+}
+
+.filters-sheet-eyebrow,
+.filter-section-heading p {
+  margin: 0;
+  color: color-mix(in srgb, var(--ion-text-color) 62%, transparent);
+}
+
+.filters-sheet-eyebrow {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.filters-sheet-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: grid;
+  gap: 20px;
+  padding-bottom: calc(20px + var(--ion-safe-area-bottom, 0px));
+}
+
+.filter-section {
+  padding: 16px;
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--ion-background-color) 94%, white 6%);
+  border: 1px solid color-mix(in srgb, var(--ion-color-secondary) 10%, transparent);
+}
+
+.amenity-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.amenity-chip {
+  --background: color-mix(in srgb, var(--ion-color-tertiary) 84%, white 16%);
+  --color: color-mix(in srgb, var(--ion-text-color) 86%, transparent);
+  border: 1px solid transparent;
+}
+
+.amenity-chip.is-selected {
+  --background: color-mix(in srgb, var(--ion-color-primary) 18%, white 82%);
+  --color: var(--ion-color-secondary);
+  border-color: color-mix(in srgb, var(--ion-color-secondary) 24%, transparent);
+}
+
+.price-range {
+  padding-top: 8px;
+  padding-bottom: 4px;
+}
+
+.guests-stepper {
+  display: inline-grid;
+  grid-template-columns: auto minmax(56px, auto) auto;
+  gap: 14px;
+  align-items: center;
+  margin-top: 14px;
+}
+
+.guests-stepper span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--ion-color-primary) 12%, white 88%);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ion-color-secondary);
+}
+
+.clear-filters-button {
+  width: 100%;
+}
+
+.clear-filters-button.in-content {
+  margin-top: -4px;
+  margin-bottom: 8px;
 }
 
 @media (min-width: 640px) {
@@ -52,6 +284,52 @@ ion-content.home-content::part(background) {
   .cards {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
+  }
+}
+
+:host-context(.ion-palette-dark) .home-searchbar {
+  --background: color-mix(in srgb, var(--ion-color-step-100) 70%, rgba(7, 20, 33, 0.92) 30%);
+  --box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+}
+
+:host-context(.ion-palette-dark) .active-filter-chip {
+  --background: color-mix(in srgb, var(--ion-color-secondary) 18%, rgba(10, 23, 37, 0.9) 82%);
+  border-color: color-mix(in srgb, var(--ion-color-primary) 20%, transparent);
+}
+
+:host-context(.ion-palette-dark) .empty-state,
+:host-context(.ion-palette-dark) .filters-sheet,
+:host-context(.ion-palette-dark) .filter-section,
+:host-context(.ion-palette-dark) .guests-stepper span {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(8, 24, 38, 0.96) 0%,
+      rgba(6, 18, 30, 0.98) 100%
+    );
+}
+
+:host-context(.ion-palette-dark) .filters-overlay {
+  background: rgba(2, 10, 18, 0.52);
+}
+
+@keyframes filters-overlay-enter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes filters-sheet-enter {
+  from {
+    transform: translateY(48px);
+  }
+
+  to {
+    transform: translateY(0);
   }
 }
 

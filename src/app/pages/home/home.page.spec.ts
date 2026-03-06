@@ -3,8 +3,17 @@ import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { HomePage } from './home.page';
 import { LodgingsResourceService } from 'src/app/lodgings/services/lodgings-resource.service';
-import { Lodging, LodgingType, PriceUnit } from 'src/app/lodgings/models/lodging.model';
-import { InfiniteScrollCustomEvent } from '@ionic/angular';
+import {
+  InfiniteScrollCustomEvent,
+  RangeCustomEvent,
+  SearchbarCustomEvent,
+} from '@ionic/angular';
+import {
+  Lodging,
+  LodgingAmenity,
+  LodgingType,
+  PriceUnit,
+} from 'src/app/lodgings/models/lodging.model';
 
 describe('HomePage', () => {
   let component: HomePage;
@@ -22,9 +31,19 @@ describe('HomePage', () => {
     bedrooms: 2,
     bathrooms: 1,
     minNights: 2,
-    amenities: [],
+    amenities: [LodgingAmenity.WIFI, LodgingAmenity.POOL],
     mainImage: 'https://example.com/main.webp',
     images: [],
+  };
+  const lodgingBeach: Lodging = {
+    ...lodgingMock,
+    id: 'lodging-2',
+    title: 'Refugio Norte',
+    location: 'Avenida Costanera',
+    city: 'Mar Azul',
+    maxGuests: 6,
+    price: 150000,
+    amenities: [LodgingAmenity.WIFI],
   };
   const lodgingsResourceMock = {
     lodgings: signal<Lodging[]>([lodgingMock]),
@@ -32,10 +51,12 @@ describe('HomePage', () => {
     isLoading: signal(false),
     isLoadingMore: signal(false),
     hasMore: signal(false),
+    search: signal(''),
     loadFavorites: jasmine.createSpy('loadFavorites').and.resolveTo(undefined),
     loadInitialLodgings: jasmine
       .createSpy('loadInitialLodgings')
       .and.resolveTo(undefined),
+    setSearch: jasmine.createSpy('setSearch').and.resolveTo(undefined),
     loadNextLodgingsPage: jasmine
       .createSpy('loadNextLodgingsPage')
       .and.resolveTo(undefined),
@@ -61,6 +82,7 @@ describe('HomePage', () => {
     lodgingsResourceMock.toggleFavorite.calls.reset();
     lodgingsResourceMock.loadFavorites.calls.reset();
     lodgingsResourceMock.loadInitialLodgings.calls.reset();
+    lodgingsResourceMock.setSearch.calls.reset();
     lodgingsResourceMock.loadNextLodgingsPage.calls.reset();
     fixture.detectChanges();
   });
@@ -71,14 +93,14 @@ describe('HomePage', () => {
 
   it('debería renderizar cards de alojamientos', () => {
     const cards = fixture.nativeElement.querySelectorAll('app-lodging-card');
-    expect(cards.length).toBe(component.lodgings().length);
+    expect(cards.length).toBe(component.lodgingsFiltered().length);
   });
 
   it('deberia navegar al detalle del alojamiento', () => {
-    component.toLodgingDetail(component.lodgings()[0]);
+    component.toLodgingDetail(component.lodgingsRaw()[0]);
 
     expect(lodgingsResourceMock.toLodgingDetail).toHaveBeenCalledWith(
-      component.lodgings()[0],
+      component.lodgingsRaw()[0],
     );
   });
 
@@ -126,5 +148,43 @@ describe('HomePage', () => {
     expect(lodgingsResourceMock.loadNextLodgingsPage).toHaveBeenCalled();
     expect(event.target.disabled).toBeTrue();
     expect(completeSpy).toHaveBeenCalled();
+  });
+
+  it('deberia buscar con backend y actualizar searchTerm', async () => {
+    const event = {
+      detail: { value: 'mar azul' },
+    } as SearchbarCustomEvent;
+
+    await component.onSearchInput(event as unknown as Event);
+
+    expect(component.searchTerm()).toBe('mar azul');
+    expect(lodgingsResourceMock.setSearch).toHaveBeenCalledWith('mar azul');
+  });
+
+  it('deberia filtrar localmente por amenidades, precio y huespedes', () => {
+    lodgingsResourceMock.lodgings.set([lodgingMock, lodgingBeach]);
+
+    component.toggleAmenity(LodgingAmenity.POOL);
+    component.onPriceRangeChange({
+      detail: { value: { lower: 90000, upper: 120000 } },
+    } as RangeCustomEvent as unknown as Event);
+    component.increaseGuests();
+    component.increaseGuests();
+    component.increaseGuests();
+    component.increaseGuests();
+
+    expect(component.lodgingsFiltered()).toEqual([lodgingMock]);
+  });
+
+  it('deberia remover chips de filtros activos', () => {
+    component.toggleAmenity(LodgingAmenity.WIFI);
+    component.increaseGuests();
+
+    const chips = component.activeFilters();
+    component.removeFilter(chips[0]);
+    component.removeFilter(chips[1]);
+
+    expect(component.filters().amenities).toEqual([]);
+    expect(component.filters().guests).toBeNull();
   });
 });

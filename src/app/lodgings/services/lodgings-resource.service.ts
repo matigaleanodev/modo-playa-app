@@ -1,6 +1,10 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { Lodging, PaginatedResponse } from '../models/lodging.model';
+import {
+  Lodging,
+  PaginatedResponse,
+  PublicLodgingsQuery,
+} from '../models/lodging.model';
 import { LodgingsService } from './lodgings.service';
 import { NavService } from '@shared/services/nav/nav.service';
 import { StorageService } from '@shared/services/storage/storage.service';
@@ -23,6 +27,7 @@ export class LodgingsResourceService {
   readonly isLoading = signal(false);
   readonly isLoadingMore = signal(false);
   readonly hasMore = signal(true);
+  readonly search = signal('');
 
   private readonly currentPage = signal(1);
   private readonly total = signal(0);
@@ -34,16 +39,21 @@ export class LodgingsResourceService {
 
   readonly favoritesCount = computed(() => this.favorites().length);
 
-  async loadInitialLodgings(): Promise<void> {
+  async loadInitialLodgings(search = this.search()): Promise<void> {
+    const normalizedSearch = this.normalizeSearch(search);
+
     this.isLoading.set(true);
     this.currentPage.set(1);
+    this.search.set(normalizedSearch);
 
     try {
       const response = await firstValueFrom(
-        this.api.getPaginated({
-          page: 1,
-          limit: LODGINGS_PAGE_SIZE,
-        }),
+        this.api.getPaginated(
+          this.buildPaginatedQuery({
+            page: 1,
+            search: normalizedSearch,
+          }),
+        ),
       );
 
       this.currentPage.set(response.page);
@@ -65,10 +75,12 @@ export class LodgingsResourceService {
     try {
       const nextPage = this.currentPage() + 1;
       const response = await firstValueFrom(
-        this.api.getPaginated({
-          page: nextPage,
-          limit: LODGINGS_PAGE_SIZE,
-        }),
+        this.api.getPaginated(
+          this.buildPaginatedQuery({
+            page: nextPage,
+            search: this.search(),
+          }),
+        ),
       );
 
       this.currentPage.set(response.page);
@@ -84,6 +96,10 @@ export class LodgingsResourceService {
 
   selectLodging(lodging: Lodging): void {
     this.selectedLodging.set(lodging);
+  }
+
+  async setSearch(search: string): Promise<void> {
+    await this.loadInitialLodgings(search);
   }
 
   toLodgingDetail(lodging: Lodging): void {
@@ -147,5 +163,24 @@ export class LodgingsResourceService {
     }
 
     return Array.from(byId.values());
+  }
+
+  private buildPaginatedQuery(
+    query: Pick<PublicLodgingsQuery, 'page' | 'search'>,
+  ): PublicLodgingsQuery {
+    const paginatedQuery: PublicLodgingsQuery = {
+      page: query.page,
+      limit: LODGINGS_PAGE_SIZE,
+    };
+
+    if (query.search) {
+      paginatedQuery.search = query.search;
+    }
+
+    return paginatedQuery;
+  }
+
+  private normalizeSearch(search: string): string {
+    return search.trim();
   }
 }
