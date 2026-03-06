@@ -93,11 +93,16 @@
   font-size: 0.84rem;
   font-weight: 700;
   border: 1px solid transparent;
+  will-change: transform;
   transition:
     transform 160ms ease,
     border-color 180ms ease,
     background-color 180ms ease,
     color 180ms ease;
+}
+
+.calendar-day:active {
+  transform: scale(0.96);
 }
 
 .calendar-day__label {
@@ -118,12 +123,12 @@
 
 .calendar-day--available {
   background: rgba(93, 194, 138, 0.18);
-  border-color: rgba(93, 194, 138, 0.26);
-  color: #8ed8ab;
+  border-color: rgba(93, 194, 138, 0.35);
+  color: #398557;
 }
 
 .calendar-day--occupied {
-  background: rgba(214, 94, 94, 0.28);
+  background: rgba(214, 94, 94, 0.32);
   color: #a24f4f;
 }
 
@@ -132,6 +137,7 @@
 }
 
 .calendar-day--range-middle {
+  margin-inline: 0;
   border-radius: 0;
 }
 
@@ -158,7 +164,7 @@
   .calendar-day--available:hover,
   .calendar-day--occupied:hover,
   .calendar-day--past:hover {
-    transform: translateY(-1px);
+    transform: translateY(-1px) scale(1.02);
   }
 
   .calendar-day--available:hover {

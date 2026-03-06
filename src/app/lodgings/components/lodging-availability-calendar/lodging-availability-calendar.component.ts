@@ -4,30 +4,11 @@ import { addIcons } from 'ionicons';
 import { chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
 import { IonButton, IonIcon } from '@ionic/angular/standalone';
 import { AvailabilityRange } from '../../models/lodging.model';
-
-type CalendarDayState = 'available' | 'occupied' | 'past';
-
-interface NormalizedAvailabilityRange {
-  from: string;
-  to: string;
-}
-
-interface CalendarPlaceholderCell {
-  readonly id: string;
-  readonly isPlaceholder: true;
-}
-
-interface CalendarDayCell {
-  readonly id: string;
-  readonly isPlaceholder: false;
-  readonly dayNumber: number;
-  readonly isoDate: string;
-  readonly state: CalendarDayState;
-  readonly classes: string[];
-  readonly ariaLabel: string;
-}
-
-type CalendarCell = CalendarPlaceholderCell | CalendarDayCell;
+import {
+  CalendarCell,
+  CalendarDayState,
+  NormalizedAvailabilityRange,
+} from './lodging-availability-calendar.types';
 
 @Component({
   selector: 'app-lodging-availability-calendar',
@@ -166,7 +147,13 @@ export class LodgingAvailabilityCalendarComponent {
     isoDate: string,
     ranges: NormalizedAvailabilityRange[],
   ): NormalizedAvailabilityRange | undefined {
-    return ranges.find((range) => isoDate >= range.from && isoDate <= range.to);
+    for (const range of ranges) {
+      if (isoDate >= range.from && isoDate <= range.to) {
+        return range;
+      }
+    }
+
+    return undefined;
   }
 
   private buildAriaLabel(
