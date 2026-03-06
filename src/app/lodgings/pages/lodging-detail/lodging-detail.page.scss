@@ -26,7 +26,7 @@ ion-content.detail-content {
   --color: var(--ion-color-primary-contrast);
   --padding-start: 10px;
   --padding-end: 10px;
-  --min-height: calc(56px + var(--ion-safe-area-top, 0px));
+  --min-height: 56px;
   box-shadow: none;
 }
 
@@ -191,8 +191,8 @@ ion-content.detail-content {
   --padding-start: 16px;
   --padding-end: 16px;
   --padding-top: 8px;
-  --padding-bottom: calc(8px + var(--ion-safe-area-bottom, 0px));
-  --min-height: calc(64px + var(--ion-safe-area-bottom, 0px));
+  --padding-bottom: 8px;
+  --min-height: 64px;
   border-top: 1px solid var(--app-border-subtle);
   display: flex;
   align-items: center;
