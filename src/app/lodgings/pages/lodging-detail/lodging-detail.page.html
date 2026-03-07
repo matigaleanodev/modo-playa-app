@@ -9,6 +9,8 @@
         ></ion-back-button>
       </ion-buttons>
 
+      <ion-title>{{ lodging().title }}</ion-title>
+
       <ion-buttons slot="end">
         <ion-menu-button menu="main-menu" autoHide="false"></ion-menu-button>
       </ion-buttons>
@@ -54,7 +56,7 @@
       </article>
 
       <article class="detail-card amenities-card">
-        <h2>Facilities</h2>
+        <h2>Comodidades</h2>
         <div class="facilities-grid">
           @for (facility of facilities(); track facility.label) {
           <div class="facility-item">
@@ -81,6 +83,11 @@
         </div>
       </article>
       }
+
+      <app-lodging-availability-calendar
+        class="availability-card"
+        [occupiedRanges]="lodging().occupiedRanges"
+      ></app-lodging-availability-calendar>
 
       <article class="detail-card contact-card">
         <h2>Contacto</h2>

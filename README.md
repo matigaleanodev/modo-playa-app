@@ -73,7 +73,7 @@ Configuracion de entorno:
 
 ## Version
 
-Version actual de aplicacion: **1.0.0**
+Version actual de aplicacion: **1.0.1**
 
 ---
 
@@ -82,3 +82,4 @@ Version actual de aplicacion: **1.0.0**
 Guia de desarrollo local:
 
 👉 [DEVELOPMENT.md](./DEVELOPMENT.md)
+

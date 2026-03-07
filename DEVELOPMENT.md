@@ -80,8 +80,8 @@ Notas:
 
 - `android/local.properties` esta ignorado por git.
 - Version Android actual:
-  - `versionCode = 10000`
-  - `versionName = 1.0.0`
+  - `versionCode = 10001`
+  - `versionName = 1.0.1`
 
 ---
 
@@ -108,3 +108,4 @@ No implementar aqui:
 - logica de negocio que ya vive en API
 
 Siempre validar cambios de modelos/endpoints contra `modo-playa-api`.
+

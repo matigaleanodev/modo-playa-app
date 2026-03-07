@@ -41,6 +41,11 @@ export interface LodgingImage {
   variants?: LodgingImageVariants;
 }
 
+export interface AvailabilityRange {
+  from: string;
+  to: string;
+}
+
 export interface Lodging {
   id: string;
   title: string;
@@ -59,6 +64,7 @@ export interface Lodging {
   mainImage: string;
   images: string[];
   mediaImages?: LodgingImage[];
+  occupiedRanges?: AvailabilityRange[];
 }
 
 export interface PublicLodgingsQuery {

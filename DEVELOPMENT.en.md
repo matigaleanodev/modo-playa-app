@@ -80,8 +80,8 @@ Notes:
 
 - `android/local.properties` is gitignored.
 - Current Android app version:
-  - `versionCode = 10000`
-  - `versionName = 1.0.0`
+  - `versionCode = 10001`
+  - `versionName = 1.0.1`
 
 ---
 
@@ -108,3 +108,4 @@ Do not implement here:
 - business logic already implemented in API
 
 Always validate endpoint/model changes against `modo-playa-api`.
+

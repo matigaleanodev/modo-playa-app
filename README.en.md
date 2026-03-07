@@ -73,7 +73,7 @@ Environment setup:
 
 ## Version
 
-Current app version: **1.0.0**
+Current app version: **1.0.1**
 
 ---
 
@@ -82,3 +82,4 @@ Current app version: **1.0.0**
 Local development guide:
 
 👉 [DEVELOPMENT.en.md](./DEVELOPMENT.en.md)
+
