@@ -84,6 +84,25 @@ describe('LodgingsResourceService', () => {
     });
   });
 
+  it('deberia omitir search vacio al reiniciar listado', async () => {
+    lodgingsServiceMock.getPaginated.and.returnValue(
+      of({
+        data: [lodgingA],
+        total: 1,
+        page: 1,
+        limit: 8,
+      }),
+    );
+
+    await service.setSearch('   ');
+
+    expect(service.search()).toBe('');
+    expect(lodgingsServiceMock.getPaginated).toHaveBeenCalledWith({
+      page: 1,
+      limit: 8,
+    });
+  });
+
   it('deberia reiniciar listado con search y reutilizarlo en la pagina siguiente', async () => {
     lodgingsServiceMock.getPaginated.and.returnValues(
       of({

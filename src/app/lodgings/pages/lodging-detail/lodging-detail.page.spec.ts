@@ -100,4 +100,15 @@ describe('LodgingDetailPage', () => {
       lodgingMock.occupiedRanges ?? [],
     );
   });
+
+  it('deberia mostrar la seccion de comodidades', () => {
+    const headings = Array.from(
+      fixture.nativeElement.querySelectorAll('h2'),
+    ) as HTMLHeadingElement[];
+    const heading = headings.find((element) =>
+      element.textContent?.includes('Comodidades'),
+    );
+
+    expect(heading).toBeTruthy();
+  });
 });
