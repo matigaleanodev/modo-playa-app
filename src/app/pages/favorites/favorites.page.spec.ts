@@ -26,8 +26,24 @@ describe('FavoritesPage', () => {
     bathrooms: 1,
     minNights: 2,
     amenities: [],
-    mainImage: 'https://example.com/main.webp',
-    images: [],
+    mainImage: 'https://example.com/lodging-1/default-hero.webp',
+    images: [
+      'https://example.com/lodging-1/default-original.webp',
+      'https://example.com/lodging-1/gallery-original.webp',
+    ],
+    mediaImages: [
+      {
+        imageId: 'image-1',
+        isDefault: true,
+        createdAt: '2026-03-12T10:00:00.000Z',
+        url: 'https://example.com/lodging-1/default-original.webp',
+        variants: {
+          thumb: 'https://example.com/lodging-1/default-thumb.webp',
+          card: 'https://example.com/lodging-1/default-card.webp',
+          hero: 'https://example.com/lodging-1/default-hero.webp',
+        },
+      },
+    ],
   };
 
   const lodgingsResourceMock = {

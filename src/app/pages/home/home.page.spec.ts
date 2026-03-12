@@ -32,8 +32,24 @@ describe('HomePage', () => {
     bathrooms: 1,
     minNights: 2,
     amenities: [LodgingAmenity.WIFI, LodgingAmenity.POOL],
-    mainImage: 'https://example.com/main.webp',
-    images: [],
+    mainImage: 'https://example.com/lodging-1/default-hero.webp',
+    images: [
+      'https://example.com/lodging-1/default-original.webp',
+      'https://example.com/lodging-1/gallery-original.webp',
+    ],
+    mediaImages: [
+      {
+        imageId: 'image-1',
+        isDefault: true,
+        createdAt: '2026-03-12T10:00:00.000Z',
+        url: 'https://example.com/lodging-1/default-original.webp',
+        variants: {
+          thumb: 'https://example.com/lodging-1/default-thumb.webp',
+          card: 'https://example.com/lodging-1/default-card.webp',
+          hero: 'https://example.com/lodging-1/default-hero.webp',
+        },
+      },
+    ],
   };
   const lodgingBeach: Lodging = {
     ...lodgingMock,
@@ -44,6 +60,24 @@ describe('HomePage', () => {
     maxGuests: 6,
     price: 150000,
     amenities: [LodgingAmenity.WIFI],
+    mainImage: 'https://example.com/lodging-2/default-hero.webp',
+    images: [
+      'https://example.com/lodging-2/default-original.webp',
+      'https://example.com/lodging-2/gallery-original.webp',
+    ],
+    mediaImages: [
+      {
+        imageId: 'image-2',
+        isDefault: true,
+        createdAt: '2026-03-12T10:15:00.000Z',
+        url: 'https://example.com/lodging-2/default-original.webp',
+        variants: {
+          thumb: 'https://example.com/lodging-2/default-thumb.webp',
+          card: 'https://example.com/lodging-2/default-card.webp',
+          hero: 'https://example.com/lodging-2/default-hero.webp',
+        },
+      },
+    ],
   };
   const lodgingsResourceMock = {
     lodgings: signal<Lodging[]>([lodgingMock]),

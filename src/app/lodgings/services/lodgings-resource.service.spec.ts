@@ -23,14 +23,48 @@ describe('LodgingsResourceService', () => {
     bathrooms: 1,
     minNights: 1,
     amenities: [],
-    mainImage: 'a.webp',
-    images: [],
+    mainImage: 'https://example.com/a/hero.webp',
+    images: [
+      'https://example.com/a/original.webp',
+      'https://example.com/a/gallery.webp',
+    ],
+    mediaImages: [
+      {
+        imageId: 'image-a-1',
+        isDefault: true,
+        createdAt: '2026-03-12T10:00:00.000Z',
+        url: 'https://example.com/a/original.webp',
+        variants: {
+          thumb: 'https://example.com/a/thumb.webp',
+          card: 'https://example.com/a/card.webp',
+          hero: 'https://example.com/a/hero.webp',
+        },
+      },
+    ],
   };
 
   const lodgingB: Lodging = {
     ...lodgingA,
     id: 'b',
     title: 'Lodging B',
+    mainImage: 'https://example.com/b/hero.webp',
+    images: [
+      'https://example.com/b/original.webp',
+      'https://example.com/b/gallery.webp',
+    ],
+    mediaImages: [
+      {
+        imageId: 'image-b-1',
+        isDefault: true,
+        createdAt: '2026-03-12T10:10:00.000Z',
+        url: 'https://example.com/b/original.webp',
+        variants: {
+          thumb: 'https://example.com/b/thumb.webp',
+          card: 'https://example.com/b/card.webp',
+          hero: 'https://example.com/b/hero.webp',
+        },
+      },
+    ],
   };
 
   const lodgingsServiceMock = {
