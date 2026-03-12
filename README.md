@@ -1,85 +1,65 @@
 # Modo Playa App
 
-🌐 English version: [README.en.md](./README.en.md)
+English version: [README.en.md](./README.en.md)
 
-**Modo Playa App** es la aplicacion publica del ecosistema Modo Playa.
-Esta app esta orientada a usuarios anonimos que quieren explorar alojamientos en la costa argentina.
+`modo-playa-app` es el catalogo publico mobile-first de Modo Playa.
+Esta aplicacion esta pensada para usuarios anonimos que exploran alojamientos, destinos e informacion de contacto.
 
-No es un panel administrativo ni contiene logica de negocio de backend.
+No es:
 
----
+- el backend API
+- el panel admin
+- una app de gestion
 
 ## Rol en el ecosistema
 
-- `modo-playa-api`: backend y reglas de negocio.
-- `modo-playa-admin`: panel privado de gestion.
-- `modo-playa-app` (este repo): catalogo publico mobile-first.
+- `modo-playa-api`: reglas de negocio, contratos publicos y datos
+- `modo-playa-admin`: gestion privada
+- `modo-playa-app`: experiencia publica de catalogo
 
----
+La API es la fuente de verdad para modelos, endpoints y codigos de error.
 
-## Stack tecnologico
+## Stack actual
 
-- Ionic + Angular standalone (v20)
-- TypeScript + Signals
+- Angular 20 standalone
+- Ionic 8
+- TypeScript con signals y computed
 - SCSS
-- Angular Router
-- Capacitor (Android)
-- Jasmine + Karma para unit testing
+- Capacitor 8 para Android
+- Jasmine + Karma
 
----
+## Flujos publicos cubiertos
 
-## Funcionalidades principales
+- home con catalogo paginado
+- detalle de alojamiento
+- favoritos persistidos en `localStorage`
+- destinos con contexto publico
+- informacion de la app y paginas legales
+- tema claro, oscuro y sistema
 
-- Home con listado paginado de alojamientos
-- Detalle de alojamiento
-- Favoritos persistidos en storage local
-- Destinos con contexto climatico (clima, pronostico, amanecer, atardecer)
-- Pantalla de info de app
-- Paginas legales (Terminos y Privacidad)
-- Selector de tema (claro, oscuro, sistema)
-- Menu lateral global y tab bar inferior
+## Contratos publicos relevantes
 
----
-
-## Integracion con API
-
-La app consume la API de Modo Playa y no duplica logica de negocio.
-
-Endpoints publicos usados actualmente:
+Endpoints consumidos:
 
 - `GET /api/lodgings`
 - `GET /api/lodgings/:id`
 - `GET /api/destinations`
 - `GET /api/destinations/:id/context`
 
-Configuracion de entorno:
+Supuestos de contrato actualmente adoptados en frontend:
 
-- Desarrollo: `src/environments/environment.ts`
-- Produccion: `src/environments/environment.prod.ts`
-
----
-
-## Navegacion principal
-
-- `/home`
-- `/favoritos`
-- `/destinos`
-- `/lodging/:id`
-- `/info`
-- `/terms`
-- `/privacy`
-
----
-
-## Version
-
-Version actual de aplicacion: **1.0.1**
-
----
+- `mediaImages` publicos no deben asumir `key`, `bytes` ni `mime` como base del contrato
+- `mainImage` e `images` siguen disponibles como fallback legacy-compatible
+- `DestinationContext` contempla `destinationId` y `timezone`
+- los errores publicos pueden discriminarse por `code` cuando la UX lo necesita
 
 ## Desarrollo
 
-Guia de desarrollo local:
+La guia operativa local esta en [DEVELOPMENT.md](./DEVELOPMENT.md).
 
-👉 [DEVELOPMENT.md](./DEVELOPMENT.md)
+## Criterio de cambios
 
+- no duplicar logica de negocio ya resuelta en `modo-playa-api`
+- no consumir endpoints `admin/*`
+- mantener foco mobile-first
+- validar cualquier cambio de contrato mirando primero `modo-playa-api`
