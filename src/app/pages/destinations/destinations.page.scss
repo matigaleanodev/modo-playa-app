@@ -103,24 +103,8 @@ ion-content.destinations-content {
   font-weight: 600;
 }
 
-.status-block {
-  display: grid;
-  justify-items: center;
-  gap: 10px;
-  padding: 16px 12px;
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--ion-color-light) 20%, transparent);
-  color: var(--ion-color-light);
-  backdrop-filter: blur(8px);
-}
-
-.status-block p {
-  margin: 0;
-  text-align: center;
-}
-
-.status-block-error {
-  background: color-mix(in srgb, var(--ion-color-danger) 20%, transparent);
+app-public-state-card {
+  display: block;
 }
 
 .cards {
@@ -202,6 +186,12 @@ ion-card-content {
   margin: 4px 0 0;
   color: rgba(255, 255, 255, 0.92);
   font-size: 0.86rem;
+}
+
+.hero-time {
+  margin: 4px 0 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.8rem;
 }
 
 .forecast-card {
@@ -415,14 +405,6 @@ ion-card-content {
 
 :host-context(.ion-palette-dark) .sunset-card {
   --background: linear-gradient(150deg, rgba(128, 74, 112, 0.9), rgba(88, 69, 131, 0.84));
-}
-
-:host-context(.ion-palette-dark) .status-block {
-  background: rgba(188, 212, 235, 0.13);
-}
-
-:host-context(.ion-palette-dark) .status-block-error {
-  background: rgba(180, 78, 89, 0.28);
 }
 
 @media (max-height: 760px) {

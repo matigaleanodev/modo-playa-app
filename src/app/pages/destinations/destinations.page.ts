@@ -17,7 +17,6 @@ import {
   IonRow,
   IonSegment,
   IonSegmentButton,
-  IonSpinner,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
@@ -42,6 +41,11 @@ import {
   getDestinationContextErrorMessage,
   getDestinationsErrorMessage,
 } from '@shared/http/public-api-error';
+import { PublicStateCardComponent } from '@shared/components/public-state-card/public-state-card.component';
+import {
+  formatDestinationTime,
+  isNightInDestination,
+} from 'src/app/destinations/utils/destination-time';
 
 @Component({
   selector: 'app-destinations',
@@ -65,8 +69,7 @@ import {
     IonRow,
     IonCol,
     IonIcon,
-    IonButton,
-    IonSpinner,
+    PublicStateCardComponent,
   ],
 })
 export class DestinationsPage {
@@ -85,7 +88,21 @@ export class DestinationsPage {
   readonly tomorrowForecast = computed(() =>
     this.findForecastByDay('tomorrow', this.context()?.forecast),
   );
-  readonly isNight = computed(() => this.isNightTime());
+  readonly isNight = computed(() =>
+    isNightInDestination(this.context()?.sun, this.context()?.timezone),
+  );
+  readonly destinationTimeLabel = computed(() => {
+    const timezone = this.context()?.timezone;
+
+    if (!timezone) {
+      return null;
+    }
+
+    return formatDestinationTime(timezone);
+  });
+  readonly hasEmptyState = computed(() => {
+    return !this.loading() && !this.error() && this.destinations().length === 0;
+  });
 
   readonly weatherLabel = computed(() => {
     const weatherCode = this.context()?.weather.weatherCode;
@@ -247,30 +264,4 @@ export class DestinationsPage {
     return forecast.find((item) => item.day === day) ?? null;
   }
 
-  private isNightTime(): boolean {
-    const sun = this.context()?.sun;
-    if (!sun) {
-      return false;
-    }
-
-    const now = new Date();
-    const nowMinutes = now.getHours() * 60 + now.getMinutes();
-    const sunriseMinutes = this.parseTimeToMinutes(sun.sunrise);
-    const sunsetMinutes = this.parseTimeToMinutes(sun.sunset);
-
-    if (sunriseMinutes === null || sunsetMinutes === null) {
-      return false;
-    }
-
-    return nowMinutes < sunriseMinutes || nowMinutes >= sunsetMinutes;
-  }
-
-  private parseTimeToMinutes(time: string): number | null {
-    const [hours, minutes] = time.split(':').map((value) => Number(value));
-    if (Number.isNaN(hours) || Number.isNaN(minutes)) {
-      return null;
-    }
-
-    return hours * 60 + minutes;
-  }
 }

@@ -125,6 +125,17 @@ describe('DestinationsPage', () => {
     expect(destinationsService.getContextByDestinationId).not.toHaveBeenCalled();
   });
 
+  it('deberia renderizar empty state cuando no hay destinos publicados', async () => {
+    destinationsService.getDestinations.and.returnValue(of([]));
+
+    await component.ionViewWillEnter();
+    fixture.detectChanges();
+
+    const stateCard = fixture.nativeElement.querySelector('app-public-state-card');
+
+    expect(stateCard?.textContent).toContain('Sin destinos disponibles');
+  });
+
   it('deberia setear error si falla la carga de destinos', async () => {
     destinationsService.getDestinations.and.returnValue(
       throwError(() => new Error('network')),
@@ -223,6 +234,7 @@ describe('DestinationsPage', () => {
 
     expect(component.todayForecast()).toEqual(contextGesellMock.forecast[0]);
     expect(component.tomorrowForecast()).toEqual(contextGesellMock.forecast[1]);
+    expect(component.destinationTimeLabel()).not.toBeNull();
   });
 
   it('deberia calcular etiqueta, icono y fondo para clima soleado de dia', async () => {
