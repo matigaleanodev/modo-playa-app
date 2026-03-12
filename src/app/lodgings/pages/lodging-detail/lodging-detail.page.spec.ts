@@ -111,4 +111,44 @@ describe('LodgingDetailPage', () => {
 
     expect(heading).toBeTruthy();
   });
+
+  it('deberia priorizar mediaImages publicas para hero y galeria sin key legacy', () => {
+    const lodgingWithPublicMedia: Lodging = {
+      ...lodgingMock,
+      mainImage: '',
+      images: ['https://example.com/legacy-gallery.webp'],
+      mediaImages: [
+        {
+          imageId: 'image-1',
+          isDefault: true,
+          createdAt: '2026-03-12T10:00:00.000Z',
+          url: 'https://example.com/default.webp',
+          variants: {
+            thumb: 'https://example.com/default-thumb.webp',
+            card: 'https://example.com/default-card.webp',
+            hero: 'https://example.com/default-hero.webp',
+          },
+        },
+        {
+          imageId: 'image-2',
+          isDefault: false,
+          createdAt: '2026-03-12T10:05:00.000Z',
+          url: 'https://example.com/gallery.webp',
+          variants: {
+            thumb: 'https://example.com/gallery-thumb.webp',
+            card: 'https://example.com/gallery-card.webp',
+            hero: 'https://example.com/gallery-hero.webp',
+          },
+        },
+      ],
+    };
+
+    fixture.componentRef.setInput('lodging', lodgingWithPublicMedia);
+    fixture.detectChanges();
+
+    expect(component.heroImage).toBe('https://example.com/default-hero.webp');
+    expect(component.galleryImages).toEqual([
+      'https://example.com/gallery-hero.webp',
+    ]);
+  });
 });
