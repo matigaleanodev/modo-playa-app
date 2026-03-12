@@ -48,6 +48,12 @@
       </section>
     }
 
+    @if (error()) {
+      <section class="status-block status-block-error" role="alert">
+        <p>{{ error() }}</p>
+      </section>
+    }
+
     <div class="cards">
       @if (isLoading()) {
         @for (_item of skeletonCards; track $index) {

@@ -85,6 +85,7 @@ describe('HomePage', () => {
     isLoading: signal(false),
     isLoadingMore: signal(false),
     hasMore: signal(false),
+    error: signal<string | null>(null),
     search: signal(''),
     loadFavorites: jasmine.createSpy('loadFavorites').and.resolveTo(undefined),
     loadInitialLodgings: jasmine
@@ -118,6 +119,7 @@ describe('HomePage', () => {
     lodgingsResourceMock.loadInitialLodgings.calls.reset();
     lodgingsResourceMock.setSearch.calls.reset();
     lodgingsResourceMock.loadNextLodgingsPage.calls.reset();
+    lodgingsResourceMock.error.set(null);
     fixture.detectChanges();
   });
 
@@ -128,6 +130,15 @@ describe('HomePage', () => {
   it('debería renderizar cards de alojamientos', () => {
     const cards = fixture.nativeElement.querySelectorAll('app-lodging-card');
     expect(cards.length).toBe(component.lodgingsFiltered().length);
+  });
+
+  it('deberia renderizar bloque de error cuando el recurso informa una falla', () => {
+    lodgingsResourceMock.error.set('No pudimos cargar los alojamientos.');
+    fixture.detectChanges();
+
+    const statusBlock = fixture.nativeElement.querySelector('.status-block-error');
+
+    expect(statusBlock?.textContent).toContain('No pudimos cargar los alojamientos.');
   });
 
   it('deberia navegar al detalle del alojamiento', () => {

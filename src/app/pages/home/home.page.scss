@@ -100,6 +100,23 @@ ion-content.home-content::part(background) {
   gap: 12px;
 }
 
+.status-block {
+  margin-bottom: 12px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--ion-color-light) 30%, white 70%);
+  backdrop-filter: blur(6px);
+}
+
+.status-block p {
+  margin: 0;
+}
+
+.status-block-error {
+  border: 1px solid color-mix(in srgb, var(--ion-color-danger) 26%, transparent);
+  color: var(--ion-color-danger);
+}
+
 .empty-state {
   padding: 24px 18px;
   border: 1px solid color-mix(in srgb, var(--ion-color-secondary) 12%, transparent);
@@ -295,6 +312,10 @@ ion-content.home-content::part(background) {
 :host-context(.ion-palette-dark) .active-filter-chip {
   --background: color-mix(in srgb, var(--ion-color-secondary) 18%, rgba(10, 23, 37, 0.9) 82%);
   border-color: color-mix(in srgb, var(--ion-color-primary) 20%, transparent);
+}
+
+:host-context(.ion-palette-dark) .status-block {
+  background: rgba(12, 28, 43, 0.78);
 }
 
 :host-context(.ion-palette-dark) .empty-state,

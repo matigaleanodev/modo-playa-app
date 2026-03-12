@@ -38,6 +38,10 @@ import {
   DestinationId,
 } from 'src/app/destinations/models/destination.model';
 import { DestinationsService } from 'src/app/destinations/services/destinations.service';
+import {
+  getDestinationContextErrorMessage,
+  getDestinationsErrorMessage,
+} from '@shared/http/public-api-error';
 
 @Component({
   selector: 'app-destinations',
@@ -197,8 +201,8 @@ export class DestinationsPage {
 
       this.selectedDestinationId.set(selectedDestination);
       await this.loadContext(false);
-    } catch {
-      this.error.set('No pudimos cargar los destinos. Intenta nuevamente.');
+    } catch (error) {
+      this.error.set(getDestinationsErrorMessage(error));
     } finally {
       this.loading.set(false);
     }
@@ -222,10 +226,8 @@ export class DestinationsPage {
         this.destinationsService.getContextByDestinationId(destinationId),
       );
       this.context.set(context);
-    } catch {
-      this.error.set(
-        'No pudimos cargar el contexto del destino seleccionado. Intenta nuevamente.',
-      );
+    } catch (error) {
+      this.error.set(getDestinationContextErrorMessage(error));
       this.context.set(null);
     } finally {
       if (manageLoading) {

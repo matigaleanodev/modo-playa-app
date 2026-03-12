@@ -85,6 +85,7 @@ export class HomePage {
   readonly isLoading = computed(() => this.lodgingsResource.isLoading());
   readonly isLoadingMore = computed(() => this.lodgingsResource.isLoadingMore());
   readonly hasMore = computed(() => this.lodgingsResource.hasMore());
+  readonly error = computed(() => this.lodgingsResource.error());
   readonly searchTerm = signal('');
   readonly isFiltersOpen = signal(false);
   readonly filters = signal<HomeFilters>(DEFAULT_FILTERS());
