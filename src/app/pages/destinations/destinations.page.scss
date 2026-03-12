@@ -223,11 +223,6 @@ ion-card-content {
   padding: 4px;
 }
 
-.forecast-row,
-.sun-row {
-  margin: 0;
-}
-
 .forecast-item {
   border-radius: 12px;
   padding: 9px;
@@ -266,14 +261,6 @@ ion-card-content {
   padding: 0 4px;
 }
 
-.sun-grid ion-col:first-child {
-  padding-left: 0;
-}
-
-.sun-grid ion-col:last-child {
-  padding-right: 0;
-}
-
 .sun-card {
   box-shadow: 0 10px 22px rgba(7, 26, 47, 0.18);
   min-height: 128px;
@@ -310,21 +297,6 @@ ion-card-content {
   font-size: 1.6rem;
   font-weight: 700;
   letter-spacing: -0.03em;
-}
-
-.content-fade-in {
-  animation: fade-up 320ms ease both;
-}
-
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 @media (min-width: 640px) {
@@ -425,12 +397,6 @@ ion-card-content {
 
 :host-context(.ion-palette-dark) .hero-weather-card {
   --background: linear-gradient(140deg, rgba(20, 66, 112, 0.92), rgba(35, 97, 141, 0.9));
-}
-
-:host-context(.ion-palette-dark) .hero-weather-card,
-:host-context(.ion-palette-dark) .sunrise-card,
-:host-context(.ion-palette-dark) .sunset-card {
-  color: rgba(226, 236, 246, 0.96);
 }
 
 :host-context(.ion-palette-dark) .hero-weather-card h2,

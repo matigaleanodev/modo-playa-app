@@ -65,7 +65,7 @@ describe('LodgingDetailPage', () => {
   });
 
   it('debería exponer imágenes secundarias en galería', () => {
-    expect(component.galleryImages).toEqual(['https://example.com/1.webp']);
+    expect(component.galleryImages()).toEqual(['https://example.com/1.webp']);
   });
 
   it('deberia cargar favoritos al entrar', async () => {
@@ -146,8 +146,8 @@ describe('LodgingDetailPage', () => {
     fixture.componentRef.setInput('lodging', lodgingWithPublicMedia);
     fixture.detectChanges();
 
-    expect(component.heroImage).toBe('https://example.com/default-hero.webp');
-    expect(component.galleryImages).toEqual([
+    expect(component.heroImage()).toBe('https://example.com/default-hero.webp');
+    expect(component.galleryImages()).toEqual([
       'https://example.com/gallery-hero.webp',
     ]);
   });
