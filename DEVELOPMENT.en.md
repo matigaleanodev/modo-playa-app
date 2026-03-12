@@ -1,111 +1,75 @@
-# Development Guide -- Modo Playa App
+# Development guide
 
-This document explains how to work with the public Modo Playa frontend locally.
-
----
+This document summarizes how to operate `modo-playa-app` locally.
 
 ## Requirements
 
-- Node.js 22+ (LTS recommended)
+- Node.js 22+
 - npm
-- Angular CLI (optional)
-- Ionic CLI (optional)
-- Android Studio (only if you build Android)
+- Angular CLI optional
+- Ionic CLI optional
+- Android Studio only for Android builds
 
----
-
-## Installation
+## Install and run
 
 ```bash
 npm install
-```
-
----
-
-## Local run (web)
-
-```bash
 npm run start
 ```
 
-Available at:
+The web app is available at `http://localhost:4200`.
 
-`http://localhost:4200`
+## Local API
 
----
+Development points to `http://localhost:3000/api` by default.
 
-## API in development
-
-By default, the app points to:
-
-`http://localhost:3000/api`
-
-Make sure `modo-playa-api` is running locally for integrated testing.
-
----
+For integrated validation, run `modo-playa-api` locally as well.
+Before changing models, endpoints, or error handling, review that repo because it is the contractual source of truth.
 
 ## Useful scripts
 
-- `npm run start`: local server
+- `npm run start`: local web server
 - `npm run build`: production build
-- `npm run watch`: development watch build
-- `npm run test`: unit tests in ChromeHeadlessCI
-- `npm run test:watch`: unit tests in watch mode
-- `npm run lint`: lint checks
+- `npm run watch`: continuous development build
+- `npm run test`: unit suite in `ChromeHeadlessCI`
+- `npm run test:watch`: unit suite in watch mode
+- `npm run lint`: lint validation
 
----
+## Local persistence
 
-## Environments
+- favorites and lightweight preferences are stored in `localStorage`
+- there is no native storage dependency for the public web app at this stage
 
-- `src/environments/environment.ts`: development
-- `src/environments/environment.prod.ts`: production
+## Operating notes
 
----
+- `roadmap.md` is a local operating file; it is used for real tracking and must not be versioned
+- this repo consumes public data and must not duplicate backend business logic
+- do not implement admin flows or consume `admin/*`
 
-## Android (Capacitor)
-
-Sync web changes into Android platform:
+## Android
 
 ```bash
 npx cap sync android
-```
-
-Open Android project:
-
-```bash
 npx cap open android
 ```
 
 Notes:
 
-- `android/local.properties` is gitignored.
-- Current Android app version:
+- `android/local.properties` is gitignored
+- current Android version:
   - `versionCode = 10001`
   - `versionName = 1.0.1`
 
----
+## Main structure
 
-## Project architecture
+- `src/app/pages`: public screens
+- `src/app/lodgings`: catalog models, components, services, and resolver
+- `src/app/destinations`: destination models and services
+- `src/app/shared`: cross-cutting services such as storage, theme, nav, and toast
+- `src/app/tabs`: mobile-first primary navigation
 
-Main structure in `src/app`:
+## Minimum validation before closing changes
 
-- `pages/`: screens (home, favorites, destinations, info, legal)
-- `lodgings/`: lodging domain (models, services, resolver, components)
-- `destinations/`: destination models and services
-- `shared/`: reusable services (theme, storage, nav, toastr)
-- `tabs/`: primary navigation (tab bar)
-
----
-
-## Repository scope
-
-This repo is only the public catalog.
-
-Do not implement here:
-
-- admin CRUD flows for lodgings
-- owner management workflows
-- business logic already implemented in API
-
-Always validate endpoint/model changes against `modo-playa-api`.
-
+- `npm run lint`
+- `npm run test`
+- `npm run build`

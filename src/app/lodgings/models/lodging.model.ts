@@ -30,15 +30,16 @@ export interface LodgingImageVariants {
 
 export interface LodgingImage {
   imageId: string;
-  key: string;
   isDefault: boolean;
   width?: number;
   height?: number;
-  bytes?: number;
-  mime?: string;
   createdAt: string;
   url: string;
   variants?: LodgingImageVariants;
+  // Legacy-compatible fields that must not be assumed in the public contract.
+  key?: string;
+  bytes?: number;
+  mime?: string;
 }
 
 export interface AvailabilityRange {

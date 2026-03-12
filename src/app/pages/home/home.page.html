@@ -50,15 +50,36 @@
 
     <div class="cards">
       @if (isLoading()) {
+        <app-public-state-card
+          kind="loading"
+          title="Cargando alojamientos"
+          message="Estamos trayendo el catalogo publico para esta busqueda."
+        ></app-public-state-card>
+
         @for (_item of skeletonCards; track $index) {
           <app-lodging-card-skeleton></app-lodging-card-skeleton>
         }
       } @else {
-        @if (lodgingsFiltered().length === 0) {
-          <article class="empty-state">
-            <h2>Sin resultados</h2>
-            <p>Probá con otra búsqueda o ajustá los filtros activos.</p>
-          </article>
+        @if (error()) {
+          <app-public-state-card
+            kind="error"
+            title="No pudimos cargar el catalogo"
+            [message]="error()!"
+            actionLabel="Reintentar"
+            (action)="retry()"
+          ></app-public-state-card>
+        } @else if (lodgingsFiltered().length === 0) {
+          <app-public-state-card
+            kind="empty"
+            title="Sin resultados"
+            [message]="
+              hasSearchOrFilters()
+                ? 'Proba con otra busqueda o limpia los filtros para volver al catalogo completo.'
+                : 'Todavia no hay alojamientos publicados para mostrar.'
+            "
+            [actionLabel]="hasSearchOrFilters() ? 'Ver todo' : null"
+            (action)="resetSearchAndFilters()"
+          ></app-public-state-card>
         } @else {
           @for (lodging of lodgingsFiltered(); track lodging.id) {
             <app-lodging-card

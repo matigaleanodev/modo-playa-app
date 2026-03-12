@@ -103,24 +103,8 @@ ion-content.destinations-content {
   font-weight: 600;
 }
 
-.status-block {
-  display: grid;
-  justify-items: center;
-  gap: 10px;
-  padding: 16px 12px;
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--ion-color-light) 20%, transparent);
-  color: var(--ion-color-light);
-  backdrop-filter: blur(8px);
-}
-
-.status-block p {
-  margin: 0;
-  text-align: center;
-}
-
-.status-block-error {
-  background: color-mix(in srgb, var(--ion-color-danger) 20%, transparent);
+app-public-state-card {
+  display: block;
 }
 
 .cards {
@@ -204,6 +188,12 @@ ion-card-content {
   font-size: 0.86rem;
 }
 
+.hero-time {
+  margin: 4px 0 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.8rem;
+}
+
 .forecast-card {
   --background: color-mix(in srgb, var(--ion-color-light) 90%, transparent);
   box-shadow: 0 10px 24px rgba(7, 26, 47, 0.14);
@@ -221,11 +211,6 @@ ion-card-content {
 
 .forecast-grid ion-col {
   padding: 4px;
-}
-
-.forecast-row,
-.sun-row {
-  margin: 0;
 }
 
 .forecast-item {
@@ -266,14 +251,6 @@ ion-card-content {
   padding: 0 4px;
 }
 
-.sun-grid ion-col:first-child {
-  padding-left: 0;
-}
-
-.sun-grid ion-col:last-child {
-  padding-right: 0;
-}
-
 .sun-card {
   box-shadow: 0 10px 22px rgba(7, 26, 47, 0.18);
   min-height: 128px;
@@ -310,21 +287,6 @@ ion-card-content {
   font-size: 1.6rem;
   font-weight: 700;
   letter-spacing: -0.03em;
-}
-
-.content-fade-in {
-  animation: fade-up 320ms ease both;
-}
-
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 @media (min-width: 640px) {
@@ -427,12 +389,6 @@ ion-card-content {
   --background: linear-gradient(140deg, rgba(20, 66, 112, 0.92), rgba(35, 97, 141, 0.9));
 }
 
-:host-context(.ion-palette-dark) .hero-weather-card,
-:host-context(.ion-palette-dark) .sunrise-card,
-:host-context(.ion-palette-dark) .sunset-card {
-  color: rgba(226, 236, 246, 0.96);
-}
-
 :host-context(.ion-palette-dark) .hero-weather-card h2,
 :host-context(.ion-palette-dark) .hero-temperature,
 :host-context(.ion-palette-dark) .hero-wind,
@@ -449,14 +405,6 @@ ion-card-content {
 
 :host-context(.ion-palette-dark) .sunset-card {
   --background: linear-gradient(150deg, rgba(128, 74, 112, 0.9), rgba(88, 69, 131, 0.84));
-}
-
-:host-context(.ion-palette-dark) .status-block {
-  background: rgba(188, 212, 235, 0.13);
-}
-
-:host-context(.ion-palette-dark) .status-block-error {
-  background: rgba(180, 78, 89, 0.28);
 }
 
 @media (max-height: 760px) {

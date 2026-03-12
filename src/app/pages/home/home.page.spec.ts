@@ -32,8 +32,24 @@ describe('HomePage', () => {
     bathrooms: 1,
     minNights: 2,
     amenities: [LodgingAmenity.WIFI, LodgingAmenity.POOL],
-    mainImage: 'https://example.com/main.webp',
-    images: [],
+    mainImage: 'https://example.com/lodging-1/default-hero.webp',
+    images: [
+      'https://example.com/lodging-1/default-original.webp',
+      'https://example.com/lodging-1/gallery-original.webp',
+    ],
+    mediaImages: [
+      {
+        imageId: 'image-1',
+        isDefault: true,
+        createdAt: '2026-03-12T10:00:00.000Z',
+        url: 'https://example.com/lodging-1/default-original.webp',
+        variants: {
+          thumb: 'https://example.com/lodging-1/default-thumb.webp',
+          card: 'https://example.com/lodging-1/default-card.webp',
+          hero: 'https://example.com/lodging-1/default-hero.webp',
+        },
+      },
+    ],
   };
   const lodgingBeach: Lodging = {
     ...lodgingMock,
@@ -44,6 +60,24 @@ describe('HomePage', () => {
     maxGuests: 6,
     price: 150000,
     amenities: [LodgingAmenity.WIFI],
+    mainImage: 'https://example.com/lodging-2/default-hero.webp',
+    images: [
+      'https://example.com/lodging-2/default-original.webp',
+      'https://example.com/lodging-2/gallery-original.webp',
+    ],
+    mediaImages: [
+      {
+        imageId: 'image-2',
+        isDefault: true,
+        createdAt: '2026-03-12T10:15:00.000Z',
+        url: 'https://example.com/lodging-2/default-original.webp',
+        variants: {
+          thumb: 'https://example.com/lodging-2/default-thumb.webp',
+          card: 'https://example.com/lodging-2/default-card.webp',
+          hero: 'https://example.com/lodging-2/default-hero.webp',
+        },
+      },
+    ],
   };
   const lodgingsResourceMock = {
     lodgings: signal<Lodging[]>([lodgingMock]),
@@ -51,6 +85,7 @@ describe('HomePage', () => {
     isLoading: signal(false),
     isLoadingMore: signal(false),
     hasMore: signal(false),
+    error: signal<string | null>(null),
     search: signal(''),
     loadFavorites: jasmine.createSpy('loadFavorites').and.resolveTo(undefined),
     loadInitialLodgings: jasmine
@@ -84,6 +119,7 @@ describe('HomePage', () => {
     lodgingsResourceMock.loadInitialLodgings.calls.reset();
     lodgingsResourceMock.setSearch.calls.reset();
     lodgingsResourceMock.loadNextLodgingsPage.calls.reset();
+    lodgingsResourceMock.error.set(null);
     fixture.detectChanges();
   });
 
@@ -94,6 +130,18 @@ describe('HomePage', () => {
   it('debería renderizar cards de alojamientos', () => {
     const cards = fixture.nativeElement.querySelectorAll('app-lodging-card');
     expect(cards.length).toBe(component.lodgingsFiltered().length);
+  });
+
+  it('deberia renderizar bloque de error cuando el recurso informa una falla', () => {
+    lodgingsResourceMock.error.set('No pudimos cargar los alojamientos.');
+    lodgingsResourceMock.lodgings.set([]);
+    fixture.detectChanges();
+
+    const statusCard = fixture.nativeElement.querySelector(
+      'app-public-state-card',
+    );
+
+    expect(statusCard?.textContent).toContain('No pudimos cargar los alojamientos.');
   });
 
   it('deberia navegar al detalle del alojamiento', () => {
@@ -159,6 +207,16 @@ describe('HomePage', () => {
 
     expect(component.searchTerm()).toBe('mar azul');
     expect(lodgingsResourceMock.setSearch).toHaveBeenCalledWith('mar azul');
+  });
+
+  it('deberia reintentar la carga del catalogo con el termino actual', async () => {
+    component.searchTerm.set('gesell');
+
+    await component.retry();
+
+    expect(lodgingsResourceMock.loadInitialLodgings).toHaveBeenCalledWith(
+      'gesell',
+    );
   });
 
   it('no deberia disparar busqueda si el termino no cambia', async () => {
@@ -234,6 +292,22 @@ describe('HomePage', () => {
       guests: null,
     });
     expect(component.hasActiveFilters()).toBeFalse();
+  });
+
+  it('deberia resetear busqueda y filtros para volver al catalogo completo', async () => {
+    component.searchTerm.set('mar azul');
+    component.toggleAmenity(LodgingAmenity.WIFI);
+
+    await component.resetSearchAndFilters();
+
+    expect(component.searchTerm()).toBe('');
+    expect(component.filters()).toEqual({
+      amenities: [],
+      minPrice: null,
+      maxPrice: null,
+      guests: null,
+    });
+    expect(lodgingsResourceMock.setSearch).toHaveBeenCalledWith('');
   });
 
   it('deberia renderizar el overlay propio de filtros cuando esta abierto', () => {

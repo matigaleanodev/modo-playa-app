@@ -25,6 +25,7 @@ import {
   RangeCustomEvent,
   SearchbarCustomEvent,
 } from '@ionic/angular';
+import { PublicStateCardComponent } from '@shared/components/public-state-card/public-state-card.component';
 import { addIcons } from 'ionicons';
 import {
   add,
@@ -33,25 +34,22 @@ import {
   remove,
   trashOutline,
 } from 'ionicons/icons';
-
-interface HomeFilters {
-  amenities: LodgingAmenity[];
-  minPrice: number | null;
-  maxPrice: number | null;
-  guests: number | null;
-}
-
-type ActiveFilterChip =
-  | { kind: 'amenity'; amenity: LodgingAmenity; label: string }
-  | { kind: 'price'; label: string }
-  | { kind: 'guests'; label: string };
-
-const DEFAULT_FILTERS = (): HomeFilters => ({
-  amenities: [],
-  minPrice: null,
-  maxPrice: null,
-  guests: null,
-});
+import {
+  ActiveFilterChip,
+  HomeFilters,
+  applyPriceRange,
+  createDefaultHomeFilters,
+  decreaseGuests,
+  filterLodgings,
+  getActiveFilters,
+  getAmenityLabel,
+  getPriceBounds,
+  getPriceRangeValue,
+  getSearchMatchedLodgings,
+  increaseGuests,
+  removeFilter,
+  toggleAmenity,
+} from './home-filters';
 
 @Component({
   selector: 'app-home',
@@ -75,6 +73,7 @@ const DEFAULT_FILTERS = (): HomeFilters => ({
     IonSearchbar,
     LodgingCardComponent,
     LodgingCardSkeletonComponent,
+    PublicStateCardComponent,
   ],
 })
 export class HomePage {
@@ -85,110 +84,30 @@ export class HomePage {
   readonly isLoading = computed(() => this.lodgingsResource.isLoading());
   readonly isLoadingMore = computed(() => this.lodgingsResource.isLoadingMore());
   readonly hasMore = computed(() => this.lodgingsResource.hasMore());
+  readonly error = computed(() => this.lodgingsResource.error());
   readonly searchTerm = signal('');
   readonly isFiltersOpen = signal(false);
-  readonly filters = signal<HomeFilters>(DEFAULT_FILTERS());
+  readonly filters = signal<HomeFilters>(createDefaultHomeFilters());
   readonly amenityOptions = Object.values(LodgingAmenity);
   readonly skeletonCards = Array.from({ length: 4 });
   readonly searchMatchedLodgings = computed(() => {
-    const normalizedSearch = this.normalizeText(this.searchTerm());
-
-    if (!normalizedSearch) {
-      return this.lodgingsRaw();
-    }
-
-    return this.lodgingsRaw().filter((lodging) =>
-      [lodging.title, lodging.location, lodging.city].some((value) =>
-        this.normalizeText(value).includes(normalizedSearch),
-      ),
-    );
+    return getSearchMatchedLodgings(this.lodgingsRaw(), this.searchTerm());
   });
   readonly lodgingsFiltered = computed(() => {
-    const lodgings = this.searchMatchedLodgings();
-    const filters = this.filters();
-
-    return lodgings.filter((lodging) => {
-      if (filters.guests && lodging.maxGuests < filters.guests) {
-        return false;
-      }
-
-      if (filters.minPrice !== null && lodging.price < filters.minPrice) {
-        return false;
-      }
-
-      if (filters.maxPrice !== null && lodging.price > filters.maxPrice) {
-        return false;
-      }
-
-      if (filters.amenities.length > 0) {
-        const hasAmenities = filters.amenities.every((amenity) =>
-          lodging.amenities.includes(amenity),
-        );
-
-        if (!hasAmenities) {
-          return false;
-        }
-      }
-
-      return true;
-    });
+    return filterLodgings(this.searchMatchedLodgings(), this.filters());
   });
-  readonly priceBounds = computed(() => {
-    const prices = this.searchMatchedLodgings().map((lodging) => lodging.price);
-
-    if (prices.length === 0) {
-      return { min: 0, max: 300000, step: 5000 };
-    }
-
-    const min = Math.min(...prices);
-    const max = Math.max(...prices);
-    const roundedMin = Math.max(0, Math.floor(min / 5000) * 5000);
-    const roundedMax = Math.max(
-      roundedMin + 5000,
-      Math.ceil(max / 5000) * 5000,
-    );
-
-    return { min: roundedMin, max: roundedMax, step: 5000 };
-  });
-  readonly priceRangeValue = computed(() => {
-    const bounds = this.priceBounds();
-    const filters = this.filters();
-
-    return {
-      lower: filters.minPrice ?? bounds.min,
-      upper: filters.maxPrice ?? bounds.max,
-    };
-  });
-  readonly activeFilters = computed<ActiveFilterChip[]>(() => {
-    const filters = this.filters();
-    const chips: ActiveFilterChip[] = filters.amenities.map((amenity) => ({
-      kind: 'amenity',
-      amenity,
-      label: this.getAmenityLabel(amenity),
-    }));
-
-    if (filters.minPrice !== null || filters.maxPrice !== null) {
-      const bounds = this.priceBounds();
-      const minPrice = filters.minPrice ?? bounds.min;
-      const maxPrice = filters.maxPrice ?? bounds.max;
-
-      chips.push({
-        kind: 'price',
-        label: `${this.formatPrice(minPrice)}-${this.formatPrice(maxPrice)}`,
-      });
-    }
-
-    if (filters.guests !== null) {
-      chips.push({
-        kind: 'guests',
-        label: `${filters.guests} huésped${filters.guests === 1 ? '' : 'es'}`,
-      });
-    }
-
-    return chips;
-  });
+  readonly priceBounds = computed(() => getPriceBounds(this.searchMatchedLodgings()));
+  readonly priceRangeValue = computed(() =>
+    getPriceRangeValue(this.filters(), this.priceBounds()),
+  );
+  readonly activeFilters = computed<ActiveFilterChip[]>(() =>
+    getActiveFilters(this.filters(), this.priceBounds()),
+  );
   readonly activeFiltersCount = computed(() => this.activeFilters().length);
   readonly hasActiveFilters = computed(() => this.activeFiltersCount() > 0);
+  readonly hasSearchOrFilters = computed(() => {
+    return Boolean(this.searchTerm()) || this.hasActiveFilters();
+  });
   readonly filtersButtonLabel = computed(() => {
     const count = this.activeFiltersCount();
     return count > 0 ? `Filtros (${count})` : 'Filtros';
@@ -236,6 +155,10 @@ export class HomePage {
     await this.lodgingsResource.setSearch(nextTerm);
   }
 
+  async retry(): Promise<void> {
+    await this.lodgingsResource.loadInitialLodgings(this.searchTerm());
+  }
+
   openFilters(): void {
     this.isFiltersOpen.set(true);
   }
@@ -245,16 +168,7 @@ export class HomePage {
   }
 
   toggleAmenity(amenity: LodgingAmenity): void {
-    this.filters.update((filters) => {
-      const amenities = filters.amenities.includes(amenity)
-        ? filters.amenities.filter((item) => item !== amenity)
-        : [...filters.amenities, amenity];
-
-      return {
-        ...filters,
-        amenities,
-      };
-    });
+    this.filters.update((filters) => toggleAmenity(filters, amenity));
   }
 
   hasAmenitySelected(amenity: LodgingAmenity): boolean {
@@ -269,55 +183,31 @@ export class HomePage {
       return;
     }
 
-    const bounds = this.priceBounds();
-    const nextMinPrice = value.lower <= bounds.min ? null : value.lower;
-    const nextMaxPrice = value.upper >= bounds.max ? null : value.upper;
-
-    this.filters.update((filters) => ({
-      ...filters,
-      minPrice: nextMinPrice,
-      maxPrice: nextMaxPrice,
-    }));
+    this.filters.update((filters) =>
+      applyPriceRange(filters, value, this.priceBounds()),
+    );
   }
 
   decreaseGuests(): void {
-    this.filters.update((filters) => ({
-      ...filters,
-      guests:
-        filters.guests === null || filters.guests <= 1 ? null : filters.guests - 1,
-    }));
+    this.filters.update((filters) => decreaseGuests(filters));
   }
 
   increaseGuests(): void {
-    this.filters.update((filters) => ({
-      ...filters,
-      guests: (filters.guests ?? 0) + 1,
-    }));
+    this.filters.update((filters) => increaseGuests(filters));
   }
 
   clearFilters(): void {
-    this.filters.set(DEFAULT_FILTERS());
+    this.filters.set(createDefaultHomeFilters());
+  }
+
+  async resetSearchAndFilters(): Promise<void> {
+    this.clearFilters();
+    this.searchTerm.set('');
+    await this.lodgingsResource.setSearch('');
   }
 
   removeFilter(chip: ActiveFilterChip): void {
-    if (chip.kind === 'amenity') {
-      this.toggleAmenity(chip.amenity);
-      return;
-    }
-
-    if (chip.kind === 'price') {
-      this.filters.update((filters) => ({
-        ...filters,
-        minPrice: null,
-        maxPrice: null,
-      }));
-      return;
-    }
-
-    this.filters.update((filters) => ({
-      ...filters,
-      guests: null,
-    }));
+    this.filters.update((filters) => removeFilter(filters, chip));
   }
 
   trackByAmenity(_index: number, amenity: LodgingAmenity): LodgingAmenity {
@@ -334,34 +224,6 @@ export class HomePage {
   }
 
   getAmenityLabel(amenity: LodgingAmenity): string {
-    const labels: Record<LodgingAmenity, string> = {
-      [LodgingAmenity.SEA_VIEW]: 'Vista al mar',
-      [LodgingAmenity.POOL]: 'Piscina',
-      [LodgingAmenity.PARRILLA]: 'Parrilla',
-      [LodgingAmenity.WIFI]: 'WiFi',
-      [LodgingAmenity.AIR_CONDITIONING]: 'Aire acondicionado',
-      [LodgingAmenity.HEATING]: 'Calefacción',
-      [LodgingAmenity.CABLE_TV]: 'Cable TV',
-      [LodgingAmenity.PETS_ALLOWED]: 'Mascotas',
-      [LodgingAmenity.GARAGE]: 'Garage',
-    };
-
-    return labels[amenity];
-  }
-
-  private formatPrice(price: number): string {
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'ARS',
-      maximumFractionDigits: 0,
-    }).format(price);
-  }
-
-  private normalizeText(value: string): string {
-    return value
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase()
-      .trim();
+    return getAmenityLabel(amenity);
   }
 }

@@ -1,5 +1,6 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { Lodging, LodgingType, PriceUnit } from '../models/lodging.model';
 import { LodgingsService } from './lodgings.service';
 import { LodgingsResourceService } from './lodgings-resource.service';
@@ -23,14 +24,48 @@ describe('LodgingsResourceService', () => {
     bathrooms: 1,
     minNights: 1,
     amenities: [],
-    mainImage: 'a.webp',
-    images: [],
+    mainImage: 'https://example.com/a/hero.webp',
+    images: [
+      'https://example.com/a/original.webp',
+      'https://example.com/a/gallery.webp',
+    ],
+    mediaImages: [
+      {
+        imageId: 'image-a-1',
+        isDefault: true,
+        createdAt: '2026-03-12T10:00:00.000Z',
+        url: 'https://example.com/a/original.webp',
+        variants: {
+          thumb: 'https://example.com/a/thumb.webp',
+          card: 'https://example.com/a/card.webp',
+          hero: 'https://example.com/a/hero.webp',
+        },
+      },
+    ],
   };
 
   const lodgingB: Lodging = {
     ...lodgingA,
     id: 'b',
     title: 'Lodging B',
+    mainImage: 'https://example.com/b/hero.webp',
+    images: [
+      'https://example.com/b/original.webp',
+      'https://example.com/b/gallery.webp',
+    ],
+    mediaImages: [
+      {
+        imageId: 'image-b-1',
+        isDefault: true,
+        createdAt: '2026-03-12T10:10:00.000Z',
+        url: 'https://example.com/b/original.webp',
+        variants: {
+          thumb: 'https://example.com/b/thumb.webp',
+          card: 'https://example.com/b/card.webp',
+          hero: 'https://example.com/b/hero.webp',
+        },
+      },
+    ],
   };
 
   const lodgingsServiceMock = {
@@ -82,6 +117,7 @@ describe('LodgingsResourceService', () => {
       page: 1,
       limit: 8,
     });
+    expect(service.error()).toBeNull();
   });
 
   it('deberia omitir search vacio al reiniciar listado', async () => {
@@ -156,6 +192,46 @@ describe('LodgingsResourceService', () => {
 
     expect(service.lodgings()).toEqual([lodgingA, lodgingB]);
     expect(service.hasMore()).toBeFalse();
+  });
+
+  it('deberia exponer error util cuando falla la carga inicial por validacion', async () => {
+    lodgingsServiceMock.getPaginated.and.returnValue(
+      throwError(
+        () =>
+          new HttpErrorResponse({
+            status: 400,
+            error: { code: 'INVALID_PRICE_RANGE' },
+          }),
+      ),
+    );
+
+    await service.loadInitialLodgings();
+
+    expect(service.lodgings()).toEqual([]);
+    expect(service.hasMore()).toBeFalse();
+    expect(service.error()).toBe(
+      'El rango de precios no es válido. Ajusta los filtros e intenta nuevamente.',
+    );
+  });
+
+  it('deberia conservar resultados y exponer error si falla la pagina siguiente', async () => {
+    lodgingsServiceMock.getPaginated.and.returnValues(
+      of({
+        data: [lodgingA],
+        total: 2,
+        page: 1,
+        limit: 8,
+      }),
+      throwError(() => new HttpErrorResponse({ status: 0 })),
+    );
+
+    await service.loadInitialLodgings();
+    await service.loadNextLodgingsPage();
+
+    expect(service.lodgings()).toEqual([lodgingA]);
+    expect(service.error()).toBe(
+      'No pudimos cargar más alojamientos por un problema de conexión.',
+    );
   });
 
   it('deberia seleccionar y navegar al detalle', () => {

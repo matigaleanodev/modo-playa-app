@@ -38,7 +38,9 @@ describe('DestinationsService', () => {
     const req = httpMock.expectOne(`${environment.API_URL}/destinations/pampas/context`);
     expect(req.request.method).toBe('GET');
     req.flush({
+      destinationId: 'pampas',
       destination: 'Mar de las Pampas',
+      timezone: 'America/Argentina/Buenos_Aires',
       weather: { temperature: 27, windSpeed: 14, weatherCode: 3 },
       forecast: [],
       sun: { sunrise: '06:12', sunset: '20:05' },

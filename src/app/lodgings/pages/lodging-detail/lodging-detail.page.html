@@ -19,7 +19,7 @@
 
   <ion-content id="detail-content" class="detail-content">
     <section class="hero">
-      <img [src]="heroImage" [alt]="lodging().title" />
+      <img [src]="heroImage()" [alt]="lodging().title" />
     </section>
 
     <section class="content-shell">
@@ -38,10 +38,10 @@
         <div class="meta-grid">
           <div class="facility-item">
             <ion-icon name="home-outline"></ion-icon>
-            <span>{{ lodgingTypeLabel }}</span>
+            <span>{{ lodgingTypeLabel() }}</span>
           </div>
 
-          @for (meta of lodgingMeta(); track meta.label) {
+          @for (meta of lodgingMeta(); track meta.id) {
           <div class="facility-item">
             <ion-icon [name]="meta.icon"></ion-icon>
             <span>{{ meta.label }}</span>
@@ -58,7 +58,7 @@
       <article class="detail-card amenities-card">
         <h2>Comodidades</h2>
         <div class="facilities-grid">
-          @for (facility of facilities(); track facility.label) {
+          @for (facility of facilities(); track facility.id) {
           <div class="facility-item">
             <ion-icon [name]="facility.icon"></ion-icon>
             <span>{{ facility.label }}</span>
@@ -67,7 +67,7 @@
         </div>
       </article>
 
-      @if (galleryImages.length) {
+      @if (galleryImages().length) {
       <article class="detail-card gallery-card">
         <h2>Galeria</h2>
         <div
@@ -75,7 +75,7 @@
           role="region"
           aria-label="Galeria de imagenes"
         >
-          @for (image of galleryImages; track image) {
+          @for (image of galleryImages(); track $index) {
           <figure class="carousel-item">
             <img [src]="image" alt="Imagen del hospedaje" loading="lazy" />
           </figure>
@@ -95,9 +95,9 @@
           <ion-button
             class="contact-button contact-button-email"
             shape="round"
-            [href]="emailHref ?? undefined"
+            [href]="emailHref() ?? undefined"
             target="_blank"
-            [disabled]="!emailHref"
+            [disabled]="!emailHref()"
           >
             <ion-icon slot="start" name="mail-outline"></ion-icon>
             Email
@@ -106,9 +106,9 @@
           <ion-button
             class="contact-button contact-button-whatsapp"
             shape="round"
-            [href]="whatsappHref ?? undefined"
+            [href]="whatsappHref() ?? undefined"
             target="_blank"
-            [disabled]="!whatsappHref"
+            [disabled]="!whatsappHref()"
           >
             <ion-icon slot="start" name="logo-whatsapp"></ion-icon>
             WhatsApp
@@ -121,7 +121,7 @@
   <ion-footer class="detail-footer">
     <ion-toolbar>
       <div class="price-box">
-        <span class="price-caption">{{ priceUnitLabel }}</span>
+        <span class="price-caption">{{ priceUnitLabel() }}</span>
         <ion-text class="price-value">
           {{ lodging().price | currency: 'ARS':'symbol':'1.0-0' }}
         </ion-text>

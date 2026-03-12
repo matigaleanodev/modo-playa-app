@@ -1,36 +1,39 @@
+import { DOCUMENT } from '@angular/common';
 import { inject, Injectable } from '@angular/core';
-import { Storage } from '@ionic/storage-angular';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StorageService {
-  private _storage: Storage | null = null;
-  private readonly storage = inject(Storage);
+  private readonly document = inject(DOCUMENT);
 
-  private async init(): Promise<void> {
-    if (!this._storage) {
-      this._storage = await this.storage.create();
-    }
+  private get storage(): Storage | null {
+    return this.document.defaultView?.localStorage ?? null;
   }
 
   async getItem<T>(key: string): Promise<T | null> {
-    await this.init();
-    return (await this._storage?.get(key)) ?? null;
+    const value = this.storage?.getItem(key) ?? null;
+
+    if (value === null) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(value) as T;
+    } catch {
+      return null;
+    }
   }
 
   async setItem<T>(key: string, value: T): Promise<void> {
-    await this.init();
-    await this._storage?.set(key, value);
+    this.storage?.setItem(key, JSON.stringify(value));
   }
 
   async removeItem(key: string): Promise<void> {
-    await this.init();
-    await this._storage?.remove(key);
+    this.storage?.removeItem(key);
   }
 
   async clear(): Promise<void> {
-    await this.init();
-    await this._storage?.clear();
+    this.storage?.clear();
   }
 }
