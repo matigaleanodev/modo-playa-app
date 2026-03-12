@@ -19,7 +19,9 @@ describe('DestinationsPage', () => {
   ];
 
   const contextGesellMock: DestinationContext = {
+    destinationId: 'gesell',
     destination: 'Villa Gesell',
+    timezone: 'America/Argentina/Buenos_Aires',
     weather: {
       temperature: 24,
       windSpeed: 12,
@@ -36,7 +38,9 @@ describe('DestinationsPage', () => {
   };
 
   const contextPampasMock: DestinationContext = {
+    destinationId: 'pampas',
     destination: 'Mar de las Pampas',
+    timezone: 'America/Argentina/Buenos_Aires',
     weather: {
       temperature: 27,
       windSpeed: 14,
