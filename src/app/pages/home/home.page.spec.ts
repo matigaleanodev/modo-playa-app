@@ -134,11 +134,14 @@ describe('HomePage', () => {
 
   it('deberia renderizar bloque de error cuando el recurso informa una falla', () => {
     lodgingsResourceMock.error.set('No pudimos cargar los alojamientos.');
+    lodgingsResourceMock.lodgings.set([]);
     fixture.detectChanges();
 
-    const statusBlock = fixture.nativeElement.querySelector('.status-block-error');
+    const statusCard = fixture.nativeElement.querySelector(
+      'app-public-state-card',
+    );
 
-    expect(statusBlock?.textContent).toContain('No pudimos cargar los alojamientos.');
+    expect(statusCard?.textContent).toContain('No pudimos cargar los alojamientos.');
   });
 
   it('deberia navegar al detalle del alojamiento', () => {
@@ -204,6 +207,16 @@ describe('HomePage', () => {
 
     expect(component.searchTerm()).toBe('mar azul');
     expect(lodgingsResourceMock.setSearch).toHaveBeenCalledWith('mar azul');
+  });
+
+  it('deberia reintentar la carga del catalogo con el termino actual', async () => {
+    component.searchTerm.set('gesell');
+
+    await component.retry();
+
+    expect(lodgingsResourceMock.loadInitialLodgings).toHaveBeenCalledWith(
+      'gesell',
+    );
   });
 
   it('no deberia disparar busqueda si el termino no cambia', async () => {
@@ -279,6 +292,22 @@ describe('HomePage', () => {
       guests: null,
     });
     expect(component.hasActiveFilters()).toBeFalse();
+  });
+
+  it('deberia resetear busqueda y filtros para volver al catalogo completo', async () => {
+    component.searchTerm.set('mar azul');
+    component.toggleAmenity(LodgingAmenity.WIFI);
+
+    await component.resetSearchAndFilters();
+
+    expect(component.searchTerm()).toBe('');
+    expect(component.filters()).toEqual({
+      amenities: [],
+      minPrice: null,
+      maxPrice: null,
+      guests: null,
+    });
+    expect(lodgingsResourceMock.setSearch).toHaveBeenCalledWith('');
   });
 
   it('deberia renderizar el overlay propio de filtros cuando esta abierto', () => {

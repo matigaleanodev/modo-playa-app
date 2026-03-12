@@ -25,6 +25,7 @@ import {
   RangeCustomEvent,
   SearchbarCustomEvent,
 } from '@ionic/angular';
+import { PublicStateCardComponent } from '@shared/components/public-state-card/public-state-card.component';
 import { addIcons } from 'ionicons';
 import {
   add,
@@ -72,6 +73,7 @@ import {
     IonSearchbar,
     LodgingCardComponent,
     LodgingCardSkeletonComponent,
+    PublicStateCardComponent,
   ],
 })
 export class HomePage {
@@ -103,6 +105,9 @@ export class HomePage {
   );
   readonly activeFiltersCount = computed(() => this.activeFilters().length);
   readonly hasActiveFilters = computed(() => this.activeFiltersCount() > 0);
+  readonly hasSearchOrFilters = computed(() => {
+    return Boolean(this.searchTerm()) || this.hasActiveFilters();
+  });
   readonly filtersButtonLabel = computed(() => {
     const count = this.activeFiltersCount();
     return count > 0 ? `Filtros (${count})` : 'Filtros';
@@ -150,6 +155,10 @@ export class HomePage {
     await this.lodgingsResource.setSearch(nextTerm);
   }
 
+  async retry(): Promise<void> {
+    await this.lodgingsResource.loadInitialLodgings(this.searchTerm());
+  }
+
   openFilters(): void {
     this.isFiltersOpen.set(true);
   }
@@ -189,6 +198,12 @@ export class HomePage {
 
   clearFilters(): void {
     this.filters.set(createDefaultHomeFilters());
+  }
+
+  async resetSearchAndFilters(): Promise<void> {
+    this.clearFilters();
+    this.searchTerm.set('');
+    await this.lodgingsResource.setSearch('');
   }
 
   removeFilter(chip: ActiveFilterChip): void {
