@@ -186,6 +186,18 @@ ion-footer.app-page-footer {
   margin-bottom: 14px;
 }
 
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.55rem;
+  color: rgba(var(--ion-color-primary-contrast-rgb), 0.82);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 .app-section-copy h1 {
   margin: 0 0 6px;
   font-size: 1.32rem;
@@ -203,6 +215,10 @@ ion-footer.app-page-footer {
 
 :root.ion-palette-dark .app-section-copy h1 {
   color: rgba(214, 230, 245, 0.96);
+}
+
+:root.ion-palette-dark .hero-eyebrow {
+  color: rgba(198, 214, 228, 0.76);
 }
 
 :root.ion-palette-dark .app-section-copy p {
