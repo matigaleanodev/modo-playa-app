@@ -9,15 +9,13 @@
         ></ion-back-button>
       </ion-buttons>
 
-      <ion-title>{{ lodging().title }}</ion-title>
-
       <ion-buttons slot="end">
         <ion-menu-button menu="main-menu" autoHide="false"></ion-menu-button>
       </ion-buttons>
     </ion-toolbar>
   </ion-header>
 
-  <ion-content id="detail-content" class="detail-content">
+  <ion-content id="detail-content" class="detail-content" appScrollHeader>
     <section class="hero">
       <img [src]="heroImage()" [alt]="lodging().title" />
     </section>

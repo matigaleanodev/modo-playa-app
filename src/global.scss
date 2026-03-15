@@ -72,24 +72,14 @@ ion-tab-button.tab-selected {
   color: var(--app-tabbar-color-active);
 }
 
-:root:not(.ion-palette-dark) ion-header {
-  background: linear-gradient(
-    180deg,
-    rgba(var(--ion-color-primary-rgb), 0.96) 0%,
-    rgba(var(--ion-color-primary-rgb), 0.9) 42%,
-    rgba(var(--ion-color-secondary-rgb), 0.88) 100%
-  );
-  box-shadow: 0 6px 18px rgba(var(--ion-color-primary-rgb), 0.2);
-}
-
-:root.ion-palette-dark ion-header {
-  background: linear-gradient(
-    180deg,
-    rgba(var(--ion-color-primary-rgb), 0.34) 0%,
-    rgba(var(--ion-color-secondary-rgb), 0.58) 46%,
-    rgba(var(--ion-color-tertiary-rgb), 0.82) 100%
-  );
-  box-shadow: 0 8px 22px rgba(var(--ion-color-tertiary-rgb), 0.38);
+ion-header {
+  background: transparent;
+  box-shadow: none;
+  transition:
+    background-color 220ms ease,
+    box-shadow 220ms ease,
+    backdrop-filter 220ms ease,
+    -webkit-backdrop-filter 220ms ease;
 }
 
 ion-header::after {
@@ -98,8 +88,8 @@ ion-header::after {
 
 ion-header ion-toolbar {
   --background: transparent;
-  --color: var(--ion-color-primary-contrast);
-  --border-color: rgba(var(--ion-color-primary-contrast-rgb), 0.22);
+  --color: var(--ion-text-color);
+  --border-color: transparent;
 }
 
 ion-header ion-title,
@@ -107,15 +97,15 @@ ion-header ion-back-button,
 ion-header ion-menu-button,
 ion-header ion-button,
 ion-header ion-icon {
-  color: var(--ion-color-primary-contrast);
+  color: var(--ion-text-color);
 }
 
 ion-header.app-page-header,
 ion-footer.app-page-footer {
-  background: var(--app-surface-toolbar);
-  box-shadow: var(--app-shadow-toolbar-top);
-  backdrop-filter: saturate(140%) blur(14px);
-  -webkit-backdrop-filter: saturate(140%) blur(14px);
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 ion-header.app-page-header::after,
@@ -124,8 +114,8 @@ ion-footer.app-page-footer::before {
 }
 
 .app-page-toolbar {
-  --background: var(--app-surface-toolbar);
-  --border-color: var(--app-border-faint);
+  --background: transparent;
+  --border-color: transparent;
   box-shadow: none;
   min-height: 56px;
 }
@@ -135,30 +125,10 @@ ion-footer.app-page-footer .app-page-toolbar {
   border-color: var(--app-border-faint);
 }
 
-:root:not(.ion-palette-dark) ion-header.app-page-header {
-  background: linear-gradient(
-    180deg,
-    rgba(var(--ion-color-primary-rgb), 0.96) 0%,
-    rgba(var(--ion-color-primary-rgb), 0.9) 42%,
-    rgba(var(--ion-color-secondary-rgb), 0.88) 100%
-  );
-  box-shadow: 0 6px 18px rgba(var(--ion-color-primary-rgb), 0.2);
-}
-
-:root.ion-palette-dark ion-header.app-page-header {
-  background: linear-gradient(
-    180deg,
-    rgba(var(--ion-color-primary-rgb), 0.34) 0%,
-    rgba(var(--ion-color-secondary-rgb), 0.58) 46%,
-    rgba(var(--ion-color-tertiary-rgb), 0.82) 100%
-  );
-  box-shadow: 0 8px 22px rgba(var(--ion-color-tertiary-rgb), 0.38);
-}
-
 ion-header.app-page-header .app-page-toolbar {
   --background: transparent;
-  --color: var(--ion-color-primary-contrast);
-  --border-color: rgba(var(--ion-color-primary-contrast-rgb), 0.22);
+  --color: var(--ion-text-color);
+  --border-color: transparent;
 }
 
 ion-header.app-page-header .app-page-toolbar {
@@ -173,10 +143,25 @@ ion-menu ion-header ion-toolbar {
   --padding-bottom: 0;
 }
 
-ion-header.app-page-header ion-title {
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+ion-menu ion-header {
+  background: var(--app-surface-toolbar);
+  box-shadow: var(--app-shadow-toolbar-top);
+  backdrop-filter: saturate(140%) blur(14px);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
+}
+
+ion-header.app-page-header.is-scrolled,
+ion-header.detail-header.is-scrolled {
+  background: color-mix(in srgb, var(--ion-background-color) 72%, transparent);
+  box-shadow: 0 10px 28px rgba(9, 28, 46, 0.1);
+  backdrop-filter: saturate(150%) blur(14px);
+  -webkit-backdrop-filter: saturate(150%) blur(14px);
+}
+
+:root.ion-palette-dark ion-header.app-page-header.is-scrolled,
+:root.ion-palette-dark ion-header.detail-header.is-scrolled {
+  background: color-mix(in srgb, rgba(7, 20, 33, 0.82) 84%, transparent);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.24);
 }
 
 ion-footer.app-page-footer .app-page-toolbar {

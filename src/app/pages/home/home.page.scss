@@ -246,6 +246,17 @@ ion-content.home-content::part(background) {
   text-align: center;
 }
 
+.filter-calendar {
+  margin-top: 14px;
+}
+
+.filter-calendar ::ng-deep .availability-card {
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
 .amenity-chips {
   display: flex;
   flex-wrap: wrap;

@@ -354,6 +354,8 @@ describe('HomePage', () => {
     component.onFiltersDragEnd({
       currentTarget: dragZone,
       pointerId: 1,
+      preventDefault: () => undefined,
+      stopPropagation: () => undefined,
     } as unknown as PointerEvent);
 
     expect(component.isFiltersOpen()).toBeFalse();
@@ -382,6 +384,8 @@ describe('HomePage', () => {
     component.onFiltersDragEnd({
       currentTarget: dragZone,
       pointerId: 1,
+      preventDefault: () => undefined,
+      stopPropagation: () => undefined,
     } as unknown as PointerEvent);
 
     expect(component.isFiltersOpen()).toBeTrue();

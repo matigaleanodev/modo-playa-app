@@ -13,11 +13,12 @@ import {
   IonMenuButton,
   IonRange,
   IonSearchbar,
-  IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
+import { LodgingAvailabilityCalendarComponent } from 'src/app/lodgings/components/lodging-availability-calendar/lodging-availability-calendar.component';
 import { LodgingCardComponent } from 'src/app/lodgings/components/lodging-card/lodging-card.component';
 import {
+  AvailabilityRange,
   Lodging,
   LodgingAmenity,
   LodgingType,
@@ -30,6 +31,7 @@ import {
   SearchbarCustomEvent,
 } from '@ionic/angular';
 import { PublicStateCardComponent } from '@shared/components/public-state-card/public-state-card.component';
+import { ScrollHeaderDirective } from '@shared/directives/scroll-header.directive';
 import { addIcons } from 'ionicons';
 import {
   add,
@@ -73,7 +75,6 @@ import {
     IonButton,
     IonHeader,
     IonToolbar,
-    IonTitle,
     IonButtons,
     IonChip,
     IonMenuButton,
@@ -84,6 +85,8 @@ import {
     IonLabel,
     IonRange,
     IonSearchbar,
+    ScrollHeaderDirective,
+    LodgingAvailabilityCalendarComponent,
     LodgingCardComponent,
     LodgingCardSkeletonComponent,
     PublicStateCardComponent,
@@ -91,8 +94,10 @@ import {
 })
 export class HomePage {
   private readonly filtersSheetCloseThreshold = 96;
+  private readonly filtersCloseGestureCooldownMs = 180;
   private activeFiltersPointerId: number | null = null;
   private filtersSheetDragStartY: number | null = null;
+  private ignoreFiltersOpenUntil = 0;
   private readonly lodgingsResource = inject(LodgingsResourceService);
 
   readonly lodgingsRaw = computed(() => this.lodgingsResource.lodgings());
@@ -193,6 +198,10 @@ export class HomePage {
   }
 
   openFilters(): void {
+    if (Date.now() < this.ignoreFiltersOpenUntil) {
+      return;
+    }
+
     this.resetFiltersSheetDrag();
     this.isFiltersOpen.set(true);
   }
@@ -249,6 +258,10 @@ export class HomePage {
     this.resetFiltersSheetDrag();
 
     if (shouldClose) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.ignoreFiltersOpenUntil =
+        Date.now() + this.filtersCloseGestureCooldownMs;
       this.closeFilters();
     }
   }
@@ -313,6 +326,18 @@ export class HomePage {
   ): void {
     const value = this.getFormValue(event);
     this.filters.update((filters) => setAvailabilityDate(filters, field, value));
+  }
+
+  onAvailabilityRangeChange(range: AvailabilityRange | null): void {
+    this.filters.update((filters) => {
+      const withFrom = setAvailabilityDate(
+        filters,
+        'availableFrom',
+        range?.from ?? null,
+      );
+
+      return setAvailabilityDate(withFrom, 'availableTo', range?.to ?? null);
+    });
   }
 
   decreaseGuests(): void {

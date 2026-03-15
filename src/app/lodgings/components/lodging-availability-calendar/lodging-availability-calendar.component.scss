@@ -15,6 +15,10 @@
   gap: 14px;
 }
 
+.availability-header:has(h2:empty) {
+  gap: 0;
+}
+
 .availability-header h2 {
   margin: 0;
   color: var(--ion-text-color);
@@ -86,14 +90,19 @@
 
 .calendar-day {
   height: 38px;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0;
   color: var(--ion-text-color);
   font-size: 0.84rem;
   font-weight: 700;
   border: 1px solid transparent;
+  background: transparent;
   will-change: transform;
+  appearance: none;
+  cursor: default;
   transition:
     transform 160ms ease,
     border-color 180ms ease,
@@ -103,6 +112,14 @@
 
 .calendar-day:active {
   transform: scale(0.96);
+}
+
+.calendar-day:disabled {
+  opacity: 1;
+}
+
+.calendar-day--interactive {
+  cursor: pointer;
 }
 
 .calendar-day__label {
@@ -156,12 +173,19 @@
   color: rgba(var(--ion-color-medium-rgb), 0.82);
 }
 
+.calendar-day--selected {
+  background: rgba(var(--ion-color-primary-rgb), 0.24);
+  color: var(--ion-color-secondary);
+  border-color: rgba(var(--ion-color-primary-rgb), 0.28);
+}
+
 @media (hover: hover) {
   .month-nav-button:hover {
     --background: rgba(var(--ion-color-primary-rgb), 0.12);
   }
 
   .calendar-day--available:hover,
+  .calendar-day--selected:hover,
   .calendar-day--occupied:hover,
   .calendar-day--past:hover {
     transform: translateY(-1px) scale(1.02);
@@ -193,6 +217,12 @@
 :host-context(.ion-palette-dark) .calendar-day--occupied {
   background: rgba(196, 86, 86, 0.34);
   color: #ffd3d3;
+}
+
+:host-context(.ion-palette-dark) .calendar-day--selected {
+  background: rgba(var(--ion-color-primary-rgb), 0.3);
+  border-color: rgba(var(--ion-color-primary-rgb), 0.24);
+  color: rgba(228, 237, 246, 0.96);
 }
 
 :host-context(.ion-palette-dark) .calendar-day--past {

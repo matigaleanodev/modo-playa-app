@@ -10,7 +10,6 @@ import {
   IonIcon,
   IonMenuButton,
   IonText,
-  IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -39,6 +38,7 @@ import {
 } from '../../models/lodging.model';
 import { LodgingAvailabilityCalendarComponent } from '../../components/lodging-availability-calendar/lodging-availability-calendar.component';
 import { LodgingsResourceService } from '../../services/lodgings-resource.service';
+import { ScrollHeaderDirective } from '@shared/directives/scroll-header.directive';
 
 interface LodgingFacility {
   id: string;
@@ -67,11 +67,11 @@ type LodgingDetailInput = Lodging & {
     IonBackButton,
     IonMenuButton,
     IonContent,
+    ScrollHeaderDirective,
     IonFooter,
     IonIcon,
     IonButton,
     IonText,
-    IonTitle,
     LodgingAvailabilityCalendarComponent,
   ],
 })

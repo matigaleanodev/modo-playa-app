@@ -1,6 +1,5 @@
 <ion-header class="app-page-header">
   <ion-toolbar class="app-page-toolbar">
-    <ion-title>Modo Playa</ion-title>
     <ion-buttons slot="end">
       <ion-menu-button menu="main-menu"></ion-menu-button>
     </ion-buttons>
@@ -9,6 +8,7 @@
 
 <ion-content
   class="destinations-content"
+  appScrollHeader
   [attr.data-weather-bg]="backgroundClass()"
 >
   <div class="weather-backdrop" aria-hidden="true"></div>

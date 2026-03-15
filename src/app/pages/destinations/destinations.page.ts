@@ -17,7 +17,6 @@ import {
   IonRow,
   IonSegment,
   IonSegmentButton,
-  IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
 import { SegmentCustomEvent } from '@ionic/angular';
@@ -42,6 +41,7 @@ import {
   getDestinationsErrorMessage,
 } from '@shared/http/public-api-error';
 import { PublicStateCardComponent } from '@shared/components/public-state-card/public-state-card.component';
+import { ScrollHeaderDirective } from '@shared/directives/scroll-header.directive';
 import {
   formatDestinationTime,
   isNightInDestination,
@@ -54,10 +54,10 @@ import {
   imports: [
     IonHeader,
     IonToolbar,
-    IonTitle,
     IonButtons,
     IonMenuButton,
     IonContent,
+    ScrollHeaderDirective,
     IonSegment,
     IonSegmentButton,
     IonLabel,

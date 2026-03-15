@@ -1,13 +1,12 @@
 <ion-header class="app-page-header">
   <ion-toolbar class="app-page-toolbar">
-    <ion-title>Modo Playa</ion-title>
     <ion-buttons slot="end">
       <ion-menu-button menu="main-menu"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="home-content">
+<ion-content class="home-content" appScrollHeader>
   <section class="page home-page">
     <header class="home-copy app-section-copy">
       <h1>Home</h1>
@@ -286,30 +285,16 @@
           <section class="filter-section">
             <div class="filter-section-heading">
               <h3>Fechas libres</h3>
-              <p>Filtro local sobre `occupiedRanges` ya cargados.</p>
             </div>
 
-            <div class="filter-grid two-columns">
-              <label class="field-shell">
-                <span class="field-label">Desde</span>
-                <input
-                  class="field-control"
-                  type="date"
-                  [value]="filters().availableFrom ?? ''"
-                  (input)="onAvailabilityDateChange('availableFrom', $event)"
-                />
-              </label>
-
-              <label class="field-shell">
-                <span class="field-label">Hasta</span>
-                <input
-                  class="field-control"
-                  type="date"
-                  [value]="filters().availableTo ?? ''"
-                  (input)="onAvailabilityDateChange('availableTo', $event)"
-                />
-              </label>
-            </div>
+            <app-lodging-availability-calendar
+              class="filter-calendar"
+              [title]="null"
+              [selectionEnabled]="true"
+              [selectedFrom]="filters().availableFrom"
+              [selectedTo]="filters().availableTo"
+              (rangeChange)="onAvailabilityRangeChange($event)"
+            ></app-lodging-availability-calendar>
           </section>
 
           <ion-button
