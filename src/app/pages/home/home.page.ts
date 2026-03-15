@@ -77,6 +77,9 @@ import {
   ],
 })
 export class HomePage {
+  private readonly filtersSheetCloseThreshold = 96;
+  private activeFiltersPointerId: number | null = null;
+  private filtersSheetDragStartY: number | null = null;
   private readonly lodgingsResource = inject(LodgingsResourceService);
 
   readonly lodgingsRaw = computed(() => this.lodgingsResource.lodgings());
@@ -87,6 +90,8 @@ export class HomePage {
   readonly error = computed(() => this.lodgingsResource.error());
   readonly searchTerm = signal('');
   readonly isFiltersOpen = signal(false);
+  readonly isDraggingFiltersSheet = signal(false);
+  readonly filtersSheetOffset = signal(0);
   readonly filters = signal<HomeFilters>(createDefaultHomeFilters());
   readonly amenityOptions = Object.values(LodgingAmenity);
   readonly skeletonCards = Array.from({ length: 4 });
@@ -112,6 +117,9 @@ export class HomePage {
     const count = this.activeFiltersCount();
     return count > 0 ? `Filtros (${count})` : 'Filtros';
   });
+  readonly filtersSheetTransform = computed(
+    () => `translateY(${this.filtersSheetOffset()}px)`,
+  );
 
   constructor() {
     addIcons({
@@ -160,11 +168,64 @@ export class HomePage {
   }
 
   openFilters(): void {
+    this.resetFiltersSheetDrag();
     this.isFiltersOpen.set(true);
   }
 
   closeFilters(): void {
+    this.resetFiltersSheetDrag();
     this.isFiltersOpen.set(false);
+  }
+
+  onFiltersDragStart(event: PointerEvent): void {
+    if (event.pointerType === 'mouse' && event.button !== 0) {
+      return;
+    }
+
+    const dragZone = event.currentTarget;
+
+    if (!(dragZone instanceof HTMLElement)) {
+      return;
+    }
+
+    dragZone.setPointerCapture(event.pointerId);
+    this.activeFiltersPointerId = event.pointerId;
+    this.filtersSheetDragStartY = event.clientY;
+    this.filtersSheetOffset.set(0);
+    this.isDraggingFiltersSheet.set(true);
+  }
+
+  onFiltersDragMove(event: PointerEvent): void {
+    if (
+      !this.isDraggingFiltersSheet() ||
+      this.activeFiltersPointerId !== event.pointerId ||
+      this.filtersSheetDragStartY === null
+    ) {
+      return;
+    }
+
+    const nextOffset = Math.max(0, event.clientY - this.filtersSheetDragStartY);
+    this.filtersSheetOffset.set(nextOffset);
+  }
+
+  onFiltersDragEnd(event: PointerEvent): void {
+    if (this.activeFiltersPointerId !== event.pointerId) {
+      return;
+    }
+
+    const dragZone = event.currentTarget;
+
+    if (dragZone instanceof HTMLElement && dragZone.hasPointerCapture(event.pointerId)) {
+      dragZone.releasePointerCapture(event.pointerId);
+    }
+
+    const shouldClose = this.filtersSheetOffset() >= this.filtersSheetCloseThreshold;
+
+    this.resetFiltersSheetDrag();
+
+    if (shouldClose) {
+      this.closeFilters();
+    }
   }
 
   toggleAmenity(amenity: LodgingAmenity): void {
@@ -225,5 +286,12 @@ export class HomePage {
 
   getAmenityLabel(amenity: LodgingAmenity): string {
     return getAmenityLabel(amenity);
+  }
+
+  private resetFiltersSheetDrag(): void {
+    this.activeFiltersPointerId = null;
+    this.filtersSheetDragStartY = null;
+    this.filtersSheetOffset.set(0);
+    this.isDraggingFiltersSheet.set(false);
   }
 }

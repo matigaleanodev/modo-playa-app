@@ -276,6 +276,62 @@ describe('HomePage', () => {
     expect(component.isFiltersOpen()).toBeFalse();
   });
 
+  it('deberia cerrar el panel cuando el arrastre hacia abajo supera el umbral', () => {
+    component.openFilters();
+
+    const dragZone = document.createElement('div');
+    spyOn(dragZone, 'setPointerCapture');
+    spyOn(dragZone, 'hasPointerCapture').and.returnValue(true);
+    spyOn(dragZone, 'releasePointerCapture');
+
+    component.onFiltersDragStart({
+      button: 0,
+      clientY: 100,
+      currentTarget: dragZone,
+      pointerId: 1,
+      pointerType: 'touch',
+    } as unknown as PointerEvent);
+    component.onFiltersDragMove({
+      clientY: 220,
+      pointerId: 1,
+    } as PointerEvent);
+    component.onFiltersDragEnd({
+      currentTarget: dragZone,
+      pointerId: 1,
+    } as unknown as PointerEvent);
+
+    expect(component.isFiltersOpen()).toBeFalse();
+    expect(component.filtersSheetOffset()).toBe(0);
+  });
+
+  it('deberia mantener el panel abierto cuando el arrastre es corto', () => {
+    component.openFilters();
+
+    const dragZone = document.createElement('div');
+    spyOn(dragZone, 'setPointerCapture');
+    spyOn(dragZone, 'hasPointerCapture').and.returnValue(true);
+    spyOn(dragZone, 'releasePointerCapture');
+
+    component.onFiltersDragStart({
+      button: 0,
+      clientY: 100,
+      currentTarget: dragZone,
+      pointerId: 1,
+      pointerType: 'touch',
+    } as unknown as PointerEvent);
+    component.onFiltersDragMove({
+      clientY: 150,
+      pointerId: 1,
+    } as PointerEvent);
+    component.onFiltersDragEnd({
+      currentTarget: dragZone,
+      pointerId: 1,
+    } as unknown as PointerEvent);
+
+    expect(component.isFiltersOpen()).toBeTrue();
+    expect(component.filtersSheetOffset()).toBe(0);
+  });
+
   it('deberia limpiar todos los filtros activos', () => {
     component.toggleAmenity(LodgingAmenity.WIFI);
     component.onPriceRangeChange({

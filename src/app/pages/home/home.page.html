@@ -108,86 +108,101 @@
 
 @if (isFiltersOpen()) {
   <div class="filters-overlay" (click)="closeFilters()">
-    <section class="filters-sheet" (click)="$event.stopPropagation()">
-      <div class="filters-sheet-handle" aria-hidden="true"></div>
+    <section
+      class="filters-sheet"
+      [class.is-dragging]="isDraggingFiltersSheet()"
+      [style.transform]="filtersSheetTransform()"
+      (click)="$event.stopPropagation()"
+    >
+      <div
+        class="filters-sheet-drag-zone"
+        (pointerdown)="onFiltersDragStart($event)"
+        (pointermove)="onFiltersDragMove($event)"
+        (pointerup)="onFiltersDragEnd($event)"
+        (pointercancel)="onFiltersDragEnd($event)"
+      >
+        <div class="filters-sheet-handle" aria-hidden="true"></div>
 
-      <header class="filters-sheet-header">
-        <div>
-          <p class="filters-sheet-eyebrow">Filtrado local</p>
-          <h2>Filtros</h2>
-        </div>
+        <header class="filters-sheet-header">
+          <div>
+            <p class="filters-sheet-eyebrow">Filtrado local</p>
+            <h2>Filtros</h2>
+          </div>
 
-        <ion-button fill="clear" size="small" (click)="closeFilters()">
-          Cerrar
-        </ion-button>
-      </header>
+          <ion-button fill="clear" size="small" (click)="closeFilters()">
+            Cerrar
+          </ion-button>
+        </header>
+      </div>
 
       <div class="filters-sheet-body">
-        <section class="filter-section">
-          <div class="filter-section-heading">
-            <h3>Comodidades</h3>
-            <p>Seleccion múltiple</p>
-          </div>
+        <div>
+          <section class="filter-section">
+            <div class="filter-section-heading">
+              <h3>Comodidades</h3>
+              <p>Seleccion múltiple</p>
+            </div>
 
-          <div class="amenity-chips">
-            @for (amenity of amenityOptions; track trackByAmenity($index, amenity)) {
-              <ion-chip
-                class="amenity-chip"
-                [class.is-selected]="hasAmenitySelected(amenity)"
-                (click)="toggleAmenity(amenity)"
-              >
-                <ion-label>{{ getAmenityLabel(amenity) }}</ion-label>
-              </ion-chip>
-            }
-          </div>
-        </section>
+            <div class="amenity-chips">
+              @for (amenity of amenityOptions; track trackByAmenity($index, amenity)) {
+                <ion-chip
+                  class="amenity-chip"
+                  [class.is-selected]="hasAmenitySelected(amenity)"
+                  (click)="toggleAmenity(amenity)"
+                >
+                  <ion-label>{{ getAmenityLabel(amenity) }}</ion-label>
+                </ion-chip>
+              }
+            </div>
+          </section>
 
-        <section class="filter-section">
-          <div class="filter-section-heading">
-            <h3>Precio</h3>
-            <p>
-              {{ priceRangeValue().lower | currency: 'ARS':'symbol':'1.0-0' }} -
-              {{ priceRangeValue().upper | currency: 'ARS':'symbol':'1.0-0' }}
-            </p>
-          </div>
+          <section class="filter-section">
+            <div class="filter-section-heading">
+              <h3>Precio</h3>
+              <p>
+                {{ priceRangeValue().lower | currency: 'ARS':'symbol':'1.0-0' }} -
+                {{ priceRangeValue().upper | currency: 'ARS':'symbol':'1.0-0' }}
+              </p>
+            </div>
 
-          <ion-range
-            class="price-range"
-            [dualKnobs]="true"
-            [min]="priceBounds().min"
-            [max]="priceBounds().max"
-            [step]="priceBounds().step"
-            [value]="priceRangeValue()"
-            (ionInput)="onPriceRangeChange($event)"
-          ></ion-range>
-        </section>
+            <ion-range
+              class="price-range"
+              [dualKnobs]="true"
+              [min]="priceBounds().min"
+              [max]="priceBounds().max"
+              [step]="priceBounds().step"
+              [value]="priceRangeValue()"
+              (ionInput)="onPriceRangeChange($event)"
+            ></ion-range>
+          </section>
 
-        <section class="filter-section">
-          <div class="filter-section-heading">
-            <h3>Huéspedes</h3>
-            <p>Se muestran alojamientos con capacidad suficiente.</p>
-          </div>
+          <section class="filter-section">
+            <div class="filter-section-heading">
+              <h3>Huéspedes</h3>
+              <p>Se muestran alojamientos con capacidad suficiente.</p>
+            </div>
 
-          <div class="guests-stepper">
-            <ion-button fill="outline" (click)="decreaseGuests()">
-              <ion-icon slot="icon-only" name="remove" aria-hidden="true"></ion-icon>
-            </ion-button>
-            <span>{{ filters().guests ?? 0 }}</span>
-            <ion-button fill="outline" (click)="increaseGuests()">
-              <ion-icon slot="icon-only" name="add" aria-hidden="true"></ion-icon>
-            </ion-button>
-          </div>
-        </section>
+            <div class="guests-stepper">
+              <ion-button fill="outline" (click)="decreaseGuests()">
+                <ion-icon slot="icon-only" name="remove" aria-hidden="true"></ion-icon>
+              </ion-button>
+              <span>{{ filters().guests ?? 0 }}</span>
+              <ion-button fill="outline" (click)="increaseGuests()">
+                <ion-icon slot="icon-only" name="add" aria-hidden="true"></ion-icon>
+              </ion-button>
+            </div>
+          </section>
 
-        <ion-button
-          class="clear-filters-button in-content"
-          fill="clear"
-          [disabled]="!hasActiveFilters()"
-          (click)="clearFilters()"
-        >
-          <ion-icon slot="start" name="trash-outline" aria-hidden="true"></ion-icon>
-          Limpiar filtros
-        </ion-button>
+          <ion-button
+            class="clear-filters-button in-content"
+            fill="clear"
+            [disabled]="!hasActiveFilters()"
+            (click)="clearFilters()"
+          >
+            <ion-icon slot="start" name="trash-outline" aria-hidden="true"></ion-icon>
+            Limpiar filtros
+          </ion-button>
+        </div>
       </div>
     </section>
   </div>
