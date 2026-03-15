@@ -25,9 +25,14 @@
       ></ion-searchbar>
 
       <div class="search-actions">
-        <ion-button class="filters-button" fill="solid" (click)="openFilters()">
-          <ion-icon slot="start" name="options-outline" aria-hidden="true"></ion-icon>
-          <span>{{ filtersButtonLabel() }}</span>
+        <ion-button
+          class="filters-button"
+          fill="solid"
+          aria-label="{{ filtersButtonLabel() }}"
+          title="{{ filtersButtonLabel() }}"
+          (click)="openFilters()"
+        >
+          <ion-icon name="options-outline" aria-hidden="true"></ion-icon>
         </ion-button>
       </div>
     </section>

@@ -62,10 +62,11 @@ ion-content.home-content::part(background) {
 
 .search-panel {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 10px;
   align-items: stretch;
   margin-bottom: 12px;
+  width: min(100%, 40rem);
   padding: 12px;
   border: 1px solid color-mix(in srgb, var(--ion-color-primary) 10%, white 42%);
   border-radius: 24px;
@@ -88,6 +89,8 @@ ion-content.home-content::part(background) {
   --placeholder-color: color-mix(in srgb, var(--ion-text-color) 58%, transparent);
   --min-height: 48px;
   height: 48px;
+  min-width: 0;
+  width: 100%;
   padding: 0;
   margin: 0;
   background: transparent;
@@ -96,13 +99,12 @@ ion-content.home-content::part(background) {
 
 .filters-button {
   height: 48px;
-  width: 100%;
-  min-width: 114px;
-  --padding-start: 16px;
-  --padding-end: 16px;
+  width: 48px;
+  min-width: 48px;
+  --padding-start: 0;
+  --padding-end: 0;
   --border-radius: 18px;
   --box-shadow: 0 14px 28px rgba(23, 53, 88, 0.18);
-  font-weight: 700;
   align-self: stretch;
 }
 
@@ -374,10 +376,6 @@ ion-content.home-content::part(background) {
 
   .home-copy {
     padding-inline: 24px;
-  }
-
-  .search-panel {
-    grid-template-columns: minmax(0, 1fr) minmax(180px, auto);
   }
 
   .cards {
