@@ -94,10 +94,9 @@ import {
 })
 export class HomePage {
   private readonly filtersSheetCloseThreshold = 96;
-  private readonly filtersCloseGestureCooldownMs = 180;
   private activeFiltersPointerId: number | null = null;
   private filtersSheetDragStartY: number | null = null;
-  private ignoreFiltersOpenUntil = 0;
+  private clickSuppressionCleanup: (() => void) | null = null;
   private readonly lodgingsResource = inject(LodgingsResourceService);
 
   readonly lodgingsRaw = computed(() => this.lodgingsResource.lodgings());
@@ -198,10 +197,6 @@ export class HomePage {
   }
 
   openFilters(): void {
-    if (Date.now() < this.ignoreFiltersOpenUntil) {
-      return;
-    }
-
     this.resetFiltersSheetDrag();
     this.isFiltersOpen.set(true);
   }
@@ -260,8 +255,7 @@ export class HomePage {
     if (shouldClose) {
       event.preventDefault();
       event.stopPropagation();
-      this.ignoreFiltersOpenUntil =
-        Date.now() + this.filtersCloseGestureCooldownMs;
+      this.suppressNextDocumentClick();
       this.closeFilters();
     }
   }
@@ -388,6 +382,28 @@ export class HomePage {
     this.filtersSheetDragStartY = null;
     this.filtersSheetOffset.set(0);
     this.isDraggingFiltersSheet.set(false);
+  }
+
+  private suppressNextDocumentClick(): void {
+    this.clickSuppressionCleanup?.();
+
+    const handler = (clickEvent: MouseEvent): void => {
+      clickEvent.preventDefault();
+      clickEvent.stopPropagation();
+      clickEvent.stopImmediatePropagation();
+      cleanup();
+    };
+
+    const cleanup = (): void => {
+      window.removeEventListener('click', handler, true);
+      if (this.clickSuppressionCleanup === cleanup) {
+        this.clickSuppressionCleanup = null;
+      }
+    };
+
+    this.clickSuppressionCleanup = cleanup;
+    window.addEventListener('click', handler, true);
+    window.setTimeout(cleanup, 320);
   }
 
   private getFormValue(event: Event): string | null {
