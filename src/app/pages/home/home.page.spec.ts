@@ -31,6 +31,7 @@ describe('HomePage', () => {
     bedrooms: 2,
     bathrooms: 1,
     minNights: 2,
+    distanceToBeach: 250,
     amenities: [LodgingAmenity.WIFI, LodgingAmenity.POOL],
     mainImage: 'https://example.com/lodging-1/default-hero.webp',
     images: [
@@ -59,6 +60,9 @@ describe('HomePage', () => {
     city: 'Mar Azul',
     maxGuests: 6,
     price: 150000,
+    bedrooms: 3,
+    bathrooms: 2,
+    distanceToBeach: 600,
     amenities: [LodgingAmenity.WIFI],
     mainImage: 'https://example.com/lodging-2/default-hero.webp',
     images: [
@@ -256,6 +260,58 @@ describe('HomePage', () => {
     expect(component.lodgingsFiltered()).toEqual([lodgingMock]);
   });
 
+  it('deberia filtrar localmente por ciudad, tipo, dormitorios, baños y distancia', () => {
+    lodgingsResourceMock.lodgings.set([lodgingMock, lodgingBeach]);
+
+    const citySelect = document.createElement('select');
+    citySelect.value = 'Mar Azul';
+    component.onCityChange({ target: citySelect } as unknown as Event);
+
+    const typeSelect = document.createElement('select');
+    typeSelect.value = LodgingType.HOUSE;
+    component.onTypeChange({ target: typeSelect } as unknown as Event);
+
+    const bedroomsInput = document.createElement('input');
+    bedroomsInput.value = '3';
+    component.onMinBedroomsChange({ target: bedroomsInput } as unknown as Event);
+
+    const bathroomsInput = document.createElement('input');
+    bathroomsInput.value = '2';
+    component.onMinBathroomsChange({ target: bathroomsInput } as unknown as Event);
+
+    component.onDistanceRangeChange({
+      detail: { value: { lower: 0, upper: 650 } },
+    } as RangeCustomEvent as unknown as Event);
+
+    expect(component.lodgingsFiltered()).toEqual([lodgingBeach]);
+  });
+
+  it('deberia filtrar fechas libres con occupiedRanges cargados localmente', () => {
+    lodgingsResourceMock.lodgings.set([
+      {
+        ...lodgingMock,
+        occupiedRanges: [{ from: '2026-03-20', to: '2026-03-25' }],
+      },
+      lodgingBeach,
+    ]);
+
+    const fromInput = document.createElement('input');
+    fromInput.value = '2026-03-21';
+    component.onAvailabilityDateChange(
+      'availableFrom',
+      { target: fromInput } as unknown as Event,
+    );
+
+    const toInput = document.createElement('input');
+    toInput.value = '2026-03-23';
+    component.onAvailabilityDateChange(
+      'availableTo',
+      { target: toInput } as unknown as Event,
+    );
+
+    expect(component.lodgingsFiltered()).toEqual([lodgingBeach]);
+  });
+
   it('deberia remover chips de filtros activos', () => {
     component.toggleAmenity(LodgingAmenity.WIFI);
     component.increaseGuests();
@@ -343,9 +399,17 @@ describe('HomePage', () => {
 
     expect(component.filters()).toEqual({
       amenities: [],
+      city: null,
+      type: null,
       minPrice: null,
       maxPrice: null,
+      minBedrooms: null,
+      minBathrooms: null,
+      minDistanceToBeach: null,
+      maxDistanceToBeach: null,
       guests: null,
+      availableFrom: null,
+      availableTo: null,
     });
     expect(component.hasActiveFilters()).toBeFalse();
   });
@@ -359,9 +423,17 @@ describe('HomePage', () => {
     expect(component.searchTerm()).toBe('');
     expect(component.filters()).toEqual({
       amenities: [],
+      city: null,
+      type: null,
       minPrice: null,
       maxPrice: null,
+      minBedrooms: null,
+      minBathrooms: null,
+      minDistanceToBeach: null,
+      maxDistanceToBeach: null,
       guests: null,
+      availableFrom: null,
+      availableTo: null,
     });
     expect(lodgingsResourceMock.setSearch).toHaveBeenCalledWith('');
   });
@@ -374,6 +446,6 @@ describe('HomePage', () => {
     const heading = fixture.nativeElement.querySelector('.filter-section h3');
 
     expect(overlay).not.toBeNull();
-    expect(heading?.textContent?.trim()).toBe('Comodidades');
+    expect(heading?.textContent?.trim()).toBe('Ubicación');
   });
 });

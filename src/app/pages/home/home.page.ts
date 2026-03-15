@@ -17,7 +17,11 @@ import {
   IonToolbar,
 } from '@ionic/angular/standalone';
 import { LodgingCardComponent } from 'src/app/lodgings/components/lodging-card/lodging-card.component';
-import { Lodging, LodgingAmenity } from 'src/app/lodgings/models/lodging.model';
+import {
+  Lodging,
+  LodgingAmenity,
+  LodgingType,
+} from 'src/app/lodgings/models/lodging.model';
 import { LodgingsResourceService } from 'src/app/lodgings/services/lodgings-resource.service';
 import { LodgingCardSkeletonComponent } from 'src/app/lodgings/components/lodging-card-skeleton/lodging-card-skeleton.component';
 import {
@@ -38,16 +42,25 @@ import {
   ActiveFilterChip,
   HomeFilters,
   applyPriceRange,
+  applyDistanceRange,
   createDefaultHomeFilters,
   decreaseGuests,
+  getDistanceBounds,
+  getDistanceRangeValue,
   filterLodgings,
   getActiveFilters,
   getAmenityLabel,
+  getLodgingTypeLabel,
   getPriceBounds,
   getPriceRangeValue,
   getSearchMatchedLodgings,
   increaseGuests,
   removeFilter,
+  setAvailabilityDate,
+  setCityFilter,
+  setMinBathrooms,
+  setMinBedrooms,
+  setTypeFilter,
   toggleAmenity,
 } from './home-filters';
 
@@ -94,7 +107,13 @@ export class HomePage {
   readonly filtersSheetOffset = signal(0);
   readonly filters = signal<HomeFilters>(createDefaultHomeFilters());
   readonly amenityOptions = Object.values(LodgingAmenity);
+  readonly lodgingTypeOptions = Object.values(LodgingType);
   readonly skeletonCards = Array.from({ length: 4 });
+  readonly cityOptions = computed(() =>
+    Array.from(new Set(this.lodgingsRaw().map((lodging) => lodging.city))).sort((left, right) =>
+      left.localeCompare(right, 'es-AR'),
+    ),
+  );
   readonly searchMatchedLodgings = computed(() => {
     return getSearchMatchedLodgings(this.lodgingsRaw(), this.searchTerm());
   });
@@ -105,8 +124,14 @@ export class HomePage {
   readonly priceRangeValue = computed(() =>
     getPriceRangeValue(this.filters(), this.priceBounds()),
   );
+  readonly distanceBounds = computed(() =>
+    getDistanceBounds(this.searchMatchedLodgings()),
+  );
+  readonly distanceRangeValue = computed(() =>
+    getDistanceRangeValue(this.filters(), this.distanceBounds()),
+  );
   readonly activeFilters = computed<ActiveFilterChip[]>(() =>
-    getActiveFilters(this.filters(), this.priceBounds()),
+    getActiveFilters(this.filters(), this.priceBounds(), this.distanceBounds()),
   );
   readonly activeFiltersCount = computed(() => this.activeFilters().length);
   readonly hasActiveFilters = computed(() => this.activeFiltersCount() > 0);
@@ -249,6 +274,47 @@ export class HomePage {
     );
   }
 
+  onDistanceRangeChange(event: Event): void {
+    const rangeEvent = event as RangeCustomEvent;
+    const value = rangeEvent.detail.value;
+
+    if (typeof value === 'number') {
+      return;
+    }
+
+    this.filters.update((filters) =>
+      applyDistanceRange(filters, value, this.distanceBounds()),
+    );
+  }
+
+  onCityChange(event: Event): void {
+    const value = this.getFormValue(event);
+    this.filters.update((filters) => setCityFilter(filters, value));
+  }
+
+  onTypeChange(event: Event): void {
+    const value = this.getFormValue(event) as LodgingType | null;
+    this.filters.update((filters) => setTypeFilter(filters, value));
+  }
+
+  onMinBedroomsChange(event: Event): void {
+    const value = this.parseOptionalPositiveInt(this.getFormValue(event));
+    this.filters.update((filters) => setMinBedrooms(filters, value));
+  }
+
+  onMinBathroomsChange(event: Event): void {
+    const value = this.parseOptionalPositiveInt(this.getFormValue(event));
+    this.filters.update((filters) => setMinBathrooms(filters, value));
+  }
+
+  onAvailabilityDateChange(
+    field: 'availableFrom' | 'availableTo',
+    event: Event,
+  ): void {
+    const value = this.getFormValue(event);
+    this.filters.update((filters) => setAvailabilityDate(filters, field, value));
+  }
+
   decreaseGuests(): void {
     this.filters.update((filters) => decreaseGuests(filters));
   }
@@ -288,10 +354,39 @@ export class HomePage {
     return getAmenityLabel(amenity);
   }
 
+  getLodgingTypeLabel(type: LodgingType): string {
+    return getLodgingTypeLabel(type);
+  }
+
   private resetFiltersSheetDrag(): void {
     this.activeFiltersPointerId = null;
     this.filtersSheetDragStartY = null;
     this.filtersSheetOffset.set(0);
     this.isDraggingFiltersSheet.set(false);
+  }
+
+  private getFormValue(event: Event): string | null {
+    const target = event.target;
+
+    if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement)) {
+      return null;
+    }
+
+    const value = target.value.trim();
+    return value ? value : null;
+  }
+
+  private parseOptionalPositiveInt(value: string | null): number | null {
+    if (!value) {
+      return null;
+    }
+
+    const parsedValue = Number.parseInt(value, 10);
+
+    if (!Number.isFinite(parsedValue) || parsedValue <= 0) {
+      return null;
+    }
+
+    return parsedValue;
   }
 }

@@ -24,10 +24,12 @@
         (ionInput)="onSearchInput($event)"
       ></ion-searchbar>
 
-      <ion-button class="filters-button" fill="solid" (click)="openFilters()">
-        <ion-icon slot="start" name="options-outline" aria-hidden="true"></ion-icon>
-        <span>{{ filtersButtonLabel() }}</span>
-      </ion-button>
+      <div class="search-actions">
+        <ion-button class="filters-button" fill="solid" (click)="openFilters()">
+          <ion-icon slot="start" name="options-outline" aria-hidden="true"></ion-icon>
+          <span>{{ filtersButtonLabel() }}</span>
+        </ion-button>
+      </div>
     </section>
 
     @if (hasActiveFilters()) {
@@ -139,6 +141,91 @@
         <div>
           <section class="filter-section">
             <div class="filter-section-heading">
+              <h3>Ubicación</h3>
+              <p>Solo ciudades publicadas</p>
+            </div>
+
+            <div class="filter-grid two-columns">
+              <label class="field-shell">
+                <span class="field-label">Ciudad</span>
+                <select
+                  class="field-control"
+                  [value]="filters().city ?? ''"
+                  (change)="onCityChange($event)"
+                >
+                  <option value="">Todas</option>
+                  @for (city of cityOptions(); track city) {
+                    <option [value]="city">{{ city }}</option>
+                  }
+                </select>
+              </label>
+
+              <label class="field-shell">
+                <span class="field-label">Tipo</span>
+                <select
+                  class="field-control"
+                  [value]="filters().type ?? ''"
+                  (change)="onTypeChange($event)"
+                >
+                  <option value="">Todos</option>
+                  @for (type of lodgingTypeOptions; track type) {
+                    <option [value]="type">{{ getLodgingTypeLabel(type) }}</option>
+                  }
+                </select>
+              </label>
+            </div>
+          </section>
+
+          <section class="filter-section compact-section">
+            <div class="filter-section-heading">
+              <h3>Capacidad base</h3>
+              <p>Valores mínimos</p>
+            </div>
+
+            <div class="filter-grid three-columns">
+              <label class="field-shell">
+                <span class="field-label">Huéspedes</span>
+                <div class="guests-stepper compact">
+                  <ion-button fill="outline" (click)="decreaseGuests()">
+                    <ion-icon slot="icon-only" name="remove" aria-hidden="true"></ion-icon>
+                  </ion-button>
+                  <span>{{ filters().guests ?? 0 }}</span>
+                  <ion-button fill="outline" (click)="increaseGuests()">
+                    <ion-icon slot="icon-only" name="add" aria-hidden="true"></ion-icon>
+                  </ion-button>
+                </div>
+              </label>
+
+              <label class="field-shell">
+                <span class="field-label">Dorm.</span>
+                <input
+                  class="field-control compact-input"
+                  type="number"
+                  inputmode="numeric"
+                  min="0"
+                  placeholder="0"
+                  [value]="filters().minBedrooms ?? ''"
+                  (input)="onMinBedroomsChange($event)"
+                />
+              </label>
+
+              <label class="field-shell">
+                <span class="field-label">Baños</span>
+                <input
+                  class="field-control compact-input"
+                  type="number"
+                  inputmode="numeric"
+                  min="0"
+                  placeholder="0"
+                  [value]="filters().minBathrooms ?? ''"
+                  (input)="onMinBathroomsChange($event)"
+                />
+              </label>
+            </div>
+          </section>
+
+          <section class="filter-section">
+            <div class="filter-section-heading">
               <h3>Comodidades</h3>
               <p>Seleccion múltiple</p>
             </div>
@@ -178,18 +265,50 @@
 
           <section class="filter-section">
             <div class="filter-section-heading">
-              <h3>Huéspedes</h3>
-              <p>Se muestran alojamientos con capacidad suficiente.</p>
+              <h3>Distancia a la playa</h3>
+              <p>
+                {{ distanceRangeValue().lower }} m -
+                {{ distanceRangeValue().upper }} m
+              </p>
             </div>
 
-            <div class="guests-stepper">
-              <ion-button fill="outline" (click)="decreaseGuests()">
-                <ion-icon slot="icon-only" name="remove" aria-hidden="true"></ion-icon>
-              </ion-button>
-              <span>{{ filters().guests ?? 0 }}</span>
-              <ion-button fill="outline" (click)="increaseGuests()">
-                <ion-icon slot="icon-only" name="add" aria-hidden="true"></ion-icon>
-              </ion-button>
+            <ion-range
+              class="price-range"
+              [dualKnobs]="true"
+              [min]="distanceBounds().min"
+              [max]="distanceBounds().max"
+              [step]="distanceBounds().step"
+              [value]="distanceRangeValue()"
+              (ionInput)="onDistanceRangeChange($event)"
+            ></ion-range>
+          </section>
+
+          <section class="filter-section">
+            <div class="filter-section-heading">
+              <h3>Fechas libres</h3>
+              <p>Filtro local sobre `occupiedRanges` ya cargados.</p>
+            </div>
+
+            <div class="filter-grid two-columns">
+              <label class="field-shell">
+                <span class="field-label">Desde</span>
+                <input
+                  class="field-control"
+                  type="date"
+                  [value]="filters().availableFrom ?? ''"
+                  (input)="onAvailabilityDateChange('availableFrom', $event)"
+                />
+              </label>
+
+              <label class="field-shell">
+                <span class="field-label">Hasta</span>
+                <input
+                  class="field-control"
+                  type="date"
+                  [value]="filters().availableTo ?? ''"
+                  (input)="onAvailabilityDateChange('availableTo', $event)"
+                />
+              </label>
             </div>
           </section>
 

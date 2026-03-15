@@ -1,11 +1,18 @@
 import {
   ActiveFilterChip,
+  applyDistanceRange,
   applyPriceRange,
   createDefaultHomeFilters,
   filterLodgings,
   getActiveFilters,
+  getDistanceBounds,
   getPriceBounds,
   getSearchMatchedLodgings,
+  setAvailabilityDate,
+  setCityFilter,
+  setMinBathrooms,
+  setMinBedrooms,
+  setTypeFilter,
   removeFilter,
   toggleAmenity,
 } from './home-filters';
@@ -31,9 +38,11 @@ describe('home-filters', () => {
       bedrooms: 2,
       bathrooms: 1,
       minNights: 2,
+      distanceToBeach: 250,
       amenities: [LodgingAmenity.WIFI, LodgingAmenity.POOL],
       mainImage: 'https://example.com/lodging-1/default-hero.webp',
       images: ['https://example.com/lodging-1/default-original.webp'],
+      occupiedRanges: [{ from: '2026-03-20', to: '2026-03-25' }],
     },
     {
       id: 'lodging-2',
@@ -48,6 +57,7 @@ describe('home-filters', () => {
       bedrooms: 3,
       bathrooms: 2,
       minNights: 3,
+      distanceToBeach: 600,
       amenities: [LodgingAmenity.WIFI],
       mainImage: 'https://example.com/lodging-2/default-hero.webp',
       images: ['https://example.com/lodging-2/default-original.webp'],
@@ -61,13 +71,50 @@ describe('home-filters', () => {
 
   it('combina filtros de amenidades, precio y huespedes', () => {
     const filteredLodgings = filterLodgings(lodgings, {
+      city: null,
+      type: null,
       amenities: [LodgingAmenity.POOL],
       minPrice: 90000,
       maxPrice: 120000,
+      minBedrooms: null,
+      minBathrooms: null,
+      minDistanceToBeach: null,
+      maxDistanceToBeach: null,
       guests: 4,
+      availableFrom: null,
+      availableTo: null,
     });
 
     expect(filteredLodgings).toEqual([lodgings[0]]);
+  });
+
+  it('filtra por ciudad, tipo, dormitorios, baños y distancia', () => {
+    const filters = applyDistanceRange(
+      setMinBathrooms(
+        setMinBedrooms(
+          setTypeFilter(
+            setCityFilter(createDefaultHomeFilters(), 'Mar Azul'),
+            LodgingType.HOUSE,
+          ),
+          3,
+        ),
+        2,
+      ),
+      { lower: 0, upper: 650 },
+      getDistanceBounds(lodgings),
+    );
+
+    expect(filterLodgings(lodgings, filters)).toEqual([lodgings[1]]);
+  });
+
+  it('filtra fechas libres usando occupiedRanges como criterio local', () => {
+    const filters = setAvailabilityDate(
+      setAvailabilityDate(createDefaultHomeFilters(), 'availableFrom', '2026-03-21'),
+      'availableTo',
+      '2026-03-23',
+    );
+
+    expect(filterLodgings(lodgings, filters)).toEqual([lodgings[1]]);
   });
 
   it('convierte el rango de precio en filtros nulos cuando coincide con los limites', () => {
@@ -90,11 +137,20 @@ describe('home-filters', () => {
     const chips = getActiveFilters(
       {
         amenities: [LodgingAmenity.WIFI],
+        city: 'Mar Azul',
+        type: LodgingType.HOUSE,
         minPrice: 100000,
         maxPrice: 150000,
+        minBedrooms: 2,
+        minBathrooms: 1,
+        minDistanceToBeach: null,
+        maxDistanceToBeach: 700,
         guests: 2,
+        availableFrom: '2026-03-26',
+        availableTo: '2026-03-28',
       },
       bounds,
+      getDistanceBounds(lodgings),
     );
 
     expect(chips[0]).toEqual({
@@ -102,9 +158,28 @@ describe('home-filters', () => {
       amenity: LodgingAmenity.WIFI,
       label: 'WiFi',
     });
-    expect(chips[1].kind).toBe('price');
-    expect(chips[1].label.replace(/\s/g, '')).toBe('$100.000-$150.000');
-    expect(chips[2]).toEqual({ kind: 'guests', label: '2 huéspedes' });
+    expect(chips.some((chip) => chip.kind === 'city' && chip.label === 'Mar Azul')).toBeTrue();
+    expect(
+      chips.some((chip) => chip.kind === 'type' && chip.label === 'Casa'),
+    ).toBeTrue();
+    expect(
+      chips.some((chip) => chip.kind === 'price' && chip.label.replace(/\s/g, '') === '$100.000-$150.000'),
+    ).toBeTrue();
+    expect(
+      chips.some((chip) => chip.kind === 'bedrooms' && chip.label === '2+ dorm.'),
+    ).toBeTrue();
+    expect(
+      chips.some((chip) => chip.kind === 'bathrooms' && chip.label === '1+ baño'),
+    ).toBeTrue();
+    expect(
+      chips.some((chip) => chip.kind === 'distance' && chip.label === 'Hasta 700 m'),
+    ).toBeTrue();
+    expect(
+      chips.some((chip) => chip.kind === 'guests' && chip.label === '2 huéspedes'),
+    ).toBeTrue();
+    expect(
+      chips.some((chip) => chip.kind === 'availability' && chip.label === '26/03/2026-28/03/2026'),
+    ).toBeTrue();
   });
 
   it('remueve un chip de amenidad sin tocar el resto de filtros', () => {
