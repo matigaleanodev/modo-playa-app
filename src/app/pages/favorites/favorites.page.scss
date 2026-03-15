@@ -48,13 +48,14 @@ ion-content.favorites-content::part(background) {
 }
 
 .favorites-copy h1 {
-  max-width: 14ch;
   font-size: clamp(1.8rem, 4.6vw, 2.4rem);
-  line-height: 1;
+  max-width: none;
+  line-height: 1.04;
+  text-wrap: balance;
 }
 
 .favorites-copy p {
-  max-width: 34rem;
+  max-width: 40rem;
   font-size: 0.96rem;
   line-height: 1.55;
 }

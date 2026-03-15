@@ -48,13 +48,14 @@ ion-content.home-content::part(background) {
 }
 
 .home-copy h1 {
-  max-width: 11ch;
   font-size: clamp(1.95rem, 5vw, 2.6rem);
-  line-height: 0.96;
+  max-width: none;
+  line-height: 1.02;
+  text-wrap: balance;
 }
 
 .home-copy p {
-  max-width: 32rem;
+  max-width: 40rem;
   font-size: 0.98rem;
   line-height: 1.55;
 }
