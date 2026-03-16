@@ -1,6 +1,7 @@
 import { CurrencyPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import {
+  IonBadge,
   IonButton,
   IonButtons,
   IonChip,
@@ -13,11 +14,16 @@ import {
   IonMenuButton,
   IonRange,
   IonSearchbar,
-  IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
+import { LodgingAvailabilityCalendarComponent } from 'src/app/lodgings/components/lodging-availability-calendar/lodging-availability-calendar.component';
 import { LodgingCardComponent } from 'src/app/lodgings/components/lodging-card/lodging-card.component';
-import { Lodging, LodgingAmenity } from 'src/app/lodgings/models/lodging.model';
+import {
+  AvailabilityRange,
+  Lodging,
+  LodgingAmenity,
+  LodgingType,
+} from 'src/app/lodgings/models/lodging.model';
 import { LodgingsResourceService } from 'src/app/lodgings/services/lodgings-resource.service';
 import { LodgingCardSkeletonComponent } from 'src/app/lodgings/components/lodging-card-skeleton/lodging-card-skeleton.component';
 import {
@@ -25,6 +31,8 @@ import {
   RangeCustomEvent,
   SearchbarCustomEvent,
 } from '@ionic/angular';
+import { PublicStateCardComponent } from '@shared/components/public-state-card/public-state-card.component';
+import { ScrollHeaderDirective } from '@shared/directives/scroll-header.directive';
 import { addIcons } from 'ionicons';
 import {
   add,
@@ -33,25 +41,31 @@ import {
   remove,
   trashOutline,
 } from 'ionicons/icons';
-
-interface HomeFilters {
-  amenities: LodgingAmenity[];
-  minPrice: number | null;
-  maxPrice: number | null;
-  guests: number | null;
-}
-
-type ActiveFilterChip =
-  | { kind: 'amenity'; amenity: LodgingAmenity; label: string }
-  | { kind: 'price'; label: string }
-  | { kind: 'guests'; label: string };
-
-const DEFAULT_FILTERS = (): HomeFilters => ({
-  amenities: [],
-  minPrice: null,
-  maxPrice: null,
-  guests: null,
-});
+import {
+  ActiveFilterChip,
+  HomeFilters,
+  applyPriceRange,
+  applyDistanceRange,
+  createDefaultHomeFilters,
+  decreaseGuests,
+  getDistanceBounds,
+  getDistanceRangeValue,
+  filterLodgings,
+  getActiveFilters,
+  getAmenityLabel,
+  getLodgingTypeLabel,
+  getPriceBounds,
+  getPriceRangeValue,
+  getSearchMatchedLodgings,
+  increaseGuests,
+  removeFilter,
+  setAvailabilityDate,
+  setCityFilter,
+  setMinBathrooms,
+  setMinBedrooms,
+  setTypeFilter,
+  toggleAmenity,
+} from './home-filters';
 
 @Component({
   selector: 'app-home',
@@ -59,10 +73,10 @@ const DEFAULT_FILTERS = (): HomeFilters => ({
   styleUrls: ['./home.page.scss'],
   imports: [
     CurrencyPipe,
+    IonBadge,
     IonButton,
     IonHeader,
     IonToolbar,
-    IonTitle,
     IonButtons,
     IonChip,
     IonMenuButton,
@@ -73,11 +87,18 @@ const DEFAULT_FILTERS = (): HomeFilters => ({
     IonLabel,
     IonRange,
     IonSearchbar,
+    ScrollHeaderDirective,
+    LodgingAvailabilityCalendarComponent,
     LodgingCardComponent,
     LodgingCardSkeletonComponent,
+    PublicStateCardComponent,
   ],
 })
 export class HomePage {
+  private readonly filtersSheetCloseThreshold = 96;
+  private activeFiltersPointerId: number | null = null;
+  private filtersSheetDragStartY: number | null = null;
+  private clickSuppressionCleanup: (() => void) | null = null;
   private readonly lodgingsResource = inject(LodgingsResourceService);
 
   readonly lodgingsRaw = computed(() => this.lodgingsResource.lodgings());
@@ -85,114 +106,51 @@ export class HomePage {
   readonly isLoading = computed(() => this.lodgingsResource.isLoading());
   readonly isLoadingMore = computed(() => this.lodgingsResource.isLoadingMore());
   readonly hasMore = computed(() => this.lodgingsResource.hasMore());
+  readonly error = computed(() => this.lodgingsResource.error());
   readonly searchTerm = signal('');
   readonly isFiltersOpen = signal(false);
-  readonly filters = signal<HomeFilters>(DEFAULT_FILTERS());
+  readonly isDraggingFiltersSheet = signal(false);
+  readonly filtersSheetOffset = signal(0);
+  readonly filters = signal<HomeFilters>(createDefaultHomeFilters());
   readonly amenityOptions = Object.values(LodgingAmenity);
+  readonly lodgingTypeOptions = Object.values(LodgingType);
   readonly skeletonCards = Array.from({ length: 4 });
+  readonly cityOptions = computed(() =>
+    Array.from(new Set(this.lodgingsRaw().map((lodging) => lodging.city))).sort((left, right) =>
+      left.localeCompare(right, 'es-AR'),
+    ),
+  );
   readonly searchMatchedLodgings = computed(() => {
-    const normalizedSearch = this.normalizeText(this.searchTerm());
-
-    if (!normalizedSearch) {
-      return this.lodgingsRaw();
-    }
-
-    return this.lodgingsRaw().filter((lodging) =>
-      [lodging.title, lodging.location, lodging.city].some((value) =>
-        this.normalizeText(value).includes(normalizedSearch),
-      ),
-    );
+    return getSearchMatchedLodgings(this.lodgingsRaw(), this.searchTerm());
   });
   readonly lodgingsFiltered = computed(() => {
-    const lodgings = this.searchMatchedLodgings();
-    const filters = this.filters();
-
-    return lodgings.filter((lodging) => {
-      if (filters.guests && lodging.maxGuests < filters.guests) {
-        return false;
-      }
-
-      if (filters.minPrice !== null && lodging.price < filters.minPrice) {
-        return false;
-      }
-
-      if (filters.maxPrice !== null && lodging.price > filters.maxPrice) {
-        return false;
-      }
-
-      if (filters.amenities.length > 0) {
-        const hasAmenities = filters.amenities.every((amenity) =>
-          lodging.amenities.includes(amenity),
-        );
-
-        if (!hasAmenities) {
-          return false;
-        }
-      }
-
-      return true;
-    });
+    return filterLodgings(this.searchMatchedLodgings(), this.filters());
   });
-  readonly priceBounds = computed(() => {
-    const prices = this.searchMatchedLodgings().map((lodging) => lodging.price);
-
-    if (prices.length === 0) {
-      return { min: 0, max: 300000, step: 5000 };
-    }
-
-    const min = Math.min(...prices);
-    const max = Math.max(...prices);
-    const roundedMin = Math.max(0, Math.floor(min / 5000) * 5000);
-    const roundedMax = Math.max(
-      roundedMin + 5000,
-      Math.ceil(max / 5000) * 5000,
-    );
-
-    return { min: roundedMin, max: roundedMax, step: 5000 };
-  });
-  readonly priceRangeValue = computed(() => {
-    const bounds = this.priceBounds();
-    const filters = this.filters();
-
-    return {
-      lower: filters.minPrice ?? bounds.min,
-      upper: filters.maxPrice ?? bounds.max,
-    };
-  });
-  readonly activeFilters = computed<ActiveFilterChip[]>(() => {
-    const filters = this.filters();
-    const chips: ActiveFilterChip[] = filters.amenities.map((amenity) => ({
-      kind: 'amenity',
-      amenity,
-      label: this.getAmenityLabel(amenity),
-    }));
-
-    if (filters.minPrice !== null || filters.maxPrice !== null) {
-      const bounds = this.priceBounds();
-      const minPrice = filters.minPrice ?? bounds.min;
-      const maxPrice = filters.maxPrice ?? bounds.max;
-
-      chips.push({
-        kind: 'price',
-        label: `${this.formatPrice(minPrice)}-${this.formatPrice(maxPrice)}`,
-      });
-    }
-
-    if (filters.guests !== null) {
-      chips.push({
-        kind: 'guests',
-        label: `${filters.guests} huésped${filters.guests === 1 ? '' : 'es'}`,
-      });
-    }
-
-    return chips;
-  });
+  readonly priceBounds = computed(() => getPriceBounds(this.searchMatchedLodgings()));
+  readonly priceRangeValue = computed(() =>
+    getPriceRangeValue(this.filters(), this.priceBounds()),
+  );
+  readonly distanceBounds = computed(() =>
+    getDistanceBounds(this.searchMatchedLodgings()),
+  );
+  readonly distanceRangeValue = computed(() =>
+    getDistanceRangeValue(this.filters(), this.distanceBounds()),
+  );
+  readonly activeFilters = computed<ActiveFilterChip[]>(() =>
+    getActiveFilters(this.filters(), this.priceBounds(), this.distanceBounds()),
+  );
   readonly activeFiltersCount = computed(() => this.activeFilters().length);
   readonly hasActiveFilters = computed(() => this.activeFiltersCount() > 0);
+  readonly hasSearchOrFilters = computed(() => {
+    return Boolean(this.searchTerm()) || this.hasActiveFilters();
+  });
   readonly filtersButtonLabel = computed(() => {
     const count = this.activeFiltersCount();
     return count > 0 ? `Filtros (${count})` : 'Filtros';
   });
+  readonly filtersSheetTransform = computed(
+    () => `translateY(${this.filtersSheetOffset()}px)`,
+  );
 
   constructor() {
     addIcons({
@@ -236,25 +194,76 @@ export class HomePage {
     await this.lodgingsResource.setSearch(nextTerm);
   }
 
+  async retry(): Promise<void> {
+    await this.lodgingsResource.loadInitialLodgings(this.searchTerm());
+  }
+
   openFilters(): void {
+    this.resetFiltersSheetDrag();
     this.isFiltersOpen.set(true);
   }
 
   closeFilters(): void {
+    this.resetFiltersSheetDrag();
     this.isFiltersOpen.set(false);
   }
 
-  toggleAmenity(amenity: LodgingAmenity): void {
-    this.filters.update((filters) => {
-      const amenities = filters.amenities.includes(amenity)
-        ? filters.amenities.filter((item) => item !== amenity)
-        : [...filters.amenities, amenity];
+  onFiltersDragStart(event: PointerEvent): void {
+    if (event.pointerType === 'mouse' && event.button !== 0) {
+      return;
+    }
 
-      return {
-        ...filters,
-        amenities,
-      };
-    });
+    const dragZone = event.currentTarget;
+
+    if (!(dragZone instanceof HTMLElement)) {
+      return;
+    }
+
+    dragZone.setPointerCapture(event.pointerId);
+    this.activeFiltersPointerId = event.pointerId;
+    this.filtersSheetDragStartY = event.clientY;
+    this.filtersSheetOffset.set(0);
+    this.isDraggingFiltersSheet.set(true);
+  }
+
+  onFiltersDragMove(event: PointerEvent): void {
+    if (
+      !this.isDraggingFiltersSheet() ||
+      this.activeFiltersPointerId !== event.pointerId ||
+      this.filtersSheetDragStartY === null
+    ) {
+      return;
+    }
+
+    const nextOffset = Math.max(0, event.clientY - this.filtersSheetDragStartY);
+    this.filtersSheetOffset.set(nextOffset);
+  }
+
+  onFiltersDragEnd(event: PointerEvent): void {
+    if (this.activeFiltersPointerId !== event.pointerId) {
+      return;
+    }
+
+    const dragZone = event.currentTarget;
+
+    if (dragZone instanceof HTMLElement && dragZone.hasPointerCapture(event.pointerId)) {
+      dragZone.releasePointerCapture(event.pointerId);
+    }
+
+    const shouldClose = this.filtersSheetOffset() >= this.filtersSheetCloseThreshold;
+
+    this.resetFiltersSheetDrag();
+
+    if (shouldClose) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.suppressNextDocumentClick();
+      this.closeFilters();
+    }
+  }
+
+  toggleAmenity(amenity: LodgingAmenity): void {
+    this.filters.update((filters) => toggleAmenity(filters, amenity));
   }
 
   hasAmenitySelected(amenity: LodgingAmenity): boolean {
@@ -269,55 +278,84 @@ export class HomePage {
       return;
     }
 
-    const bounds = this.priceBounds();
-    const nextMinPrice = value.lower <= bounds.min ? null : value.lower;
-    const nextMaxPrice = value.upper >= bounds.max ? null : value.upper;
+    this.filters.update((filters) =>
+      applyPriceRange(filters, value, this.priceBounds()),
+    );
+  }
 
-    this.filters.update((filters) => ({
-      ...filters,
-      minPrice: nextMinPrice,
-      maxPrice: nextMaxPrice,
-    }));
+  onDistanceRangeChange(event: Event): void {
+    const rangeEvent = event as RangeCustomEvent;
+    const value = rangeEvent.detail.value;
+
+    if (typeof value === 'number') {
+      return;
+    }
+
+    this.filters.update((filters) =>
+      applyDistanceRange(filters, value, this.distanceBounds()),
+    );
+  }
+
+  onCityChange(event: Event): void {
+    const value = this.getFormValue(event);
+    this.filters.update((filters) => setCityFilter(filters, value));
+  }
+
+  onTypeChange(event: Event): void {
+    const value = this.getFormValue(event) as LodgingType | null;
+    this.filters.update((filters) => setTypeFilter(filters, value));
+  }
+
+  onMinBedroomsChange(event: Event): void {
+    const value = this.parseOptionalPositiveInt(this.getFormValue(event));
+    this.filters.update((filters) => setMinBedrooms(filters, value));
+  }
+
+  onMinBathroomsChange(event: Event): void {
+    const value = this.parseOptionalPositiveInt(this.getFormValue(event));
+    this.filters.update((filters) => setMinBathrooms(filters, value));
+  }
+
+  onAvailabilityDateChange(
+    field: 'availableFrom' | 'availableTo',
+    event: Event,
+  ): void {
+    const value = this.getFormValue(event);
+    this.filters.update((filters) => setAvailabilityDate(filters, field, value));
+  }
+
+  onAvailabilityRangeChange(range: AvailabilityRange | null): void {
+    this.filters.update((filters) => {
+      const withFrom = setAvailabilityDate(
+        filters,
+        'availableFrom',
+        range?.from ?? null,
+      );
+
+      return setAvailabilityDate(withFrom, 'availableTo', range?.to ?? null);
+    });
   }
 
   decreaseGuests(): void {
-    this.filters.update((filters) => ({
-      ...filters,
-      guests:
-        filters.guests === null || filters.guests <= 1 ? null : filters.guests - 1,
-    }));
+    this.filters.update((filters) => decreaseGuests(filters));
   }
 
   increaseGuests(): void {
-    this.filters.update((filters) => ({
-      ...filters,
-      guests: (filters.guests ?? 0) + 1,
-    }));
+    this.filters.update((filters) => increaseGuests(filters));
   }
 
   clearFilters(): void {
-    this.filters.set(DEFAULT_FILTERS());
+    this.filters.set(createDefaultHomeFilters());
+  }
+
+  async resetSearchAndFilters(): Promise<void> {
+    this.clearFilters();
+    this.searchTerm.set('');
+    await this.lodgingsResource.setSearch('');
   }
 
   removeFilter(chip: ActiveFilterChip): void {
-    if (chip.kind === 'amenity') {
-      this.toggleAmenity(chip.amenity);
-      return;
-    }
-
-    if (chip.kind === 'price') {
-      this.filters.update((filters) => ({
-        ...filters,
-        minPrice: null,
-        maxPrice: null,
-      }));
-      return;
-    }
-
-    this.filters.update((filters) => ({
-      ...filters,
-      guests: null,
-    }));
+    this.filters.update((filters) => removeFilter(filters, chip));
   }
 
   trackByAmenity(_index: number, amenity: LodgingAmenity): LodgingAmenity {
@@ -334,34 +372,64 @@ export class HomePage {
   }
 
   getAmenityLabel(amenity: LodgingAmenity): string {
-    const labels: Record<LodgingAmenity, string> = {
-      [LodgingAmenity.SEA_VIEW]: 'Vista al mar',
-      [LodgingAmenity.POOL]: 'Piscina',
-      [LodgingAmenity.PARRILLA]: 'Parrilla',
-      [LodgingAmenity.WIFI]: 'WiFi',
-      [LodgingAmenity.AIR_CONDITIONING]: 'Aire acondicionado',
-      [LodgingAmenity.HEATING]: 'Calefacción',
-      [LodgingAmenity.CABLE_TV]: 'Cable TV',
-      [LodgingAmenity.PETS_ALLOWED]: 'Mascotas',
-      [LodgingAmenity.GARAGE]: 'Garage',
+    return getAmenityLabel(amenity);
+  }
+
+  getLodgingTypeLabel(type: LodgingType): string {
+    return getLodgingTypeLabel(type);
+  }
+
+  private resetFiltersSheetDrag(): void {
+    this.activeFiltersPointerId = null;
+    this.filtersSheetDragStartY = null;
+    this.filtersSheetOffset.set(0);
+    this.isDraggingFiltersSheet.set(false);
+  }
+
+  private suppressNextDocumentClick(): void {
+    this.clickSuppressionCleanup?.();
+
+    const handler = (clickEvent: MouseEvent): void => {
+      clickEvent.preventDefault();
+      clickEvent.stopPropagation();
+      clickEvent.stopImmediatePropagation();
+      cleanup();
     };
 
-    return labels[amenity];
+    const cleanup = (): void => {
+      window.removeEventListener('click', handler, true);
+      if (this.clickSuppressionCleanup === cleanup) {
+        this.clickSuppressionCleanup = null;
+      }
+    };
+
+    this.clickSuppressionCleanup = cleanup;
+    window.addEventListener('click', handler, true);
+    window.setTimeout(cleanup, 320);
   }
 
-  private formatPrice(price: number): string {
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'ARS',
-      maximumFractionDigits: 0,
-    }).format(price);
+  private getFormValue(event: Event): string | null {
+    const target = event.target;
+
+    if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement)) {
+      return null;
+    }
+
+    const value = target.value.trim();
+    return value ? value : null;
   }
 
-  private normalizeText(value: string): string {
-    return value
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase()
-      .trim();
+  private parseOptionalPositiveInt(value: string | null): number | null {
+    if (!value) {
+      return null;
+    }
+
+    const parsedValue = Number.parseInt(value, 10);
+
+    if (!Number.isFinite(parsedValue) || parsedValue <= 0) {
+      return null;
+    }
+
+    return parsedValue;
   }
 }

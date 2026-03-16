@@ -8,6 +8,10 @@ import {
 import { LodgingsService } from './lodgings.service';
 import { NavService } from '@shared/services/nav/nav.service';
 import { StorageService } from '@shared/services/storage/storage.service';
+import {
+  getHomeLodgingsErrorMessage,
+  getLoadMoreLodgingsErrorMessage,
+} from '@shared/http/public-api-error';
 
 const LODGINGS_PAGE_SIZE = 8;
 const FAVORITE_LODGINGS_KEY = 'favorite_lodgings';
@@ -28,6 +32,7 @@ export class LodgingsResourceService {
   readonly isLoadingMore = signal(false);
   readonly hasMore = signal(true);
   readonly search = signal('');
+  readonly error = signal<string | null>(null);
 
   private readonly currentPage = signal(1);
   private readonly total = signal(0);
@@ -43,6 +48,7 @@ export class LodgingsResourceService {
     const normalizedSearch = this.normalizeSearch(search);
 
     this.isLoading.set(true);
+    this.error.set(null);
     this.currentPage.set(1);
     this.search.set(normalizedSearch);
 
@@ -60,6 +66,11 @@ export class LodgingsResourceService {
       this.total.set(response.total);
       this.lodgings.set(response.data);
       this.hasMore.set(this.shouldKeepLoading(response, response.data.length));
+    } catch (error) {
+      this.total.set(0);
+      this.lodgings.set([]);
+      this.hasMore.set(false);
+      this.error.set(getHomeLodgingsErrorMessage(error));
     } finally {
       this.isLoading.set(false);
     }
@@ -71,6 +82,7 @@ export class LodgingsResourceService {
     }
 
     this.isLoadingMore.set(true);
+    this.error.set(null);
 
     try {
       const nextPage = this.currentPage() + 1;
@@ -89,6 +101,8 @@ export class LodgingsResourceService {
       const merged = this.mergeUniqueLodgings(this.lodgings(), response.data);
       this.lodgings.set(merged);
       this.hasMore.set(this.shouldKeepLoading(response, merged.length));
+    } catch (error) {
+      this.error.set(getLoadMoreLodgingsErrorMessage(error));
     } finally {
       this.isLoadingMore.set(false);
     }

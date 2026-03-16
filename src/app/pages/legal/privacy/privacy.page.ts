@@ -6,9 +6,9 @@ import {
   IonFooter,
   IonHeader,
   IonMenuButton,
-  IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
+import { ScrollHeaderDirective } from '@shared/directives/scroll-header.directive';
 
 @Component({
   selector: 'app-privacy',
@@ -18,10 +18,10 @@ import {
     IonButtons,
     IonBackButton,
     IonContent,
+    ScrollHeaderDirective,
     IonFooter,
     IonHeader,
     IonMenuButton,
-    IonTitle,
     IonToolbar,
   ],
 })

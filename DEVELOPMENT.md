@@ -1,111 +1,75 @@
-# Development Guide -- Modo Playa App
+# Guia de desarrollo
 
-Este documento describe como trabajar con el frontend publico de Modo Playa en local.
-
----
+Este documento resume como operar `modo-playa-app` en local.
 
 ## Requisitos
 
-- Node.js 22+ (LTS recomendado)
+- Node.js 22+
 - npm
-- Angular CLI (opcional)
-- Ionic CLI (opcional)
-- Android Studio (solo si vas a compilar Android)
+- Angular CLI opcional
+- Ionic CLI opcional
+- Android Studio solo para builds Android
 
----
-
-## Instalacion
+## Instalacion y ejecucion
 
 ```bash
 npm install
-```
-
----
-
-## Ejecucion local (web)
-
-```bash
 npm run start
 ```
 
-Disponible en:
+Aplicacion web disponible en `http://localhost:4200`.
 
-`http://localhost:4200`
+## API local
 
----
+Por defecto, desarrollo apunta a `http://localhost:3000/api`.
 
-## API en desarrollo
-
-Por defecto, la app en desarrollo apunta a:
-
-`http://localhost:3000/api`
-
-Asegurate de levantar `modo-playa-api` localmente para pruebas integradas.
-
----
+Para validacion integrada, levantar tambien `modo-playa-api` en local.
+Antes de cambiar modelos, endpoints o manejo de errores, revisar ese repo porque es la fuente de verdad contractual.
 
 ## Scripts utiles
 
-- `npm run start`: servidor local
-- `npm run build`: build de produccion
-- `npm run watch`: build continuo en modo desarrollo
-- `npm run test`: unit tests en ChromeHeadlessCI
-- `npm run test:watch`: unit tests en modo watch
-- `npm run lint`: validaciones de lint
+- `npm run start`: servidor web local
+- `npm run build`: build productivo
+- `npm run watch`: build continuo de desarrollo
+- `npm run test`: suite unitaria en `ChromeHeadlessCI`
+- `npm run test:watch`: suite unitaria en watch mode
+- `npm run lint`: validacion de lint
 
----
+## Persistencia local
 
-## Entornos
+- favoritos y preferencias livianas se guardan en `localStorage`
+- no hay dependencias de storage nativo en la web publica para esta etapa
 
-- `src/environments/environment.ts`: desarrollo
-- `src/environments/environment.prod.ts`: produccion
+## Notas operativas
 
----
+- `roadmap.md` es un archivo local y operativo; se usa para seguimiento real, no debe versionarse
+- este repo consume datos publicos; no debe duplicar logica de negocio del backend
+- no implementar flujos administrativos ni consumo de `admin/*`
 
-## Android (Capacitor)
-
-Sincronizar cambios web con plataforma Android:
+## Android
 
 ```bash
 npx cap sync android
-```
-
-Abrir proyecto Android:
-
-```bash
 npx cap open android
 ```
 
 Notas:
 
-- `android/local.properties` esta ignorado por git.
-- Version Android actual:
+- `android/local.properties` esta ignorado por git
+- version Android actual:
   - `versionCode = 10001`
   - `versionName = 1.0.1`
 
----
+## Estructura principal
 
-## Arquitectura del proyecto
+- `src/app/pages`: pantallas publicas
+- `src/app/lodgings`: modelos, componentes, servicios y resolver del catalogo
+- `src/app/destinations`: modelos y servicios de destinos
+- `src/app/shared`: servicios transversales como storage, tema, nav y toast
+- `src/app/tabs`: navegacion principal mobile-first
 
-Estructura principal en `src/app`:
+## Validacion minima antes de cerrar cambios
 
-- `pages/`: pantallas (home, favoritos, destinos, info, legales)
-- `lodgings/`: dominio de alojamientos (modelos, servicios, resolver, componentes)
-- `destinations/`: modelos y servicios de destinos
-- `shared/`: servicios reutilizables (tema, storage, nav, toastr)
-- `tabs/`: navegacion principal (tab bar)
-
----
-
-## Alcance del repo
-
-Este repo es solo catalogo publico.
-
-No implementar aqui:
-
-- ABM administrativo de alojamientos
-- flujos de gestion de owners
-- logica de negocio que ya vive en API
-
-Siempre validar cambios de modelos/endpoints contra `modo-playa-api`.
-
+- `npm run lint`
+- `npm run test`
+- `npm run build`

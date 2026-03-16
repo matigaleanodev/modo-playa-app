@@ -10,7 +10,6 @@ import {
   IonIcon,
   IonMenuButton,
   IonText,
-  IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -39,8 +38,10 @@ import {
 } from '../../models/lodging.model';
 import { LodgingAvailabilityCalendarComponent } from '../../components/lodging-availability-calendar/lodging-availability-calendar.component';
 import { LodgingsResourceService } from '../../services/lodgings-resource.service';
+import { ScrollHeaderDirective } from '@shared/directives/scroll-header.directive';
 
 interface LodgingFacility {
+  id: string;
   icon: string;
   label: string;
 }
@@ -66,11 +67,11 @@ type LodgingDetailInput = Lodging & {
     IonBackButton,
     IonMenuButton,
     IonContent,
+    ScrollHeaderDirective,
     IonFooter,
     IonIcon,
     IonButton,
     IonText,
-    IonTitle,
     LodgingAvailabilityCalendarComponent,
   ],
 })
@@ -90,10 +91,26 @@ export class LodgingDetailPage {
   readonly lodgingMeta = computed<LodgingFacility[]>(() => {
     const lodging = this.lodging();
     return [
-      { icon: 'people-outline', label: `${lodging.maxGuests} huespedes` },
-      { icon: 'moon-outline', label: `${lodging.bedrooms} dormitorios` },
-      { icon: 'water-outline', label: `${lodging.bathrooms} banos` },
-      { icon: 'leaf-outline', label: `${lodging.minNights} noches min.` },
+      {
+        id: 'max-guests',
+        icon: 'people-outline',
+        label: `${lodging.maxGuests} huespedes`,
+      },
+      {
+        id: 'bedrooms',
+        icon: 'moon-outline',
+        label: `${lodging.bedrooms} dormitorios`,
+      },
+      {
+        id: 'bathrooms',
+        icon: 'water-outline',
+        label: `${lodging.bathrooms} banos`,
+      },
+      {
+        id: 'min-nights',
+        icon: 'leaf-outline',
+        label: `${lodging.minNights} noches min.`,
+      },
     ];
   });
 
@@ -128,12 +145,12 @@ export class LodgingDetailPage {
     await this.lodgingsResource.loadFavorites();
   }
 
-  get emailHref(): string | null {
+  readonly emailHref = computed(() => {
     const email = this.contact().email?.trim();
     return email ? `mailto:${email}` : null;
-  }
+  });
 
-  get whatsappHref(): string | null {
+  readonly whatsappHref = computed(() => {
     const whatsapp = this.contact().whatsapp?.replace(/\D/g, '') ?? '';
     if (!whatsapp) {
       return null;
@@ -144,9 +161,9 @@ export class LodgingDetailPage {
     );
 
     return `https://wa.me/+549${whatsapp}?text=${message}`;
-  }
+  });
 
-  get galleryImages(): string[] {
+  readonly galleryImages = computed(() => {
     const lodging = this.lodging();
     const mediaGallery = (lodging.mediaImages ?? [])
       .filter((image) => !image.isDefault)
@@ -161,9 +178,9 @@ export class LodgingDetailPage {
     return lodging.images.filter(
       (image) => image && image !== lodging.mainImage,
     );
-  }
+  });
 
-  get heroImage(): string {
+  readonly heroImage = computed(() => {
     const lodging = this.lodging();
     const defaultMedia = lodging.mediaImages?.find((image) => image.isDefault);
     const mediaHero =
@@ -181,9 +198,9 @@ export class LodgingDetailPage {
 
     const firstLegacyImage = lodging.images.find((image) => image?.trim());
     return firstLegacyImage?.trim() || this.fallbackImage;
-  }
+  });
 
-  get lodgingTypeLabel(): string {
+  readonly lodgingTypeLabel = computed(() => {
     const labels: Record<LodgingType, string> = {
       [LodgingType.CABIN]: 'Cabana',
       [LodgingType.APARTMENT]: 'Departamento',
@@ -192,9 +209,9 @@ export class LodgingDetailPage {
 
     const lodgingType = this.lodging().type;
     return labels[lodgingType] ?? lodgingType;
-  }
+  });
 
-  get priceUnitLabel(): string {
+  readonly priceUnitLabel = computed(() => {
     const labels: Record<PriceUnit, string> = {
       [PriceUnit.NIGHT]: 'Por noche',
       [PriceUnit.WEEK]: 'Por semana',
@@ -203,7 +220,7 @@ export class LodgingDetailPage {
 
     const priceUnit = this.lodging().priceUnit;
     return labels[priceUnit] ?? 'Precio';
-  }
+  });
 
   async toggleFavorite(): Promise<void> {
     await this.lodgingsResource.toggleFavorite(this.lodging());
@@ -211,27 +228,48 @@ export class LodgingDetailPage {
 
   private mapAmenity(amenity: LodgingAmenity): LodgingFacility | null {
     const map: Record<LodgingAmenity, LodgingFacility> = {
-      [LodgingAmenity.POOL]: { icon: 'water-outline', label: 'Piscina' },
+      [LodgingAmenity.POOL]: {
+        id: LodgingAmenity.POOL,
+        icon: 'water-outline',
+        label: 'Piscina',
+      },
       [LodgingAmenity.SEA_VIEW]: {
+        id: LodgingAmenity.SEA_VIEW,
         icon: 'leaf-outline',
         label: 'Acceso a playa',
       },
       [LodgingAmenity.GARAGE]: {
+        id: LodgingAmenity.GARAGE,
         icon: 'car-sport-outline',
         label: 'Estacionamiento',
       },
-      [LodgingAmenity.WIFI]: { icon: 'wifi-outline', label: 'Wifi' },
-      [LodgingAmenity.PARRILLA]: { icon: 'flame-outline', label: 'Parrilla' },
+      [LodgingAmenity.WIFI]: {
+        id: LodgingAmenity.WIFI,
+        icon: 'wifi-outline',
+        label: 'Wifi',
+      },
+      [LodgingAmenity.PARRILLA]: {
+        id: LodgingAmenity.PARRILLA,
+        icon: 'flame-outline',
+        label: 'Parrilla',
+      },
       [LodgingAmenity.AIR_CONDITIONING]: {
+        id: LodgingAmenity.AIR_CONDITIONING,
         icon: 'snow-outline',
         label: 'Aire acondicionado',
       },
-      [LodgingAmenity.HEATING]: { icon: 'moon-outline', label: 'Calefaccion' },
+      [LodgingAmenity.HEATING]: {
+        id: LodgingAmenity.HEATING,
+        icon: 'moon-outline',
+        label: 'Calefaccion',
+      },
       [LodgingAmenity.CABLE_TV]: {
+        id: LodgingAmenity.CABLE_TV,
         icon: 'ellipsis-horizontal',
         label: 'Cable TV',
       },
       [LodgingAmenity.PETS_ALLOWED]: {
+        id: LodgingAmenity.PETS_ALLOWED,
         icon: 'ellipsis-horizontal',
         label: 'Mascotas permitidas',
       },

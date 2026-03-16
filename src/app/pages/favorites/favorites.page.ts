@@ -4,9 +4,9 @@ import {
   IonContent,
   IonHeader,
   IonMenuButton,
-  IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
+import { ScrollHeaderDirective } from '@shared/directives/scroll-header.directive';
 import { LodgingCardComponent } from 'src/app/lodgings/components/lodging-card/lodging-card.component';
 import { Lodging } from 'src/app/lodgings/models/lodging.model';
 import { LodgingsResourceService } from 'src/app/lodgings/services/lodgings-resource.service';
@@ -18,10 +18,10 @@ import { LodgingsResourceService } from 'src/app/lodgings/services/lodgings-reso
   imports: [
     IonHeader,
     IonToolbar,
-    IonTitle,
     IonButtons,
     IonMenuButton,
     IonContent,
+    ScrollHeaderDirective,
     LodgingCardComponent,
   ],
 })

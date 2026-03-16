@@ -1,17 +1,17 @@
 <ion-header class="app-page-header">
   <ion-toolbar class="app-page-toolbar">
-    <ion-title>Modo Playa</ion-title>
     <ion-buttons slot="end">
       <ion-menu-button menu="main-menu"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="favorites-content">
+<ion-content class="favorites-content" appScrollHeader fullscreen="true">
   <section class="page favorites-page">
     <header class="favorites-copy app-section-copy">
-      <h1>Favoritos</h1>
-      <p>Accede rapido a los alojamientos que mas te gustaron.</p>
+      <span class="hero-eyebrow">Tus favoritos</span>
+      <h1>Volve a ver los alojamientos que mas te gustaron</h1>
+      <p>Retoma la busqueda rapido y compara las opciones que ya guardaste.</p>
     </header>
 
     @if (hasFavorites()) {

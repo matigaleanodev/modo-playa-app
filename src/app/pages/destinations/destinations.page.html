@@ -1,6 +1,5 @@
 <ion-header class="app-page-header">
   <ion-toolbar class="app-page-toolbar">
-    <ion-title>Modo Playa</ion-title>
     <ion-buttons slot="end">
       <ion-menu-button menu="main-menu"></ion-menu-button>
     </ion-buttons>
@@ -9,6 +8,7 @@
 
 <ion-content
   class="destinations-content"
+  appScrollHeader
   [attr.data-weather-bg]="backgroundClass()"
 >
   <div class="weather-backdrop" aria-hidden="true"></div>
@@ -16,8 +16,9 @@
 
   <section class="page destinations-page">
     <header class="destinations-copy app-section-copy content-fade-in">
-      <h1>Destinos</h1>
-      <p>Elige un destino y consulta su clima al instante.</p>
+      <span class="hero-eyebrow">Clima en la costa</span>
+      <h1>Elegi un destino y mira el clima al instante</h1>
+      <p>Consulta el pronostico, el viento y los horarios solares para organizar mejor tu salida.</p>
     </header>
 
     @if (destinations().length > 0) {
@@ -33,24 +34,30 @@
       }
     </ion-segment>
     } @if (loading()) {
-    <section
-      class="status-block content-fade-in"
-      role="status"
-      aria-live="polite"
-    >
-      <ion-spinner name="crescent"></ion-spinner>
-      <p>Cargando datos del destino...</p>
-    </section>
+    <app-public-state-card
+      class="content-fade-in"
+      kind="loading"
+      title="Cargando destino"
+      message="Estamos trayendo clima, pronostico y datos solares del destino."
+    ></app-public-state-card>
+    } @else if (hasEmptyState()) {
+    <app-public-state-card
+      class="content-fade-in"
+      kind="empty"
+      title="Sin destinos disponibles"
+      message="Todavia no hay destinos publicos listos para mostrar."
+      actionLabel="Reintentar"
+      (action)="retry()"
+    ></app-public-state-card>
     } @else if (error()) {
-    <section
-      class="status-block status-block-error content-fade-in"
-      role="alert"
-    >
-      <p>{{ error() }}</p>
-      <ion-button size="small" fill="outline" (click)="retry()">
-        Reintentar
-      </ion-button>
-    </section>
+    <app-public-state-card
+      class="content-fade-in"
+      kind="error"
+      title="No pudimos cargar el destino"
+      [message]="error()!"
+      actionLabel="Reintentar"
+      (action)="retry()"
+    ></app-public-state-card>
     } @else if (context()) {
     <div class="cards content-fade-in" [class.cards-transitioning]="loading()">
       <ion-card class="hero-weather-card">
@@ -68,6 +75,11 @@
           <p class="hero-wind">
             Viento {{ context()!.weather.windSpeed }} km/h
           </p>
+          @if (destinationTimeLabel()) {
+          <p class="hero-time">
+            Hora local {{ destinationTimeLabel() }}
+          </p>
+          }
         </ion-card-content>
       </ion-card>
 

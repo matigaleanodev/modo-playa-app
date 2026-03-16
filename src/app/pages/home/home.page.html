@@ -1,17 +1,17 @@
 <ion-header class="app-page-header">
   <ion-toolbar class="app-page-toolbar">
-    <ion-title>Modo Playa</ion-title>
     <ion-buttons slot="end">
       <ion-menu-button menu="main-menu"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="home-content">
+<ion-content class="home-content" appScrollHeader fullscreen="true">
   <section class="page home-page">
     <header class="home-copy app-section-copy">
-      <h1>Home</h1>
-      <p>Explora alojamientos y encuentra tu proxima escapada.</p>
+      <span class="hero-eyebrow">Escapadas junto al mar</span>
+      <h1>Encontra tu proximo alojamiento en la costa</h1>
+      <p>Explora opciones, compara comodidades y filtra rapido segun lo que necesitas.</p>
     </header>
 
     <section class="search-panel">
@@ -24,10 +24,20 @@
         (ionInput)="onSearchInput($event)"
       ></ion-searchbar>
 
-      <ion-button class="filters-button" fill="solid" (click)="openFilters()">
-        <ion-icon slot="start" name="options-outline" aria-hidden="true"></ion-icon>
-        <span>{{ filtersButtonLabel() }}</span>
-      </ion-button>
+      <div class="search-actions">
+        <ion-button
+          class="filters-button"
+          fill="solid"
+          aria-label="{{ filtersButtonLabel() }}"
+          title="{{ filtersButtonLabel() }}"
+          (click)="openFilters()"
+        >
+          <ion-icon name="options-outline" aria-hidden="true"></ion-icon>
+          @if (hasActiveFilters()) {
+            <ion-badge class="filters-badge">{{ activeFiltersCount() }}</ion-badge>
+          }
+        </ion-button>
+      </div>
     </section>
 
     @if (hasActiveFilters()) {
@@ -50,15 +60,36 @@
 
     <div class="cards">
       @if (isLoading()) {
+        <app-public-state-card
+          kind="loading"
+          title="Cargando alojamientos"
+          message="Estamos trayendo el catalogo publico para esta busqueda."
+        ></app-public-state-card>
+
         @for (_item of skeletonCards; track $index) {
           <app-lodging-card-skeleton></app-lodging-card-skeleton>
         }
       } @else {
-        @if (lodgingsFiltered().length === 0) {
-          <article class="empty-state">
-            <h2>Sin resultados</h2>
-            <p>Probá con otra búsqueda o ajustá los filtros activos.</p>
-          </article>
+        @if (error()) {
+          <app-public-state-card
+            kind="error"
+            title="No pudimos cargar el catalogo"
+            [message]="error()!"
+            actionLabel="Reintentar"
+            (action)="retry()"
+          ></app-public-state-card>
+        } @else if (lodgingsFiltered().length === 0) {
+          <app-public-state-card
+            kind="empty"
+            title="Sin resultados"
+            [message]="
+              hasSearchOrFilters()
+                ? 'Proba con otra busqueda o limpia los filtros para volver al catalogo completo.'
+                : 'Todavia no hay alojamientos publicados para mostrar.'
+            "
+            [actionLabel]="hasSearchOrFilters() ? 'Ver todo' : null"
+            (action)="resetSearchAndFilters()"
+          ></app-public-state-card>
         } @else {
           @for (lodging of lodgingsFiltered(); track lodging.id) {
             <app-lodging-card
@@ -87,86 +118,204 @@
 
 @if (isFiltersOpen()) {
   <div class="filters-overlay" (click)="closeFilters()">
-    <section class="filters-sheet" (click)="$event.stopPropagation()">
-      <div class="filters-sheet-handle" aria-hidden="true"></div>
+    <section
+      class="filters-sheet"
+      [class.is-dragging]="isDraggingFiltersSheet()"
+      [style.transform]="filtersSheetTransform()"
+      (click)="$event.stopPropagation()"
+    >
+      <div
+        class="filters-sheet-drag-zone"
+        (pointerdown)="onFiltersDragStart($event)"
+        (pointermove)="onFiltersDragMove($event)"
+        (pointerup)="onFiltersDragEnd($event)"
+        (pointercancel)="onFiltersDragEnd($event)"
+      >
+        <div class="filters-sheet-handle" aria-hidden="true"></div>
 
-      <header class="filters-sheet-header">
-        <div>
-          <p class="filters-sheet-eyebrow">Filtrado local</p>
-          <h2>Filtros</h2>
-        </div>
+        <header class="filters-sheet-header">
+          <div>
+            <p class="filters-sheet-eyebrow">Filtrado local</p>
+            <h2>Filtros</h2>
+          </div>
 
-        <ion-button fill="clear" size="small" (click)="closeFilters()">
-          Cerrar
-        </ion-button>
-      </header>
+          <ion-button fill="clear" size="small" (click)="closeFilters()">
+            Cerrar
+          </ion-button>
+        </header>
+      </div>
 
       <div class="filters-sheet-body">
-        <section class="filter-section">
-          <div class="filter-section-heading">
-            <h3>Comodidades</h3>
-            <p>Seleccion múltiple</p>
-          </div>
+        <div>
+          <section class="filter-section">
+            <div class="filter-section-heading">
+              <h3>Ubicación</h3>
+              <p>Solo ciudades publicadas</p>
+            </div>
 
-          <div class="amenity-chips">
-            @for (amenity of amenityOptions; track trackByAmenity($index, amenity)) {
-              <ion-chip
-                class="amenity-chip"
-                [class.is-selected]="hasAmenitySelected(amenity)"
-                (click)="toggleAmenity(amenity)"
-              >
-                <ion-label>{{ getAmenityLabel(amenity) }}</ion-label>
-              </ion-chip>
-            }
-          </div>
-        </section>
+            <div class="filter-grid two-columns">
+              <label class="field-shell">
+                <span class="field-label">Ciudad</span>
+                <select
+                  class="field-control"
+                  [value]="filters().city ?? ''"
+                  (change)="onCityChange($event)"
+                >
+                  <option value="">Todas</option>
+                  @for (city of cityOptions(); track city) {
+                    <option [value]="city">{{ city }}</option>
+                  }
+                </select>
+              </label>
 
-        <section class="filter-section">
-          <div class="filter-section-heading">
-            <h3>Precio</h3>
-            <p>
-              {{ priceRangeValue().lower | currency: 'ARS':'symbol':'1.0-0' }} -
-              {{ priceRangeValue().upper | currency: 'ARS':'symbol':'1.0-0' }}
-            </p>
-          </div>
+              <label class="field-shell">
+                <span class="field-label">Tipo</span>
+                <select
+                  class="field-control"
+                  [value]="filters().type ?? ''"
+                  (change)="onTypeChange($event)"
+                >
+                  <option value="">Todos</option>
+                  @for (type of lodgingTypeOptions; track type) {
+                    <option [value]="type">{{ getLodgingTypeLabel(type) }}</option>
+                  }
+                </select>
+              </label>
+            </div>
+          </section>
 
-          <ion-range
-            class="price-range"
-            [dualKnobs]="true"
-            [min]="priceBounds().min"
-            [max]="priceBounds().max"
-            [step]="priceBounds().step"
-            [value]="priceRangeValue()"
-            (ionInput)="onPriceRangeChange($event)"
-          ></ion-range>
-        </section>
+          <section class="filter-section compact-section">
+            <div class="filter-section-heading">
+              <h3>Capacidad base</h3>
+              <p>Valores mínimos</p>
+            </div>
 
-        <section class="filter-section">
-          <div class="filter-section-heading">
-            <h3>Huéspedes</h3>
-            <p>Se muestran alojamientos con capacidad suficiente.</p>
-          </div>
+            <div class="filter-grid three-columns">
+              <label class="field-shell">
+                <span class="field-label">Huéspedes</span>
+                <div class="guests-stepper compact">
+                  <ion-button fill="outline" (click)="decreaseGuests()">
+                    <ion-icon slot="icon-only" name="remove" aria-hidden="true"></ion-icon>
+                  </ion-button>
+                  <span>{{ filters().guests ?? 0 }}</span>
+                  <ion-button fill="outline" (click)="increaseGuests()">
+                    <ion-icon slot="icon-only" name="add" aria-hidden="true"></ion-icon>
+                  </ion-button>
+                </div>
+              </label>
 
-          <div class="guests-stepper">
-            <ion-button fill="outline" (click)="decreaseGuests()">
-              <ion-icon slot="icon-only" name="remove" aria-hidden="true"></ion-icon>
-            </ion-button>
-            <span>{{ filters().guests ?? 0 }}</span>
-            <ion-button fill="outline" (click)="increaseGuests()">
-              <ion-icon slot="icon-only" name="add" aria-hidden="true"></ion-icon>
-            </ion-button>
-          </div>
-        </section>
+              <label class="field-shell">
+                <span class="field-label">Dorm.</span>
+                <input
+                  class="field-control compact-input"
+                  type="number"
+                  inputmode="numeric"
+                  min="0"
+                  placeholder="0"
+                  [value]="filters().minBedrooms ?? ''"
+                  (input)="onMinBedroomsChange($event)"
+                />
+              </label>
 
-        <ion-button
-          class="clear-filters-button in-content"
-          fill="clear"
-          [disabled]="!hasActiveFilters()"
-          (click)="clearFilters()"
-        >
-          <ion-icon slot="start" name="trash-outline" aria-hidden="true"></ion-icon>
-          Limpiar filtros
-        </ion-button>
+              <label class="field-shell">
+                <span class="field-label">Baños</span>
+                <input
+                  class="field-control compact-input"
+                  type="number"
+                  inputmode="numeric"
+                  min="0"
+                  placeholder="0"
+                  [value]="filters().minBathrooms ?? ''"
+                  (input)="onMinBathroomsChange($event)"
+                />
+              </label>
+            </div>
+          </section>
+
+          <section class="filter-section">
+            <div class="filter-section-heading">
+              <h3>Comodidades</h3>
+              <p>Seleccion múltiple</p>
+            </div>
+
+            <div class="amenity-chips">
+              @for (amenity of amenityOptions; track trackByAmenity($index, amenity)) {
+                <ion-chip
+                  class="amenity-chip"
+                  [class.is-selected]="hasAmenitySelected(amenity)"
+                  (click)="toggleAmenity(amenity)"
+                >
+                  <ion-label>{{ getAmenityLabel(amenity) }}</ion-label>
+                </ion-chip>
+              }
+            </div>
+          </section>
+
+          <section class="filter-section">
+            <div class="filter-section-heading">
+              <h3>Precio</h3>
+              <p>
+                {{ priceRangeValue().lower | currency: 'ARS':'symbol':'1.0-0' }} -
+                {{ priceRangeValue().upper | currency: 'ARS':'symbol':'1.0-0' }}
+              </p>
+            </div>
+
+            <ion-range
+              class="price-range"
+              [dualKnobs]="true"
+              [min]="priceBounds().min"
+              [max]="priceBounds().max"
+              [step]="priceBounds().step"
+              [value]="priceRangeValue()"
+              (ionInput)="onPriceRangeChange($event)"
+            ></ion-range>
+          </section>
+
+          <section class="filter-section">
+            <div class="filter-section-heading">
+              <h3>Distancia a la playa</h3>
+              <p>
+                {{ distanceRangeValue().lower }} m -
+                {{ distanceRangeValue().upper }} m
+              </p>
+            </div>
+
+            <ion-range
+              class="price-range"
+              [dualKnobs]="true"
+              [min]="distanceBounds().min"
+              [max]="distanceBounds().max"
+              [step]="distanceBounds().step"
+              [value]="distanceRangeValue()"
+              (ionInput)="onDistanceRangeChange($event)"
+            ></ion-range>
+          </section>
+
+          <section class="filter-section">
+            <div class="filter-section-heading">
+              <h3>Fechas libres</h3>
+            </div>
+
+            <app-lodging-availability-calendar
+              class="filter-calendar"
+              [title]="null"
+              [selectionEnabled]="true"
+              [selectedFrom]="filters().availableFrom"
+              [selectedTo]="filters().availableTo"
+              (rangeChange)="onAvailabilityRangeChange($event)"
+            ></app-lodging-availability-calendar>
+          </section>
+
+          <ion-button
+            class="clear-filters-button in-content"
+            fill="clear"
+            [disabled]="!hasActiveFilters()"
+            (click)="clearFilters()"
+          >
+            <ion-icon slot="start" name="trash-outline" aria-hidden="true"></ion-icon>
+            Limpiar filtros
+          </ion-button>
+        </div>
       </div>
     </section>
   </div>

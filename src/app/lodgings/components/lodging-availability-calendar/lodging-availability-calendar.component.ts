@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, computed, input, output, signal } from '@angular/core';
 import { addIcons } from 'ionicons';
 import { chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
 import { IonButton, IonIcon } from '@ionic/angular/standalone';
@@ -24,6 +24,11 @@ export class LodgingAvailabilityCalendarComponent {
   });
 
   readonly occupiedRanges = input<AvailabilityRange[] | null | undefined>([]);
+  readonly title = input<string | null>('Disponibilidad');
+  readonly selectionEnabled = input(false);
+  readonly selectedFrom = input<string | null>(null);
+  readonly selectedTo = input<string | null>(null);
+  readonly rangeChange = output<AvailabilityRange | null>();
   readonly weekdayLabels = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
   readonly currentMonth = signal(this.startOfMonth(new Date()));
 
@@ -76,6 +81,9 @@ export class LodgingAvailabilityCalendarComponent {
           ? 'occupied'
           : 'available';
       const classes = [`calendar-day--${state}`];
+      const isSelected = this.isWithinSelectedRange(isoDate);
+      const selectedFrom = this.selectedFrom();
+      const selectedTo = this.selectedTo() ?? selectedFrom;
 
       if (state === 'occupied' && range) {
         if (isoDate === range.from) {
@@ -91,6 +99,22 @@ export class LodgingAvailabilityCalendarComponent {
         }
       }
 
+      if (isSelected) {
+        classes.push('calendar-day--selected');
+
+        if (selectedFrom && isoDate === selectedFrom) {
+          classes.push('calendar-day--range-start');
+        }
+
+        if (selectedFrom && selectedTo && isoDate > selectedFrom && isoDate < selectedTo) {
+          classes.push('calendar-day--range-middle');
+        }
+
+        if (selectedTo && isoDate === selectedTo) {
+          classes.push('calendar-day--range-end');
+        }
+      }
+
       cells.push({
         id: isoDate,
         isPlaceholder: false,
@@ -99,6 +123,7 @@ export class LodgingAvailabilityCalendarComponent {
         state,
         classes,
         ariaLabel: this.buildAriaLabel(day, state, isoDate),
+        isInteractive: this.selectionEnabled() && state === 'available',
       });
     }
 
@@ -124,6 +149,27 @@ export class LodgingAvailabilityCalendarComponent {
     this.currentMonth.set(
       this.createLocalDate(month.getFullYear(), month.getMonth() + 1, 1),
     );
+  }
+
+  selectDay(isoDate: string): void {
+    if (!this.selectionEnabled()) {
+      return;
+    }
+
+    const start = this.selectedFrom();
+    const end = this.selectedTo();
+
+    if (!start || (start && end)) {
+      this.rangeChange.emit({ from: isoDate, to: isoDate });
+      return;
+    }
+
+    if (isoDate < start) {
+      this.rangeChange.emit({ from: isoDate, to: isoDate });
+      return;
+    }
+
+    this.rangeChange.emit({ from: start, to: isoDate });
   }
 
   private normalizeRange(
@@ -195,5 +241,16 @@ export class LodgingAvailabilityCalendarComponent {
 
   private isIsoDate(value: string): boolean {
     return /^\d{4}-\d{2}-\d{2}$/.test(value);
+  }
+
+  private isWithinSelectedRange(isoDate: string): boolean {
+    const from = this.selectedFrom();
+
+    if (!from) {
+      return false;
+    }
+
+    const to = this.selectedTo() ?? from;
+    return isoDate >= from && isoDate <= to;
   }
 }

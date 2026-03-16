@@ -1,6 +1,8 @@
 <section class="availability-card">
   <div class="availability-header">
-    <h2>Disponibilidad</h2>
+    @if (title()) {
+      <h2>{{ title() }}</h2>
+    }
 
     <div class="availability-month-nav" aria-label="Navegacion del calendario">
       <ion-button
@@ -37,13 +39,17 @@
       <span class="calendar-day calendar-day--placeholder" aria-hidden="true"></span>
       } @else {
       <div class="calendar-day-shell">
-        <div
+        <button
+          type="button"
           class="calendar-day"
           [ngClass]="cell.classes"
           [attr.aria-label]="cell.ariaLabel"
+          [disabled]="!cell.isInteractive"
+          [class.calendar-day--interactive]="cell.isInteractive"
+          (click)="selectDay(cell.isoDate)"
         >
           <span class="calendar-day__label">{{ cell.dayNumber }}</span>
-        </div>
+        </button>
       </div>
       }
     }

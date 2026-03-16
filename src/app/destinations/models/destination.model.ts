@@ -23,7 +23,9 @@ export interface DestinationSun {
 }
 
 export interface DestinationContext {
+  destinationId: DestinationId;
   destination: string;
+  timezone: string;
   weather: DestinationWeather;
   forecast: DestinationForecastItem[];
   sun: DestinationSun;

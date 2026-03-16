@@ -1,8 +1,12 @@
 {
   "name": "modo-playa-app",
   "version": "1.0.1",
-  "author": "Ionic Framework",
-  "homepage": "https://ionicframework.com/",
+  "author": "Modo Playa",
+  "homepage": "https://github.com/matigaleanodev/modo-playa-app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/matigaleanodev/modo-playa-app.git"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -29,7 +33,6 @@
     "@capacitor/keyboard": "8.0.1",
     "@capacitor/status-bar": "8.0.1",
     "@ionic/angular": "^8.0.0",
-    "@ionic/storage-angular": "^4.0.0",
     "ionicons": "^7.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
@@ -63,6 +66,6 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "typescript": "~5.9.0"
   },
-  "description": "An Ionic project"
+  "description": "Public mobile-first catalog application for Modo Playa"
 }
 

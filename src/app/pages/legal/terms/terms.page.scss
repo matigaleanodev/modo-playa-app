@@ -2,14 +2,10 @@ ion-content.legal-content {
   --padding-bottom: calc(56px + var(--ion-safe-area-bottom, 0px));
 }
 
-ion-header {
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}
-
 .terms-wrapper {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1.5rem 1.25rem 2rem;
+  padding: calc(18px + var(--ion-safe-area-top, 0px)) 1.25rem 2rem;
 }
 
 .terms-section {
@@ -47,18 +43,50 @@ ion-footer.app-page-footer {
 }
 .legal-page-title {
   margin-bottom: 1.25rem;
+  padding: 1.15rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--ion-color-primary) 10%, white 36%);
+  border-radius: 24px;
+  background:
+    linear-gradient(145deg, rgba(7, 34, 58, 0.12) 0%, rgba(255, 255, 255, 0.88) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 251, 255, 0.78) 100%);
+  box-shadow: 0 16px 34px rgba(10, 34, 55, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .legal-page-title h1 {
   margin: 0;
-  font-size: 1.35rem;
+  font-size: clamp(1.6rem, 4.6vw, 2.2rem);
   font-weight: 700;
   color: var(--ion-color-dark);
+  line-height: 1.02;
 }
 
 .legal-page-title p {
   margin: 0.35rem 0 0;
-  font-size: 0.9rem;
-  line-height: 1.45;
+  font-size: 0.95rem;
+  line-height: 1.55;
   color: var(--ion-color-medium);
+}
+
+@media (min-width: 640px) {
+  .legal-page-title {
+    padding: 1.35rem 1.25rem;
+  }
+}
+
+:host-context(.ion-palette-dark) .legal-page-title {
+  border-color: rgba(180, 205, 228, 0.12);
+  background:
+    linear-gradient(145deg, rgba(6, 29, 49, 0.8) 0%, rgba(14, 44, 68, 0.46) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.24);
+}
+
+:host-context(.ion-palette-dark) .legal-page-title h1 {
+  color: rgba(214, 230, 245, 0.96);
+}
+
+:host-context(.ion-palette-dark) .legal-page-title p {
+  color: rgba(198, 214, 228, 0.82);
 }

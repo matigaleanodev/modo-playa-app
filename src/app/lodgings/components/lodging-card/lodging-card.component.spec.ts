@@ -70,4 +70,26 @@ describe('LodgingCardComponent', () => {
   it('deberia usar imagen fallback cuando mainImage esta vacia', () => {
     expect(component.imageUrl()).toBe(component.fallbackImage);
   });
+
+  it('deberia resolver imagen desde mediaImages publicas sin metadata interna', () => {
+    fixture.componentRef.setInput('lodging', {
+      ...lodgingMock,
+      mediaImages: [
+        {
+          imageId: 'image-1',
+          isDefault: true,
+          createdAt: '2026-03-12T10:00:00.000Z',
+          url: 'https://example.com/original.webp',
+          variants: {
+            thumb: 'https://example.com/thumb.webp',
+            card: 'https://example.com/card.webp',
+            hero: 'https://example.com/hero.webp',
+          },
+        },
+      ],
+    });
+    fixture.detectChanges();
+
+    expect(component.imageUrl()).toBe('https://example.com/card.webp');
+  });
 });

@@ -4,16 +4,28 @@
 }
 
 .detail-page {
+  position: relative;
   height: 100%;
 }
 
 ion-content.detail-content {
   --background: var(--ion-background-color);
+  --offset-top: 0px !important;
+  --offset-bottom: 0px !important;
+  position: absolute;
+  inset: 0;
+}
+
+ion-content.detail-content::part(scroll) {
+  top: 0 !important;
+  padding-top: 0 !important;
 }
 
 .detail-header {
   background: transparent;
   box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .detail-header::after {

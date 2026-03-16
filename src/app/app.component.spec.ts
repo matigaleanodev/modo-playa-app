@@ -14,6 +14,16 @@ describe('AppComponent', () => {
   };
 
   it('should create the app', async () => {
+    TestBed.overrideComponent(AppComponent, {
+      set: {
+        template: `
+          <ion-app>
+            <div id="app-content"></div>
+          </ion-app>
+        `,
+      },
+    });
+
     await TestBed.configureTestingModule({
       imports: [AppComponent],
       providers: [
@@ -22,8 +32,9 @@ describe('AppComponent', () => {
         { provide: ThemeService, useValue: themeServiceMock },
       ]
     }).compileComponents();
-    
+
     const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });

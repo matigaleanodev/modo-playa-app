@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
@@ -19,7 +20,9 @@ describe('DestinationsPage', () => {
   ];
 
   const contextGesellMock: DestinationContext = {
+    destinationId: 'gesell',
     destination: 'Villa Gesell',
+    timezone: 'America/Argentina/Buenos_Aires',
     weather: {
       temperature: 24,
       windSpeed: 12,
@@ -36,7 +39,9 @@ describe('DestinationsPage', () => {
   };
 
   const contextPampasMock: DestinationContext = {
+    destinationId: 'pampas',
     destination: 'Mar de las Pampas',
+    timezone: 'America/Argentina/Buenos_Aires',
     weather: {
       temperature: 27,
       windSpeed: 14,
@@ -120,6 +125,17 @@ describe('DestinationsPage', () => {
     expect(destinationsService.getContextByDestinationId).not.toHaveBeenCalled();
   });
 
+  it('deberia renderizar empty state cuando no hay destinos publicados', async () => {
+    destinationsService.getDestinations.and.returnValue(of([]));
+
+    await component.ionViewWillEnter();
+    fixture.detectChanges();
+
+    const stateCard = fixture.nativeElement.querySelector('app-public-state-card');
+
+    expect(stateCard?.textContent).toContain('Sin destinos disponibles');
+  });
+
   it('deberia setear error si falla la carga de destinos', async () => {
     destinationsService.getDestinations.and.returnValue(
       throwError(() => new Error('network')),
@@ -127,8 +143,30 @@ describe('DestinationsPage', () => {
 
     await component.ionViewWillEnter();
 
-    expect(component.error()).toBe('No pudimos cargar los destinos. Intenta nuevamente.');
+    expect(component.error()).toBe(
+      'No pudimos cargar los destinos. Intenta nuevamente.',
+    );
     expect(component.loading()).toBeFalse();
+  });
+
+  it('deberia usar mensaje especifico si el backend invalida el destino', async () => {
+    component.selectedDestinationId.set('gesell');
+    destinationsService.getContextByDestinationId.and.returnValue(
+      throwError(
+        () =>
+          new HttpErrorResponse({
+            status: 400,
+            error: { code: 'INVALID_DESTINATION_ID' },
+          }),
+      ),
+    );
+
+    await component.retry();
+
+    expect(component.error()).toBe(
+      'El destino seleccionado ya no es válido. Elige otro para continuar.',
+    );
+    expect(component.context()).toBeNull();
   });
 
   it('deberia actualizar destino y contexto al cambiar el selector', async () => {
@@ -160,13 +198,13 @@ describe('DestinationsPage', () => {
     component.selectedDestinationId.set('gesell');
     component.context.set(contextGesellMock);
     destinationsService.getContextByDestinationId.and.returnValue(
-      throwError(() => new Error('network')),
+      throwError(() => new HttpErrorResponse({ status: 0 })),
     );
 
     await component.retry();
 
     expect(component.error()).toBe(
-      'No pudimos cargar el contexto del destino seleccionado. Intenta nuevamente.',
+      'No pudimos cargar el contexto del destino por un problema de conexión.',
     );
     expect(component.context()).toBeNull();
     expect(component.loading()).toBeFalse();
@@ -196,6 +234,7 @@ describe('DestinationsPage', () => {
 
     expect(component.todayForecast()).toEqual(contextGesellMock.forecast[0]);
     expect(component.tomorrowForecast()).toEqual(contextGesellMock.forecast[1]);
+    expect(component.destinationTimeLabel()).not.toBeNull();
   });
 
   it('deberia calcular etiqueta, icono y fondo para clima soleado de dia', async () => {

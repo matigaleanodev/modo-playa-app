@@ -1,85 +1,65 @@
 # Modo Playa App
 
-🌎 Version en espanol: [README.md](./README.md)
+Spanish version: [README.md](./README.md)
 
-**Modo Playa App** is the public app of the Modo Playa ecosystem.
-It is designed for anonymous users who want to browse lodgings on the Argentine coast.
+`modo-playa-app` is the public mobile-first catalog for Modo Playa.
+It is designed for anonymous users browsing lodgings, destinations, and public contact information.
 
-It is not an admin panel and does not contain backend business logic.
+It is not:
 
----
+- the backend API
+- the admin panel
+- a management app
 
 ## Ecosystem role
 
-- `modo-playa-api`: backend and business rules.
-- `modo-playa-admin`: private management panel.
-- `modo-playa-app` (this repo): public mobile-first catalog.
+- `modo-playa-api`: business rules, public contracts, and data
+- `modo-playa-admin`: private management
+- `modo-playa-app`: public catalog experience
 
----
+The API is the source of truth for models, endpoints, and error codes.
 
-## Tech stack
+## Current stack
 
-- Ionic + Angular standalone (v20)
-- TypeScript + Signals
+- Angular 20 standalone
+- Ionic 8
+- TypeScript with signals and computed
 - SCSS
-- Angular Router
-- Capacitor (Android)
-- Jasmine + Karma for unit testing
+- Capacitor 8 for Android
+- Jasmine + Karma
 
----
+## Public flows covered
 
-## Main features
+- home with paginated catalog
+- lodging detail
+- favorites persisted in `localStorage`
+- destinations with public context
+- app info and legal pages
+- light, dark, and system theme
 
-- Home with paginated lodging catalog
-- Lodging detail page
-- Favorites persisted in local storage
-- Destinations with weather context (current weather, forecast, sunrise, sunset)
-- App info page
-- Legal pages (Terms and Privacy)
-- Theme selector (light, dark, system)
-- Global side menu and bottom tab bar
+## Relevant public contracts
 
----
-
-## API integration
-
-The app consumes Modo Playa API and does not duplicate business logic.
-
-Public endpoints currently used:
+Consumed endpoints:
 
 - `GET /api/lodgings`
 - `GET /api/lodgings/:id`
 - `GET /api/destinations`
 - `GET /api/destinations/:id/context`
 
-Environment setup:
+Contract assumptions currently adopted by the frontend:
 
-- Development: `src/environments/environment.ts`
-- Production: `src/environments/environment.prod.ts`
-
----
-
-## Main routes
-
-- `/home`
-- `/favoritos`
-- `/destinos`
-- `/lodging/:id`
-- `/info`
-- `/terms`
-- `/privacy`
-
----
-
-## Version
-
-Current app version: **1.0.1**
-
----
+- public `mediaImages` must not assume `key`, `bytes`, or `mime` as canonical fields
+- `mainImage` and `images` remain available as legacy-compatible fallbacks
+- `DestinationContext` includes `destinationId` and `timezone`
+- public errors may be discriminated by `code` when the UX needs it
 
 ## Development
 
-Local development guide:
+The local operating guide lives in [DEVELOPMENT.en.md](./DEVELOPMENT.en.md).
 
-👉 [DEVELOPMENT.en.md](./DEVELOPMENT.en.md)
+## Change criteria
 
+- do not duplicate business logic already implemented in `modo-playa-api`
+- do not consume `admin/*` endpoints
+- keep the product mobile-first
+- validate contract changes against `modo-playa-api` first

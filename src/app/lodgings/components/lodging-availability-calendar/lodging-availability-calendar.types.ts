@@ -18,6 +18,7 @@ export interface CalendarDayCell {
   readonly state: CalendarDayState;
   readonly classes: readonly string[];
   readonly ariaLabel: string;
+  readonly isInteractive: boolean;
 }
 
 export type CalendarCell = CalendarPlaceholderCell | CalendarDayCell;

@@ -12,9 +12,9 @@ import {
   IonList,
   IonListHeader,
   IonMenuButton,
-  IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
+import { ScrollHeaderDirective } from '@shared/directives/scroll-header.directive';
 import { addIcons } from 'ionicons';
 import {
   documentTextOutline,
@@ -33,11 +33,11 @@ import {
     RouterLink,
     IonHeader,
     IonToolbar,
-    IonTitle,
     IonButtons,
     IonBackButton,
     IonMenuButton,
     IonContent,
+    ScrollHeaderDirective,
     IonFooter,
     IonList,
     IonListHeader,
