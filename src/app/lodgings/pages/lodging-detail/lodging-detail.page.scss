@@ -9,6 +9,12 @@
 
 ion-content.detail-content {
   --background: var(--ion-background-color);
+  --offset-top: 0px !important;
+  --offset-bottom: 0px !important;
+}
+
+ion-content.detail-content::part(scroll) {
+  padding-top: 0 !important;
 }
 
 .detail-header {
