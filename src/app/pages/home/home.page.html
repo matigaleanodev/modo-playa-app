@@ -44,6 +44,9 @@
       <section class="active-filters" aria-label="Filtros activos">
         @for (chip of activeFilters(); track chip.label) {
           <ion-chip class="active-filter-chip">
+            @if (chip.kind === 'amenity') {
+              <ion-icon [name]="getAmenityIcon(chip.amenity)" aria-hidden="true"></ion-icon>
+            }
             <ion-label>{{ chip.label }}</ion-label>
             <button
               class="chip-remove-button"
@@ -245,6 +248,7 @@
                   [class.is-selected]="hasAmenitySelected(amenity)"
                   (click)="toggleAmenity(amenity)"
                 >
+                  <ion-icon [name]="getAmenityIcon(amenity)" aria-hidden="true"></ion-icon>
                   <ion-label>{{ getAmenityLabel(amenity) }}</ion-label>
                 </ion-chip>
               }

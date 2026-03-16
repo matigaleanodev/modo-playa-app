@@ -8,14 +8,15 @@
   gap: 10px;
   align-items: stretch;
   margin-bottom: 12px;
-  width: min(100%, 40rem);
-  padding: 12px;
+  width: min(100%, 25rem);
+  padding: 0;
   border: 1px solid color-mix(in srgb, var(--ion-color-primary) 10%, white 42%);
-  border-radius: 24px;
+  border-radius: 22px;
   background: color-mix(in srgb, var(--ion-background-color) 88%, white 12%);
   box-shadow: 0 16px 34px rgba(12, 36, 58, 0.08);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  overflow: visible;
 }
 
 .search-actions {
@@ -56,22 +57,31 @@
   height: 48px;
   width: 48px;
   min-width: 48px;
+  margin: 0;
+  overflow: visible;
   --padding-start: 0;
   --padding-end: 0;
-  --border-radius: 18px;
+  --border-radius: 22px;
   --box-shadow: 0 14px 28px rgba(23, 53, 88, 0.18);
   align-self: stretch;
 }
 
+.filters-button::part(native) {
+  overflow: visible;
+}
+
 .filters-badge {
   position: absolute;
-  top: -4px;
-  right: -4px;
+  top: -6px;
+  right: -6px;
   min-width: 18px;
   height: 18px;
   padding: 0 4px;
   border-radius: 999px;
-  box-shadow: 0 6px 16px rgba(9, 28, 46, 0.2);
+  background: color-mix(in srgb, var(--ion-color-tertiary) 82%, white 18%);
+  color: var(--ion-color-secondary);
+  border: 1px solid rgba(var(--ion-color-secondary-rgb), 0.16);
+  box-shadow: 0 8px 18px rgba(9, 28, 46, 0.22);
   font-size: 0.68rem;
   font-weight: 700;
   line-height: 18px;
@@ -91,11 +101,21 @@
 }
 
 .active-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   flex: 0 0 auto;
   --background: color-mix(in srgb, var(--ion-color-tertiary) 78%, white 22%);
   --color: var(--ion-color-secondary);
   border: 1px solid color-mix(in srgb, var(--ion-color-secondary) 18%, transparent);
   font-weight: 700;
+}
+
+.active-filter-chip ion-icon,
+.amenity-chip ion-icon {
+  flex: 0 0 auto;
+  font-size: 0.92rem;
+  color: inherit;
 }
 
 .chip-remove-button {
@@ -279,6 +299,9 @@
 }
 
 .amenity-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   --background: color-mix(in srgb, var(--ion-color-tertiary) 84%, white 16%);
   --color: color-mix(in srgb, var(--ion-text-color) 86%, transparent);
   border: 1px solid transparent;

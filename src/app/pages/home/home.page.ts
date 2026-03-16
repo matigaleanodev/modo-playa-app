@@ -66,6 +66,10 @@ import {
   setTypeFilter,
   toggleAmenity,
 } from './home-filters';
+import {
+  getLodgingAmenityIcon,
+  registerLodgingAmenityIcons,
+} from 'src/app/lodgings/utils/lodging-amenities';
 
 @Component({
   selector: 'app-home',
@@ -160,6 +164,7 @@ export class HomePage {
       remove,
       trashOutline,
     });
+    registerLodgingAmenityIcons();
   }
 
   async ionViewWillEnter(): Promise<void> {
@@ -373,6 +378,10 @@ export class HomePage {
 
   getAmenityLabel(amenity: LodgingAmenity): string {
     return getAmenityLabel(amenity);
+  }
+
+  getAmenityIcon(amenity: LodgingAmenity): string {
+    return getLodgingAmenityIcon(amenity);
   }
 
   getLodgingTypeLabel(type: LodgingType): string {

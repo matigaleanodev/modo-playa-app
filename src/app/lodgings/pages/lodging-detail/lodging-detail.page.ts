@@ -15,7 +15,6 @@ import {
 import { addIcons } from 'ionicons';
 import {
   carSportOutline,
-  ellipsisHorizontal,
   flameOutline,
   heart,
   heartOutline,
@@ -25,8 +24,12 @@ import {
   logoWhatsapp,
   mailOutline,
   moonOutline,
+  partlySunnyOutline,
   peopleOutline,
+  pawOutline,
   snowOutline,
+  thermometerOutline,
+  tvOutline,
   waterOutline,
   wifiOutline,
 } from 'ionicons/icons';
@@ -39,6 +42,7 @@ import {
 import { LodgingAvailabilityCalendarComponent } from '../../components/lodging-availability-calendar/lodging-availability-calendar.component';
 import { LodgingsResourceService } from '../../services/lodgings-resource.service';
 import { ScrollHeaderDirective } from '@shared/directives/scroll-header.directive';
+import { getLodgingAmenityPresentation } from '../../utils/lodging-amenities';
 
 interface LodgingFacility {
   id: string;
@@ -123,7 +127,6 @@ export class LodgingDetailPage {
 
   constructor() {
     addIcons({
-      ellipsisHorizontal,
       homeOutline,
       heart,
       heartOutline,
@@ -138,6 +141,10 @@ export class LodgingDetailPage {
       peopleOutline,
       mailOutline,
       logoWhatsapp,
+      tvOutline,
+      pawOutline,
+      thermometerOutline,
+      partlySunnyOutline,
     });
   }
 
@@ -227,54 +234,17 @@ export class LodgingDetailPage {
   }
 
   private mapAmenity(amenity: LodgingAmenity): LodgingFacility | null {
-    const map: Record<LodgingAmenity, LodgingFacility> = {
-      [LodgingAmenity.POOL]: {
-        id: LodgingAmenity.POOL,
-        icon: 'water-outline',
-        label: 'Piscina',
-      },
-      [LodgingAmenity.SEA_VIEW]: {
-        id: LodgingAmenity.SEA_VIEW,
-        icon: 'leaf-outline',
-        label: 'Acceso a playa',
-      },
-      [LodgingAmenity.GARAGE]: {
-        id: LodgingAmenity.GARAGE,
-        icon: 'car-sport-outline',
-        label: 'Estacionamiento',
-      },
-      [LodgingAmenity.WIFI]: {
-        id: LodgingAmenity.WIFI,
-        icon: 'wifi-outline',
-        label: 'Wifi',
-      },
-      [LodgingAmenity.PARRILLA]: {
-        id: LodgingAmenity.PARRILLA,
-        icon: 'flame-outline',
-        label: 'Parrilla',
-      },
-      [LodgingAmenity.AIR_CONDITIONING]: {
-        id: LodgingAmenity.AIR_CONDITIONING,
-        icon: 'snow-outline',
-        label: 'Aire acondicionado',
-      },
-      [LodgingAmenity.HEATING]: {
-        id: LodgingAmenity.HEATING,
-        icon: 'moon-outline',
-        label: 'Calefaccion',
-      },
-      [LodgingAmenity.CABLE_TV]: {
-        id: LodgingAmenity.CABLE_TV,
-        icon: 'ellipsis-horizontal',
-        label: 'Cable TV',
-      },
-      [LodgingAmenity.PETS_ALLOWED]: {
-        id: LodgingAmenity.PETS_ALLOWED,
-        icon: 'ellipsis-horizontal',
-        label: 'Mascotas permitidas',
-      },
-    };
+    const presentation = getLodgingAmenityPresentation(amenity);
 
-    return map[amenity] ?? null;
+    return {
+      id: amenity,
+      icon: presentation.icon,
+      label:
+        amenity === LodgingAmenity.GARAGE
+          ? 'Estacionamiento'
+          : amenity === LodgingAmenity.PETS_ALLOWED
+            ? 'Mascotas permitidas'
+            : presentation.label,
+    };
   }
 }
