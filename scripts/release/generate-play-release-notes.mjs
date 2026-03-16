@@ -28,23 +28,23 @@ function buildNotes(locale) {
     "en-US": [
       `What's new in ${versionName}`,
       "",
-      "- Destinations now highlight points of interest with direct map access.",
-      "- Favorites stay more consistent with the latest published lodging data.",
-      "- Shared styles were compacted to keep the catalog lighter and more consistent.",
+      "- Explore each destination with clearer points of interest and quicker access to key spots.",
+      "- Favorites now stay more reliable, so saved places feel more consistent when you come back.",
+      "- We also refined shared app styles to keep browsing lighter, smoother, and more polished.",
     ].join("\n"),
     "es-419": [
       `Novedades de ${versionName}`,
       "",
-      "- Los destinos ahora destacan puntos de interes con acceso directo al mapa.",
-      "- Los favoritos se mantienen mas consistentes con los ultimos datos publicados.",
-      "- Se compactaron estilos compartidos para mantener el catalogo mas liviano y consistente.",
+      "- Ahora podes explorar cada destino con puntos de interes mas claros y acceso rapido a lugares clave.",
+      "- Los favoritos se mantienen mas confiables para que tus lugares guardados se sientan consistentes al volver.",
+      "- Tambien ajustamos estilos compartidos para que navegar se sienta mas liviano, fluido y prolijo.",
     ].join("\n"),
     "es-US": [
       `Novedades de ${versionName}`,
       "",
-      "- Los destinos ahora destacan puntos de interes con acceso directo al mapa.",
-      "- Los favoritos se mantienen mas consistentes con los ultimos datos publicados.",
-      "- Se compactaron estilos compartidos para mantener el catalogo mas liviano y consistente.",
+      "- Ahora podes explorar cada destino con puntos de interes mas claros y acceso rapido a lugares clave.",
+      "- Los favoritos se mantienen mas confiables para que tus lugares guardados se sientan consistentes al volver.",
+      "- Tambien ajustamos estilos compartidos para que navegar se sienta mas liviano, fluido y prolijo.",
     ].join("\n"),
   };
 
