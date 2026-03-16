@@ -69,6 +69,16 @@ ion-footer.app-page-footer {
   color: var(--ion-color-medium);
 }
 
+@media (max-width: 639px) {
+  .terms-wrapper {
+    padding-top: calc(8px + var(--ion-safe-area-top, 0px));
+  }
+
+  .legal-page-title {
+    margin-bottom: 0.9rem;
+  }
+}
+
 @media (min-width: 640px) {
   .legal-page-title {
     padding: 1.35rem 1.25rem;

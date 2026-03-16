@@ -49,6 +49,16 @@ ion-content::part(background) {
   padding: 1rem 0;
 }
 
+@media (max-width: 639px) {
+  .info-hero {
+    padding: calc(6px + var(--ion-safe-area-top, 0px)) 1rem 0.6rem;
+  }
+
+  .info-wrapper {
+    padding-top: 0.35rem;
+  }
+}
+
 ion-list {
   margin-bottom: 0.85rem;
   border-radius: 12px;

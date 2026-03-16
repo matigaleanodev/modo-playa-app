@@ -278,6 +278,12 @@ ion-footer.app-page-footer {
   padding-top: calc(18px + var(--ion-safe-area-top, 0px));
 }
 
+@media (max-width: 639px) {
+  .app-hero-card--safe-top {
+    padding-top: calc(10px + var(--ion-safe-area-top, 0px));
+  }
+}
+
 .app-hero-card h1 {
   max-width: none;
   line-height: 1.02;
