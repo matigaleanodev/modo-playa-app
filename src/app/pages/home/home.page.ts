@@ -1,6 +1,7 @@
 import { CurrencyPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import {
+  IonBadge,
   IonButton,
   IonButtons,
   IonChip,
@@ -72,6 +73,7 @@ import {
   styleUrls: ['./home.page.scss'],
   imports: [
     CurrencyPipe,
+    IonBadge,
     IonButton,
     IonHeader,
     IonToolbar,

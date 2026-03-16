@@ -83,7 +83,7 @@ ion-content.home-content::part(background) {
 .home-searchbar {
   --background: color-mix(in srgb, var(--ion-background-color) 92%, white 8%);
   --border-radius: 22px;
-  --box-shadow: 0 12px 32px rgba(23, 53, 88, 0.12);
+  --box-shadow: none;
   --color: var(--ion-text-color);
   --icon-color: color-mix(in srgb, var(--ion-color-secondary) 72%, white 28%);
   --placeholder-color: color-mix(in srgb, var(--ion-text-color) 58%, transparent);
@@ -97,7 +97,20 @@ ion-content.home-content::part(background) {
   align-self: stretch;
 }
 
+.home-searchbar::part(container) {
+  height: 48px;
+  min-height: 48px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--ion-background-color) 96%, white 4%);
+  box-shadow: 0 12px 28px rgba(23, 53, 88, 0.1);
+}
+
+.home-searchbar::part(input) {
+  min-height: 48px;
+}
+
 .filters-button {
+  position: relative;
   height: 48px;
   width: 48px;
   min-width: 48px;
@@ -106,6 +119,20 @@ ion-content.home-content::part(background) {
   --border-radius: 18px;
   --box-shadow: 0 14px 28px rgba(23, 53, 88, 0.18);
   align-self: stretch;
+}
+
+.filters-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  box-shadow: 0 6px 16px rgba(9, 28, 46, 0.2);
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 18px;
 }
 
 .active-filters {
@@ -413,8 +440,12 @@ ion-content.home-content::part(background) {
 }
 
 :host-context(.ion-palette-dark) .home-searchbar {
-  --background: color-mix(in srgb, var(--ion-color-step-100) 70%, rgba(7, 20, 33, 0.92) 30%);
-  --box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+  --background: transparent;
+}
+
+:host-context(.ion-palette-dark) .home-searchbar::part(container) {
+  background: color-mix(in srgb, var(--ion-color-step-100) 70%, rgba(7, 20, 33, 0.92) 30%);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
 }
 
 :host-context(.ion-palette-dark) .active-filter-chip {

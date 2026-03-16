@@ -33,6 +33,9 @@
           (click)="openFilters()"
         >
           <ion-icon name="options-outline" aria-hidden="true"></ion-icon>
+          @if (hasActiveFilters()) {
+            <ion-badge class="filters-badge">{{ activeFiltersCount() }}</ion-badge>
+          }
         </ion-button>
       </div>
     </section>
