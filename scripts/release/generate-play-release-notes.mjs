@@ -28,23 +28,23 @@ function buildNotes(locale) {
     "en-US": [
       `What's new in ${versionName}`,
       "",
-      "- Explore each destination with clearer points of interest and quicker access to key spots.",
-      "- Favorites now stay more reliable, so saved places feel more consistent when you come back.",
-      "- We also refined shared app styles to keep browsing lighter, smoother, and more polished.",
+      "- Refined spacing and visual balance across home, favorites, and detail screens.",
+      "- Improved backgrounds, headers, and safe-area behavior for a cleaner mobile feel.",
+      "- Polished filters, chips, and shared UI styles for a more consistent browsing experience.",
     ].join("\n"),
     "es-419": [
       `Novedades de ${versionName}`,
       "",
-      "- Ahora podes explorar cada destino con puntos de interes mas claros y acceso rapido a lugares clave.",
-      "- Los favoritos se mantienen mas confiables para que tus lugares guardados se sientan consistentes al volver.",
-      "- Tambien ajustamos estilos compartidos para que navegar se sienta mas liviano, fluido y prolijo.",
+      "- Refinamos espaciados y balance visual en home, favoritos y detalle de alojamiento.",
+      "- Mejoramos fondos, headers y comportamiento de safe area para una vista mobile mas prolija.",
+      "- Pulimos filtros, chips y estilos compartidos para que navegar se sienta mas consistente.",
     ].join("\n"),
     "es-US": [
       `Novedades de ${versionName}`,
       "",
-      "- Ahora podes explorar cada destino con puntos de interes mas claros y acceso rapido a lugares clave.",
-      "- Los favoritos se mantienen mas confiables para que tus lugares guardados se sientan consistentes al volver.",
-      "- Tambien ajustamos estilos compartidos para que navegar se sienta mas liviano, fluido y prolijo.",
+      "- Refinamos espaciados y balance visual en home, favoritos y detalle de alojamiento.",
+      "- Mejoramos fondos, headers y comportamiento de safe area para una vista mobile mas prolija.",
+      "- Pulimos filtros, chips y estilos compartidos para que navegar se sienta mas consistente.",
     ].join("\n"),
   };
 

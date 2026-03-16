@@ -1,11 +1,54 @@
+.page-backdrop,
+.page-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-backdrop {
+  background:
+    linear-gradient(
+      170deg,
+      rgba(95, 138, 178, 0.24),
+      rgba(37, 74, 116, 0.2)
+    ),
+    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2400&q=80');
+  background-size: 100% 100%, cover;
+  background-position: 0 0, center;
+  background-repeat: no-repeat, no-repeat;
+}
+
+.page-overlay {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--ion-color-primary) 38%, transparent) 0%,
+    color-mix(in srgb, var(--ion-background-color) 82%, transparent) 58%,
+    color-mix(in srgb, var(--ion-background-color) 92%, transparent) 100%
+  );
+}
+
 ion-content.legal-content {
+  --background: transparent;
+  --padding-top: 0;
   --padding-bottom: calc(56px + var(--ion-safe-area-bottom, 0px));
+  --overflow: auto;
+}
+
+ion-content.legal-content::part(scroll) {
+  scrollbar-width: none;
+}
+
+ion-content.legal-content::part(scroll)::-webkit-scrollbar {
+  display: none;
 }
 
 .privacy-wrapper {
   max-width: 1200px;
   margin: 0 auto;
-  padding: calc(18px + var(--ion-safe-area-top, 0px)) 1.25rem 2rem;
+  padding: 12px 1.25rem 2rem;
+  position: relative;
+  z-index: 1;
 }
 
 .privacy-section {
@@ -69,6 +112,16 @@ ion-footer.app-page-footer {
   color: var(--ion-color-medium);
 }
 
+@media (max-width: 639px) {
+  .privacy-wrapper {
+    padding-top: 8px;
+  }
+
+  .legal-page-title {
+    margin-bottom: 0.9rem;
+  }
+}
+
 @media (min-width: 640px) {
   .legal-page-title {
     padding: 1.35rem 1.25rem;
@@ -89,4 +142,26 @@ ion-footer.app-page-footer {
 
 :host-context(.ion-palette-dark) .legal-page-title p {
   color: rgba(198, 214, 228, 0.82);
+}
+
+:host-context(.ion-palette-dark) .page-backdrop {
+  background:
+    linear-gradient(
+      170deg,
+      rgba(12, 34, 62, 0.38),
+      rgba(5, 14, 31, 0.34)
+    ),
+    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2400&q=80');
+  background-size: 100% 100%, cover;
+  background-position: 0 0, center;
+  background-repeat: no-repeat, no-repeat;
+}
+
+:host-context(.ion-palette-dark) .page-overlay {
+  background: linear-gradient(
+    180deg,
+    rgba(6, 24, 43, 0.62) 0%,
+    rgba(6, 18, 31, 0.84) 60%,
+    rgba(4, 12, 22, 0.94) 100%
+  );
 }

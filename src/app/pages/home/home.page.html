@@ -6,7 +6,9 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="home-content app-coastal-content" appScrollHeader fullscreen="true">
+<ion-content class="home-content" appScrollHeader>
+  <div class="page-backdrop" aria-hidden="true"></div>
+  <div class="page-overlay" aria-hidden="true"></div>
   <section class="page home-page app-shell-page">
     <header class="home-copy app-section-copy app-hero-card app-hero-card--safe-top">
       <span class="hero-eyebrow">Escapadas junto al mar</span>
@@ -33,10 +35,11 @@
           (click)="openFilters()"
         >
           <ion-icon name="options-outline" aria-hidden="true"></ion-icon>
-          @if (hasActiveFilters()) {
-            <ion-badge class="filters-badge">{{ activeFiltersCount() }}</ion-badge>
-          }
         </ion-button>
+
+        @if (hasActiveFilters()) {
+          <ion-badge class="filters-badge">{{ activeFiltersCount() }}</ion-badge>
+        }
       </div>
     </section>
 
@@ -44,6 +47,9 @@
       <section class="active-filters" aria-label="Filtros activos">
         @for (chip of activeFilters(); track chip.label) {
           <ion-chip class="active-filter-chip">
+            @if (chip.kind === 'amenity') {
+              <ion-icon [name]="getAmenityIcon(chip.amenity)" aria-hidden="true"></ion-icon>
+            }
             <ion-label>{{ chip.label }}</ion-label>
             <button
               class="chip-remove-button"
@@ -116,11 +122,12 @@
   </section>
 </ion-content>
 
-@if (isFiltersOpen()) {
+@if (isFiltersOpen() || isFiltersClosing()) {
   <div class="filters-overlay" (click)="closeFilters()">
     <section
       class="filters-sheet"
       [class.is-dragging]="isDraggingFiltersSheet()"
+      [class.is-closing]="isFiltersClosing()"
       [style.transform]="filtersSheetTransform()"
       (click)="$event.stopPropagation()"
     >
@@ -139,7 +146,12 @@
             <h2>Filtros</h2>
           </div>
 
-          <ion-button fill="clear" size="small" (click)="closeFilters()">
+          <ion-button
+            fill="clear"
+            size="small"
+            (pointerdown)="$event.stopPropagation()"
+            (click)="closeFilters()"
+          >
             Cerrar
           </ion-button>
         </header>
@@ -245,6 +257,7 @@
                   [class.is-selected]="hasAmenitySelected(amenity)"
                   (click)="toggleAmenity(amenity)"
                 >
+                  <ion-icon [name]="getAmenityIcon(amenity)" aria-hidden="true"></ion-icon>
                   <ion-label>{{ getAmenityLabel(amenity) }}</ion-label>
                 </ion-chip>
               }

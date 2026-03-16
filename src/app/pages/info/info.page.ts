@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   IonBackButton,
@@ -24,6 +24,8 @@ import {
   mailOutline,
   shieldCheckmarkOutline,
 } from 'ionicons/icons';
+import { environment } from 'src/environments/environment';
+import { AppInfoService } from './services/app-info.service';
 
 @Component({
   selector: 'app-info',
@@ -46,10 +48,12 @@ import {
     IonIcon,
   ],
 })
-export class InfoPage {
+export class InfoPage implements OnInit {
+  private readonly appInfoService = inject(AppInfoService);
+
   readonly appName = 'Modo Playa App';
-  readonly appVersion = '1.0.0';
-  readonly appStage = 'Produccion';
+  readonly appVersion = signal(environment.appVersion);
+  readonly appStage = computed(() => this.appInfoService.appStage());
 
   readonly contactEmail = 'contacto@modoplaya.app';
   readonly githubUrl = 'https://github.com/matigaleanodev/modo-playa-app';
@@ -64,5 +68,13 @@ export class InfoPage {
       documentTextOutline,
       informationCircleOutline,
     });
+  }
+
+  ngOnInit(): void {
+    void this.loadAppVersion();
+  }
+
+  private async loadAppVersion(): Promise<void> {
+    this.appVersion.set(await this.appInfoService.getAppVersion());
   }
 }

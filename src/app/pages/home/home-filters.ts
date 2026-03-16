@@ -3,6 +3,7 @@ import {
   LodgingAmenity,
   LodgingType,
 } from 'src/app/lodgings/models/lodging.model';
+import { getLodgingAmenityLabel } from 'src/app/lodgings/utils/lodging-amenities';
 
 export interface HomeFilters {
   amenities: LodgingAmenity[];
@@ -83,19 +84,7 @@ export function createDefaultHomeFilters(): HomeFilters {
 }
 
 export function getAmenityLabel(amenity: LodgingAmenity): string {
-  const labels: Record<LodgingAmenity, string> = {
-    [LodgingAmenity.SEA_VIEW]: 'Vista al mar',
-    [LodgingAmenity.POOL]: 'Piscina',
-    [LodgingAmenity.PARRILLA]: 'Parrilla',
-    [LodgingAmenity.WIFI]: 'WiFi',
-    [LodgingAmenity.AIR_CONDITIONING]: 'Aire acondicionado',
-    [LodgingAmenity.HEATING]: 'Calefacción',
-    [LodgingAmenity.CABLE_TV]: 'Cable TV',
-    [LodgingAmenity.PETS_ALLOWED]: 'Mascotas',
-    [LodgingAmenity.GARAGE]: 'Garage',
-  };
-
-  return labels[amenity];
+  return getLodgingAmenityLabel(amenity);
 }
 
 export function getLodgingTypeLabel(type: LodgingType): string {

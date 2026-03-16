@@ -66,6 +66,10 @@ import {
   setTypeFilter,
   toggleAmenity,
 } from './home-filters';
+import {
+  getLodgingAmenityIcon,
+  registerLodgingAmenityIcons,
+} from 'src/app/lodgings/utils/lodging-amenities';
 
 @Component({
   selector: 'app-home',
@@ -96,9 +100,11 @@ import {
 })
 export class HomePage {
   private readonly filtersSheetCloseThreshold = 96;
+  private readonly filtersSheetCloseAnimationMs = 180;
   private activeFiltersPointerId: number | null = null;
   private filtersSheetDragStartY: number | null = null;
   private clickSuppressionCleanup: (() => void) | null = null;
+  private filtersSheetCloseTimeoutId: number | null = null;
   private readonly lodgingsResource = inject(LodgingsResourceService);
 
   readonly lodgingsRaw = computed(() => this.lodgingsResource.lodgings());
@@ -109,6 +115,7 @@ export class HomePage {
   readonly error = computed(() => this.lodgingsResource.error());
   readonly searchTerm = signal('');
   readonly isFiltersOpen = signal(false);
+  readonly isFiltersClosing = signal(false);
   readonly isDraggingFiltersSheet = signal(false);
   readonly filtersSheetOffset = signal(0);
   readonly filters = signal<HomeFilters>(createDefaultHomeFilters());
@@ -160,6 +167,7 @@ export class HomePage {
       remove,
       trashOutline,
     });
+    registerLodgingAmenityIcons();
   }
 
   async ionViewWillEnter(): Promise<void> {
@@ -199,13 +207,23 @@ export class HomePage {
   }
 
   openFilters(): void {
+    this.clearFiltersSheetCloseTimeout();
     this.resetFiltersSheetDrag();
+    this.isFiltersClosing.set(false);
+    this.filtersSheetOffset.set(0);
     this.isFiltersOpen.set(true);
   }
 
   closeFilters(): void {
     this.resetFiltersSheetDrag();
+    this.clearFiltersSheetCloseTimeout();
     this.isFiltersOpen.set(false);
+    this.isFiltersClosing.set(true);
+    this.filtersSheetCloseTimeoutId = window.setTimeout(() => {
+      this.isFiltersClosing.set(false);
+      this.filtersSheetOffset.set(0);
+      this.filtersSheetCloseTimeoutId = null;
+    }, this.filtersSheetCloseAnimationMs);
   }
 
   onFiltersDragStart(event: PointerEvent): void {
@@ -375,6 +393,10 @@ export class HomePage {
     return getAmenityLabel(amenity);
   }
 
+  getAmenityIcon(amenity: LodgingAmenity): string {
+    return getLodgingAmenityIcon(amenity);
+  }
+
   getLodgingTypeLabel(type: LodgingType): string {
     return getLodgingTypeLabel(type);
   }
@@ -384,6 +406,15 @@ export class HomePage {
     this.filtersSheetDragStartY = null;
     this.filtersSheetOffset.set(0);
     this.isDraggingFiltersSheet.set(false);
+  }
+
+  private clearFiltersSheetCloseTimeout(): void {
+    if (this.filtersSheetCloseTimeoutId === null) {
+      return;
+    }
+
+    window.clearTimeout(this.filtersSheetCloseTimeoutId);
+    this.filtersSheetCloseTimeoutId = null;
   }
 
   private suppressNextDocumentClick(): void {

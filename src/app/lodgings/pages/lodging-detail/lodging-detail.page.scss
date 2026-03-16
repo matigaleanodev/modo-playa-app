@@ -6,6 +6,10 @@
 .detail-page {
   position: relative;
   height: 100%;
+  --detail-footer-base-height: 72px;
+  --detail-footer-clearance: calc(
+    var(--detail-footer-base-height) + var(--ion-safe-area-bottom, 0px)
+  );
 }
 
 ion-content.detail-content {
@@ -86,7 +90,7 @@ ion-content.detail-content::part(scroll) {
   margin-top: -34px;
   position: relative;
   z-index: 3;
-  padding: 0 16px calc(18px + var(--ion-safe-area-bottom, 0px));
+  padding: 0 16px calc(18px + var(--detail-footer-clearance));
   display: grid;
   gap: 14px;
 }
@@ -211,7 +215,7 @@ ion-content.detail-content::part(scroll) {
   --padding-end: 16px;
   --padding-top: 8px;
   --padding-bottom: 8px;
-  --min-height: 64px;
+  --min-height: var(--detail-footer-base-height);
   border-top: 1px solid var(--app-border-subtle);
   display: flex;
   align-items: center;
