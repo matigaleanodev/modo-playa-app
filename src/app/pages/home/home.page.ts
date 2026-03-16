@@ -115,6 +115,7 @@ export class HomePage {
   readonly error = computed(() => this.lodgingsResource.error());
   readonly searchTerm = signal('');
   readonly isFiltersOpen = signal(false);
+  readonly isFiltersClosing = signal(false);
   readonly isDraggingFiltersSheet = signal(false);
   readonly filtersSheetOffset = signal(0);
   readonly filters = signal<HomeFilters>(createDefaultHomeFilters());
@@ -208,19 +209,18 @@ export class HomePage {
   openFilters(): void {
     this.clearFiltersSheetCloseTimeout();
     this.resetFiltersSheetDrag();
+    this.isFiltersClosing.set(false);
+    this.filtersSheetOffset.set(0);
     this.isFiltersOpen.set(true);
   }
 
   closeFilters(): void {
     this.resetFiltersSheetDrag();
     this.clearFiltersSheetCloseTimeout();
-
-    const viewportHeight =
-      typeof window === 'undefined' ? 640 : Math.max(window.innerHeight, 640);
-
-    this.filtersSheetOffset.set(viewportHeight);
+    this.isFiltersOpen.set(false);
+    this.isFiltersClosing.set(true);
     this.filtersSheetCloseTimeoutId = window.setTimeout(() => {
-      this.isFiltersOpen.set(false);
+      this.isFiltersClosing.set(false);
       this.filtersSheetOffset.set(0);
       this.filtersSheetCloseTimeoutId = null;
     }, this.filtersSheetCloseAnimationMs);
@@ -404,6 +404,7 @@ export class HomePage {
   private resetFiltersSheetDrag(): void {
     this.activeFiltersPointerId = null;
     this.filtersSheetDragStartY = null;
+    this.filtersSheetOffset.set(0);
     this.isDraggingFiltersSheet.set(false);
   }
 

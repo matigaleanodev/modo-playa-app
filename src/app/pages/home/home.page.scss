@@ -222,6 +222,10 @@ ion-content.home-content {
   transition: none;
 }
 
+.filters-sheet.is-closing {
+  animation: filters-sheet-exit 180ms ease-in forwards;
+}
+
 .filters-sheet-drag-zone {
   touch-action: none;
 }
@@ -509,6 +513,16 @@ ion-content.home-content {
 
   to {
     transform: translateY(0);
+  }
+}
+
+@keyframes filters-sheet-exit {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(100%);
   }
 }
 

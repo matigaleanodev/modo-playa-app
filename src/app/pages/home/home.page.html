@@ -122,11 +122,12 @@
   </section>
 </ion-content>
 
-@if (isFiltersOpen()) {
+@if (isFiltersOpen() || isFiltersClosing()) {
   <div class="filters-overlay" (click)="closeFilters()">
     <section
       class="filters-sheet"
       [class.is-dragging]="isDraggingFiltersSheet()"
+      [class.is-closing]="isFiltersClosing()"
       [style.transform]="filtersSheetTransform()"
       (click)="$event.stopPropagation()"
     >
