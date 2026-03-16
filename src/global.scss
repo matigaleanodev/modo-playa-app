@@ -224,3 +224,105 @@ ion-footer.app-page-footer {
 :root.ion-palette-dark .app-section-copy p {
   color: rgba(198, 214, 228, 0.82);
 }
+
+.app-coastal-content {
+  --background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--ion-color-primary) 38%, transparent) 0%,
+      color-mix(in srgb, var(--ion-background-color) 82%, transparent) 58%,
+      color-mix(in srgb, var(--ion-background-color) 92%, transparent) 100%
+    ),
+    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2400&q=80');
+}
+
+.app-coastal-content::part(background) {
+  background-size: 100% 100%, cover;
+  background-position: 0 0, center;
+  background-repeat: no-repeat, no-repeat;
+}
+
+.app-shell-page {
+  width: min(100%, 1140px);
+  margin: 0 auto;
+  padding: 16px 16px calc(18px + var(--ion-safe-area-bottom, 0px));
+}
+
+.app-hero-card {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 14px;
+  padding: 18px 18px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 26px;
+  background:
+    linear-gradient(145deg, rgba(7, 34, 58, 0.28) 0%, rgba(255, 255, 255, 0.1) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.08) 100%);
+  box-shadow: 0 18px 40px rgba(11, 35, 58, 0.16);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.app-hero-card::after {
+  content: "";
+  position: absolute;
+  inset: auto -28px -44px auto;
+  width: 132px;
+  height: 132px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0) 72%);
+  pointer-events: none;
+}
+
+.app-hero-card--safe-top {
+  padding-top: calc(18px + var(--ion-safe-area-top, 0px));
+}
+
+.app-hero-card h1 {
+  max-width: none;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.app-hero-card p {
+  max-width: 40rem;
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+
+@media (min-width: 640px) {
+  .app-shell-page {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .app-hero-card {
+    padding-inline: 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-shell-page {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+:root.ion-palette-dark .app-coastal-content {
+  --background:
+    linear-gradient(
+      180deg,
+      rgba(6, 24, 43, 0.62) 0%,
+      rgba(6, 18, 31, 0.84) 60%,
+      rgba(4, 12, 22, 0.94) 100%
+    ),
+    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2400&q=80');
+}
+
+:root.ion-palette-dark .app-hero-card {
+  border-color: rgba(180, 205, 228, 0.12);
+  background:
+    linear-gradient(145deg, rgba(6, 29, 49, 0.8) 0%, rgba(14, 44, 68, 0.46) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.24);
+}
