@@ -1,0 +1,77 @@
+ion-menu {
+  --width: min(88vw, 320px);
+}
+
+ion-menu ion-content {
+  width: 100%;
+  max-width: 100%;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--ion-color-primary) 38%, transparent) 0%,
+    color-mix(in srgb, var(--ion-background-color) 82%, transparent) 58%,
+    color-mix(in srgb, var(--ion-background-color) 92%, transparent) 100%
+  );
+}
+
+ion-menu ion-content::part(scroll) {
+  scrollbar-width: none;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+ion-menu ion-content::part(scroll)::-webkit-scrollbar {
+  display: none;
+}
+
+ion-menu ion-list {
+  width: 100%;
+  margin: 0;
+}
+
+ion-menu ion-item,
+ion-menu ion-menu-toggle {
+  max-width: 100%;
+}
+
+ion-menu ion-header ion-toolbar {
+  --background: color-mix(
+    in srgb,
+    var(--ion-color-primary) 18%,
+    var(--ion-background-color)
+  );
+}
+
+ion-list + ion-list {
+  margin-top: 20px;
+}
+
+ion-menu ion-list:last-of-type {
+  margin-bottom: 0;
+}
+
+.menu-item.selected {
+  --background: rgba(var(--ion-color-primary-rgb), 0.14);
+  --color: var(--ion-color-primary);
+  --border-radius: 10px;
+  font-weight: 600;
+}
+
+.menu-item.selected ion-icon {
+  color: var(--ion-color-primary);
+}
+
+:host-context(.ion-palette-dark) ion-menu ion-content {
+  --background: linear-gradient(
+    180deg,
+    rgba(8, 27, 47, 0.42) 0%,
+    rgba(7, 19, 33, 0.74) 62%,
+    rgba(5, 14, 24, 0.88) 100%
+  );
+}
+
+:host-context(.ion-palette-dark) ion-menu ion-header ion-toolbar {
+  --background: rgba(11, 34, 56, 0.9);
+}

@@ -1,3 +1,40 @@
+.page-backdrop,
+.page-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-backdrop {
+  background:
+    linear-gradient(
+      170deg,
+      rgba(95, 138, 178, 0.24),
+      rgba(37, 74, 116, 0.2)
+    ),
+    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2400&q=80');
+  background-size: 100% 100%, cover;
+  background-position: 0 0, center;
+  background-repeat: no-repeat, no-repeat;
+}
+
+.page-overlay {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--ion-color-primary) 38%, transparent) 0%,
+    color-mix(in srgb, var(--ion-background-color) 82%, transparent) 58%,
+    color-mix(in srgb, var(--ion-background-color) 92%, transparent) 100%
+  );
+}
+
+ion-content.home-content {
+  --background: transparent;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --overflow: auto;
+}
+
 .home-copy h1 {
   font-size: clamp(1.95rem, 5vw, 2.6rem);
 }
@@ -21,6 +58,7 @@
 
 .search-actions {
   display: flex;
+  position: relative;
 }
 
 .home-searchbar {
@@ -32,6 +70,8 @@
   --placeholder-color: color-mix(in srgb, var(--ion-text-color) 58%, transparent);
   --min-height: 48px;
   height: 48px;
+  min-height: 48px;
+  max-height: 48px;
   min-width: 0;
   width: 100%;
   padding: 0;
@@ -43,6 +83,7 @@
 .home-searchbar::part(container) {
   height: 48px;
   min-height: 48px;
+  max-height: 48px;
   border-radius: 18px;
   background: color-mix(in srgb, var(--ion-background-color) 96%, white 4%);
   box-shadow: 0 12px 28px rgba(23, 53, 88, 0.1);
@@ -50,6 +91,7 @@
 
 .home-searchbar::part(input) {
   min-height: 48px;
+  height: 48px;
 }
 
 .filters-button {
@@ -67,15 +109,16 @@
 }
 
 .filters-button::part(native) {
-  overflow: visible;
+  overflow: hidden;
+  border-radius: 22px;
 }
 
 .filters-badge {
   position: absolute;
-  top: -6px;
-  right: -6px;
-  min-width: 18px;
-  height: 18px;
+  top: -4px;
+  right: -8px;
+  min-width: 20px;
+  height: 20px;
   padding: 0 4px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--ion-color-tertiary) 82%, white 18%);
@@ -84,7 +127,7 @@
   box-shadow: 0 8px 18px rgba(9, 28, 46, 0.22);
   font-size: 0.68rem;
   font-weight: 700;
-  line-height: 18px;
+  line-height: 20px;
 }
 
 .active-filters {
@@ -392,6 +435,28 @@
 
 :host-context(.ion-palette-dark) .home-searchbar {
   --background: transparent;
+}
+
+:host-context(.ion-palette-dark) .page-backdrop {
+  background:
+    linear-gradient(
+      170deg,
+      rgba(12, 34, 62, 0.38),
+      rgba(5, 14, 31, 0.34)
+    ),
+    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2400&q=80');
+  background-size: 100% 100%, cover;
+  background-position: 0 0, center;
+  background-repeat: no-repeat, no-repeat;
+}
+
+:host-context(.ion-palette-dark) .page-overlay {
+  background: linear-gradient(
+    180deg,
+    rgba(6, 24, 43, 0.62) 0%,
+    rgba(6, 18, 31, 0.84) 60%,
+    rgba(4, 12, 22, 0.94) 100%
+  );
 }
 
 :host-context(.ion-palette-dark) .home-searchbar::part(container) {

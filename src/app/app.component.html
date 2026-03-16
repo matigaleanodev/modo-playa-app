@@ -8,11 +8,11 @@
 
     <ion-content>
       @for (section of menuSections; track section.title) {
-        <ion-list>
+        <ion-list class="ion-no-padding">
           <ion-list-header>{{ section.title }}</ion-list-header>
 
           @for (item of section.items; track item.id) {
-            @if (item.type === 'link') {
+            @if (item.type === "link") {
               <ion-menu-toggle autoHide="true">
                 <ion-item
                   button
@@ -22,15 +22,23 @@
                   routerLinkActive="selected"
                   [routerLinkActiveOptions]="{ exact: true }"
                 >
-                  <ion-icon aria-hidden="true" [name]="item.icon" slot="start"></ion-icon>
+                  <ion-icon
+                    aria-hidden="true"
+                    [name]="item.icon"
+                    slot="start"
+                  ></ion-icon>
                   <ion-label>{{ item.label }}</ion-label>
                 </ion-item>
               </ion-menu-toggle>
             } @else {
               <ion-item button (click)="onMenuAction(item.action)">
-                <ion-icon aria-hidden="true" [name]="item.icon" slot="start"></ion-icon>
+                <ion-icon
+                  aria-hidden="true"
+                  [name]="item.icon"
+                  slot="start"
+                ></ion-icon>
                 <ion-label>{{ item.label }}</ion-label>
-                @if (item.action === 'theme') {
+                @if (item.action === "theme") {
                   <ion-note slot="end">{{ currentThemeLabel() }}</ion-note>
                 }
               </ion-item>

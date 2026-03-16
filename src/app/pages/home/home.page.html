@@ -6,7 +6,9 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="home-content app-coastal-content" appScrollHeader fullscreen="true">
+<ion-content class="home-content" appScrollHeader>
+  <div class="page-backdrop" aria-hidden="true"></div>
+  <div class="page-overlay" aria-hidden="true"></div>
   <section class="page home-page app-shell-page">
     <header class="home-copy app-section-copy app-hero-card app-hero-card--safe-top">
       <span class="hero-eyebrow">Escapadas junto al mar</span>
@@ -33,10 +35,11 @@
           (click)="openFilters()"
         >
           <ion-icon name="options-outline" aria-hidden="true"></ion-icon>
-          @if (hasActiveFilters()) {
-            <ion-badge class="filters-badge">{{ activeFiltersCount() }}</ion-badge>
-          }
         </ion-button>
+
+        @if (hasActiveFilters()) {
+          <ion-badge class="filters-badge">{{ activeFiltersCount() }}</ion-badge>
+        }
       </div>
     </section>
 
@@ -142,7 +145,12 @@
             <h2>Filtros</h2>
           </div>
 
-          <ion-button fill="clear" size="small" (click)="closeFilters()">
+          <ion-button
+            fill="clear"
+            size="small"
+            (pointerdown)="$event.stopPropagation()"
+            (click)="closeFilters()"
+          >
             Cerrar
           </ion-button>
         </header>

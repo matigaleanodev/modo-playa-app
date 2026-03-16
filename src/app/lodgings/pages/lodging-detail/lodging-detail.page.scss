@@ -6,7 +6,7 @@
 .detail-page {
   position: relative;
   height: 100%;
-  --detail-footer-base-height: 80px;
+  --detail-footer-base-height: 72px;
   --detail-footer-clearance: calc(
     var(--detail-footer-base-height) + var(--ion-safe-area-bottom, 0px)
   );
@@ -214,7 +214,7 @@ ion-content.detail-content::part(scroll) {
   --padding-start: 16px;
   --padding-end: 16px;
   --padding-top: 8px;
-  --padding-bottom: calc(8px + var(--ion-safe-area-bottom, 0px));
+  --padding-bottom: 8px;
   --min-height: var(--detail-footer-base-height);
   border-top: 1px solid var(--app-border-subtle);
   display: flex;

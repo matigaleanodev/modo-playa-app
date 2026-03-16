@@ -100,9 +100,11 @@ import {
 })
 export class HomePage {
   private readonly filtersSheetCloseThreshold = 96;
+  private readonly filtersSheetCloseAnimationMs = 180;
   private activeFiltersPointerId: number | null = null;
   private filtersSheetDragStartY: number | null = null;
   private clickSuppressionCleanup: (() => void) | null = null;
+  private filtersSheetCloseTimeoutId: number | null = null;
   private readonly lodgingsResource = inject(LodgingsResourceService);
 
   readonly lodgingsRaw = computed(() => this.lodgingsResource.lodgings());
@@ -204,13 +206,24 @@ export class HomePage {
   }
 
   openFilters(): void {
+    this.clearFiltersSheetCloseTimeout();
     this.resetFiltersSheetDrag();
     this.isFiltersOpen.set(true);
   }
 
   closeFilters(): void {
     this.resetFiltersSheetDrag();
-    this.isFiltersOpen.set(false);
+    this.clearFiltersSheetCloseTimeout();
+
+    const viewportHeight =
+      typeof window === 'undefined' ? 640 : Math.max(window.innerHeight, 640);
+
+    this.filtersSheetOffset.set(viewportHeight);
+    this.filtersSheetCloseTimeoutId = window.setTimeout(() => {
+      this.isFiltersOpen.set(false);
+      this.filtersSheetOffset.set(0);
+      this.filtersSheetCloseTimeoutId = null;
+    }, this.filtersSheetCloseAnimationMs);
   }
 
   onFiltersDragStart(event: PointerEvent): void {
@@ -391,8 +404,16 @@ export class HomePage {
   private resetFiltersSheetDrag(): void {
     this.activeFiltersPointerId = null;
     this.filtersSheetDragStartY = null;
-    this.filtersSheetOffset.set(0);
     this.isDraggingFiltersSheet.set(false);
+  }
+
+  private clearFiltersSheetCloseTimeout(): void {
+    if (this.filtersSheetCloseTimeoutId === null) {
+      return;
+    }
+
+    window.clearTimeout(this.filtersSheetCloseTimeoutId);
+    this.filtersSheetCloseTimeoutId = null;
   }
 
   private suppressNextDocumentClick(): void {
