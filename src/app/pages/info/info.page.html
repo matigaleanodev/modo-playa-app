@@ -70,7 +70,7 @@
         <ion-icon name="information-circle-outline" slot="start"></ion-icon>
         <ion-label>
           <p>Version</p>
-          <h3>{{ appVersion }}</h3>
+          <h3>{{ appVersion() }}</h3>
         </ion-label>
       </ion-item>
 
@@ -78,7 +78,7 @@
         <ion-icon name="information-circle-outline" slot="start"></ion-icon>
         <ion-label>
           <p>Entorno</p>
-          <h3>{{ appStage }}</h3>
+          <h3>{{ appStage() }}</h3>
         </ion-label>
       </ion-item>
     </ion-list>
