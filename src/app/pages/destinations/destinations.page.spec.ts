@@ -36,6 +36,7 @@ describe('DestinationsPage', () => {
       sunrise: '06:11',
       sunset: '20:04',
     },
+    pointsOfInterest: [],
   };
 
   const contextPampasMock: DestinationContext = {
@@ -55,6 +56,7 @@ describe('DestinationsPage', () => {
       sunrise: '06:12',
       sunset: '20:05',
     },
+    pointsOfInterest: [],
   };
 
   beforeEach(async () => {
