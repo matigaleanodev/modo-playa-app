@@ -250,6 +250,32 @@ describe('LodgingsResourceService', () => {
     expect(service.isFavorite(lodgingA.id)).toBeTrue();
   });
 
+  it('deberia normalizar favoritos invalidos o duplicados al cargar desde storage', async () => {
+    storageServiceMock.getItem.and.resolveTo([
+      lodgingA,
+      {
+        ...lodgingA,
+        title: '',
+      },
+      {
+        ...lodgingA,
+        title: 'Lodging A actualizado',
+        images: [' https://example.com/a/original.webp ', ''],
+      },
+    ]);
+
+    await service.loadFavorites();
+
+    expect(service.favorites()).toEqual([
+      jasmine.objectContaining({
+        id: 'a',
+        title: 'Lodging A actualizado',
+        images: ['https://example.com/a/original.webp'],
+      }),
+    ]);
+    expect(storageServiceMock.setItem).toHaveBeenCalledTimes(1);
+  });
+
   it('no deberia recargar favoritos si ya fueron cargados', async () => {
     storageServiceMock.getItem.and.resolveTo([lodgingA]);
 
@@ -269,7 +295,7 @@ describe('LodgingsResourceService', () => {
     await service.loadFavorites(true);
 
     expect(storageServiceMock.getItem).toHaveBeenCalledTimes(2);
-    expect(service.favorites()).toEqual([lodgingB]);
+    expect(service.favorites()).toEqual([jasmine.objectContaining({ id: 'b' })]);
   });
 
   it('deberia alternar favorito y persistirlo', async () => {
@@ -284,12 +310,43 @@ describe('LodgingsResourceService', () => {
     expect(storageServiceMock.setItem).toHaveBeenCalledTimes(2);
   });
 
+  it('deberia reconciliar favoritos con datos frescos del listado', async () => {
+    storageServiceMock.getItem.and.resolveTo([lodgingA]);
+    lodgingsServiceMock.getPaginated.and.returnValue(
+      of({
+        data: [
+          {
+            ...lodgingA,
+            title: 'Lodging A refreshed',
+          },
+        ],
+        total: 1,
+        page: 1,
+        limit: 8,
+      }),
+    );
+
+    await service.loadFavorites();
+    await service.loadInitialLodgings();
+
+    expect(service.favorites()).toEqual([
+      jasmine.objectContaining({
+        id: 'a',
+        title: 'Lodging A refreshed',
+      }),
+    ]);
+    expect(storageServiceMock.setItem).toHaveBeenCalledTimes(1);
+  });
+
   it('deberia cargar favoritos antes de alternar si aun no se cargaron', async () => {
     storageServiceMock.getItem.and.resolveTo([lodgingB]);
 
     await service.toggleFavorite(lodgingA);
 
     expect(storageServiceMock.getItem).toHaveBeenCalledTimes(1);
-    expect(service.favorites()).toEqual([lodgingA, lodgingB]);
+    expect(service.favorites()).toEqual([
+      jasmine.objectContaining({ id: 'a' }),
+      jasmine.objectContaining({ id: 'b' }),
+    ]);
   });
 });
