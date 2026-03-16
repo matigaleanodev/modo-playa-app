@@ -14,6 +14,8 @@ ion-content.detail-content {
 .detail-header {
   background: transparent;
   box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .detail-header::after {
