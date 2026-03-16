@@ -59,6 +59,21 @@ describe('DestinationsPage', () => {
     pointsOfInterest: [],
   };
 
+  const contextWithPointsMock: DestinationContext = {
+    ...contextPampasMock,
+    pointsOfInterest: [
+      {
+        id: 'downtown',
+        title: 'Centro Comercial de Mar de las Pampas',
+        category: 'downtown',
+        summary: 'Nucleo comercial principal del destino.',
+        googleMapsUrl: 'https://maps.google.com/?q=Centro+Comercial+de+Mar+de+las+Pampas',
+        highlight: 'Paseo y servicios',
+        displayOrder: 1,
+      },
+    ],
+  };
+
   beforeEach(async () => {
     destinationsService = jasmine.createSpyObj<DestinationsService>(
       'DestinationsService',
@@ -258,5 +273,28 @@ describe('DestinationsPage', () => {
     expect(component.weatherLabel()).toBe('Cielo despejado');
     expect(component.weatherIcon()).toBe('sunny-outline');
     expect(component.backgroundClass()).toBe('weather-bg-sunny');
+  });
+
+  it('deberia renderizar puntos de interes con link a google maps', async () => {
+    destinationsService.getContextByDestinationId.and.returnValue(
+      of(contextWithPointsMock),
+    );
+
+    await component.ionViewWillEnter();
+    fixture.detectChanges();
+
+    const hero = fixture.nativeElement.querySelector('.destinations-copy');
+    const pointLink = fixture.nativeElement.querySelector('.point-item');
+
+    expect(hero?.textContent).toContain('puntos clave');
+    expect(pointLink?.getAttribute('href')).toBe(
+      contextWithPointsMock.pointsOfInterest[0].googleMapsUrl,
+    );
+    expect(pointLink?.textContent).toContain('Ver mapa');
+  });
+
+  it('deberia mapear iconos de puntos de interes por categoria', () => {
+    expect(component.getPointOfInterestIcon('healthcare')).toBe('medical-outline');
+    expect(component.getPointOfInterestIcon('landmark')).toBe('location-outline');
   });
 });

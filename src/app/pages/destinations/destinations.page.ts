@@ -22,18 +22,26 @@ import {
 import { SegmentCustomEvent } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
+  businessOutline,
   cloudyOutline,
+  locationOutline,
+  medicalOutline,
   moonOutline,
   partlySunnyOutline,
   rainyOutline,
+  shieldCheckmarkOutline,
+  storefrontOutline,
   sunnyOutline,
   thunderstormOutline,
+  walkOutline,
 } from 'ionicons/icons';
 import {
   Destination,
   DestinationContext,
   DestinationForecastItem,
   DestinationId,
+  PointOfInterest,
+  PointOfInterestCategory,
 } from 'src/app/destinations/models/destination.model';
 import { DestinationsService } from 'src/app/destinations/services/destinations.service';
 import {
@@ -103,6 +111,7 @@ export class DestinationsPage {
   readonly hasEmptyState = computed(() => {
     return !this.loading() && !this.error() && this.destinations().length === 0;
   });
+  readonly pointsOfInterest = computed(() => this.context()?.pointsOfInterest ?? []);
 
   readonly weatherLabel = computed(() => {
     const weatherCode = this.context()?.weather.weatherCode;
@@ -159,12 +168,18 @@ export class DestinationsPage {
 
   constructor() {
     addIcons({
+      businessOutline,
       sunnyOutline,
       moonOutline,
       partlySunnyOutline,
       rainyOutline,
       thunderstormOutline,
       cloudyOutline,
+      locationOutline,
+      medicalOutline,
+      shieldCheckmarkOutline,
+      storefrontOutline,
+      walkOutline,
     });
   }
 
@@ -262,6 +277,29 @@ export class DestinationsPage {
     }
 
     return forecast.find((item) => item.day === day) ?? null;
+  }
+
+  getPointOfInterestIcon(category: PointOfInterestCategory): string {
+    switch (category) {
+      case 'healthcare':
+        return 'medical-outline';
+      case 'safety':
+        return 'shield-checkmark-outline';
+      case 'downtown':
+        return 'business-outline';
+      case 'pharmacy':
+        return 'storefront-outline';
+      case 'beach':
+        return 'walk-outline';
+      case 'landmark':
+        return 'location-outline';
+      default:
+        return 'location-outline';
+    }
+  }
+
+  trackPointOfInterest(_: number, pointOfInterest: PointOfInterest): string {
+    return pointOfInterest.id;
   }
 
 }
