@@ -1,5 +1,5 @@
 <div class="ion-page detail-page">
-  <ion-header class="detail-header app-page-header" translucent="true">
+  <ion-header class="detail-header app-page-header">
     <ion-toolbar class="detail-toolbar app-page-toolbar">
       <ion-buttons slot="start">
         <ion-back-button
@@ -15,7 +15,12 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-content id="detail-content" class="detail-content" appScrollHeader fullscreen="true">
+  <ion-content
+    id="detail-content"
+    class="detail-content"
+    appScrollHeader
+    fullscreen="true"
+  >
     <section class="hero">
       <img [src]="heroImage()" [alt]="lodging().title" />
     </section>
