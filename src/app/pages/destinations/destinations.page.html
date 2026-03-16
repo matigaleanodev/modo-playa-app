@@ -14,11 +14,11 @@
   <div class="weather-backdrop" aria-hidden="true"></div>
   <div class="weather-overlay" aria-hidden="true"></div>
 
-  <section class="page destinations-page">
-    <header class="destinations-copy app-section-copy content-fade-in">
-      <span class="hero-eyebrow">Clima en la costa</span>
-      <h1>Elegi un destino y mira el clima al instante</h1>
-      <p>Consulta el pronostico, el viento y los horarios solares para organizar mejor tu salida.</p>
+  <section class="page destinations-page app-shell-page">
+    <header class="destinations-copy app-section-copy app-hero-card content-fade-in">
+      <span class="hero-eyebrow">Destinos para explorar</span>
+      <h1>Elige un destino y ubica rapido sus puntos clave</h1>
+      <p>Descubre referencias utiles y el contexto del lugar para moverte mejor desde el primer vistazo.</p>
     </header>
 
     @if (destinations().length > 0) {
@@ -151,6 +151,40 @@
           </ion-col>
         </ion-row>
       </ion-grid>
+
+      @if (pointsOfInterest().length > 0) {
+      <ion-card class="points-card">
+        <ion-card-header>
+          <ion-card-title>Puntos de interés</ion-card-title>
+          <p class="points-copy">
+            Abre cada referencia en Google Maps para orientarte rapido en {{ context()!.destination }}.
+          </p>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="points-grid">
+            @for (pointOfInterest of pointsOfInterest(); track trackPointOfInterest($index, pointOfInterest)) {
+            <a
+              class="point-item"
+              [href]="pointOfInterest.googleMapsUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              [attr.aria-label]="'Abrir ' + pointOfInterest.title + ' en Google Maps'"
+            >
+              <span class="point-icon-shell">
+                <ion-icon [name]="getPointOfInterestIcon(pointOfInterest.category)"></ion-icon>
+              </span>
+              <div class="point-body">
+                <span class="point-highlight">{{ pointOfInterest.highlight }}</span>
+                <h3>{{ pointOfInterest.title }}</h3>
+                <p>{{ pointOfInterest.summary }}</p>
+              </div>
+              <span class="point-cta">Ver mapa</span>
+            </a>
+            }
+          </div>
+        </ion-card-content>
+      </ion-card>
+      }
     </div>
     }
   </section>

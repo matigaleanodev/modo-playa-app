@@ -44,6 +44,7 @@ describe('DestinationsService', () => {
       weather: { temperature: 27, windSpeed: 14, weatherCode: 3 },
       forecast: [],
       sun: { sunrise: '06:12', sunset: '20:05' },
+      pointsOfInterest: [],
     });
   });
 });

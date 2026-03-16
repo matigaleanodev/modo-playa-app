@@ -66,6 +66,7 @@ export class LodgingsResourceService {
       this.total.set(response.total);
       this.lodgings.set(response.data);
       this.hasMore.set(this.shouldKeepLoading(response, response.data.length));
+      this.syncFavoritesWithLodgings(response.data);
     } catch (error) {
       this.total.set(0);
       this.lodgings.set([]);
@@ -101,6 +102,7 @@ export class LodgingsResourceService {
       const merged = this.mergeUniqueLodgings(this.lodgings(), response.data);
       this.lodgings.set(merged);
       this.hasMore.set(this.shouldKeepLoading(response, merged.length));
+      this.syncFavoritesWithLodgings(response.data);
     } catch (error) {
       this.error.set(getLoadMoreLodgingsErrorMessage(error));
     } finally {
@@ -130,10 +132,19 @@ export class LodgingsResourceService {
       return;
     }
 
-    const stored =
-      (await this.storage.getItem<Lodging[]>(FAVORITE_LODGINGS_KEY)) ?? [];
-    this.favorites.set(stored);
+    const stored = await this.storage.getItem<Lodging[]>(FAVORITE_LODGINGS_KEY);
+    const normalizedFavorites = this.normalizeFavoriteLodgings(stored);
+    const reconciledFavorites = this.reconcileFavoritesWithLodgings(
+      normalizedFavorites,
+      this.lodgings(),
+    );
+
+    this.favorites.set(reconciledFavorites);
     this.favoritesLoaded.set(true);
+
+    if (!this.areFavoriteCollectionsEqual(stored ?? [], reconciledFavorites)) {
+      await this.persistFavorites(reconciledFavorites);
+    }
   }
 
   async toggleFavorite(lodging: Lodging): Promise<void> {
@@ -143,12 +154,15 @@ export class LodgingsResourceService {
 
     const current = this.favorites();
     const exists = current.some((item) => item.id === lodging.id);
+    const sanitizedLodging = this.sanitizeFavoriteLodging(lodging);
     const next = exists
       ? current.filter((item) => item.id !== lodging.id)
-      : [lodging, ...current];
+      : sanitizedLodging
+        ? [sanitizedLodging, ...current]
+        : current;
 
     this.favorites.set(next);
-    await this.storage.setItem(FAVORITE_LODGINGS_KEY, next);
+    await this.persistFavorites(next);
   }
 
   private shouldKeepLoading(
@@ -196,5 +210,126 @@ export class LodgingsResourceService {
 
   private normalizeSearch(search: string): string {
     return search.trim();
+  }
+
+  private syncFavoritesWithLodgings(lodgings: Lodging[]): void {
+    if (!this.favoritesLoaded() || lodgings.length === 0) {
+      return;
+    }
+
+    const nextFavorites = this.reconcileFavoritesWithLodgings(
+      this.favorites(),
+      lodgings,
+    );
+
+    if (this.areFavoriteCollectionsEqual(this.favorites(), nextFavorites)) {
+      return;
+    }
+
+    this.favorites.set(nextFavorites);
+    void this.persistFavorites(nextFavorites);
+  }
+
+  private reconcileFavoritesWithLodgings(
+    favorites: Lodging[],
+    lodgings: Lodging[],
+  ): Lodging[] {
+    if (favorites.length === 0 || lodgings.length === 0) {
+      return favorites;
+    }
+
+    const lodgingsById = new Map(
+      lodgings
+        .map((lodging) => this.sanitizeFavoriteLodging(lodging))
+        .filter((lodging): lodging is Lodging => Boolean(lodging))
+        .map((lodging) => [lodging.id, lodging]),
+    );
+
+    return favorites.map((favorite) => lodgingsById.get(favorite.id) ?? favorite);
+  }
+
+  private normalizeFavoriteLodgings(stored: Lodging[] | null): Lodging[] {
+    if (!Array.isArray(stored)) {
+      return [];
+    }
+
+    const favoritesById = new Map<string, Lodging>();
+
+    for (const lodging of stored) {
+      const sanitizedLodging = this.sanitizeFavoriteLodging(lodging);
+
+      if (!sanitizedLodging) {
+        continue;
+      }
+
+      favoritesById.set(sanitizedLodging.id, sanitizedLodging);
+    }
+
+    return Array.from(favoritesById.values());
+  }
+
+  private sanitizeFavoriteLodging(lodging: Lodging | null | undefined): Lodging | null {
+    if (!lodging?.id || !lodging.title) {
+      return null;
+    }
+
+    return {
+      ...lodging,
+      mainImage: lodging.mainImage?.trim() ?? '',
+      images: this.sanitizeImageList(lodging.images),
+      mediaImages: this.sanitizeMediaImages(lodging.mediaImages),
+      occupiedRanges: lodging.occupiedRanges?.filter(
+        (range) => Boolean(range?.from && range?.to),
+      ),
+    };
+  }
+
+  private sanitizeImageList(images: string[] | undefined): string[] {
+    if (!Array.isArray(images)) {
+      return [];
+    }
+
+    return images
+      .filter((image): image is string => typeof image === 'string')
+      .map((image) => image.trim())
+      .filter(Boolean);
+  }
+
+  private sanitizeMediaImages(lodgingImages: Lodging['mediaImages']): Lodging['mediaImages'] {
+    if (!Array.isArray(lodgingImages)) {
+      return undefined;
+    }
+
+    const images = lodgingImages
+      .filter((image) => Boolean(image?.imageId && image?.createdAt && image?.url))
+      .map((image) => ({
+        imageId: image.imageId,
+        isDefault: Boolean(image.isDefault),
+        width: image.width,
+        height: image.height,
+        createdAt: image.createdAt,
+        url: image.url.trim(),
+        variants: image.variants
+          ? {
+              thumb: image.variants.thumb,
+              card: image.variants.card,
+              hero: image.variants.hero,
+            }
+          : undefined,
+      }))
+      .filter((image) => Boolean(image.url));
+
+    return images.length > 0 ? images : undefined;
+  }
+
+  private areFavoriteCollectionsEqual(
+    current: Lodging[],
+    next: Lodging[],
+  ): boolean {
+    return JSON.stringify(current) === JSON.stringify(next);
+  }
+
+  private async persistFavorites(favorites: Lodging[]): Promise<void> {
+    await this.storage.setItem(FAVORITE_LODGINGS_KEY, favorites);
   }
 }

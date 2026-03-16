@@ -22,6 +22,24 @@ export interface DestinationSun {
   sunset: string;
 }
 
+export type PointOfInterestCategory =
+  | 'healthcare'
+  | 'safety'
+  | 'downtown'
+  | 'pharmacy'
+  | 'beach'
+  | 'landmark';
+
+export interface PointOfInterest {
+  id: string;
+  title: string;
+  category: PointOfInterestCategory;
+  summary: string;
+  googleMapsUrl: string;
+  highlight: string;
+  displayOrder: number;
+}
+
 export interface DestinationContext {
   destinationId: DestinationId;
   destination: string;
@@ -29,4 +47,5 @@ export interface DestinationContext {
   weather: DestinationWeather;
   forecast: DestinationForecastItem[];
   sun: DestinationSun;
+  pointsOfInterest: PointOfInterest[];
 }

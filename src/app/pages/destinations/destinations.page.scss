@@ -2,7 +2,7 @@ ion-content.destinations-content {
   --background: transparent;
   --padding-top: 0;
   --padding-bottom: 0;
-  --overflow: hidden;
+  --overflow: auto;
 }
 
 .weather-backdrop,
@@ -58,50 +58,18 @@ ion-content.destinations-content {
 .destinations-page {
   position: relative;
   z-index: 1;
-  width: min(100%, 780px);
-  margin: 0 auto;
   min-height: calc(100dvh - 56px - env(safe-area-inset-top));
-  padding: 10px 14px max(8px, env(safe-area-inset-bottom));
   --card-text-strong: rgba(39, 54, 71, 0.96);
   --card-text-medium: rgba(68, 86, 106, 0.9);
   --card-text-soft: rgba(90, 108, 128, 0.86);
 }
 
-.destinations-copy {
-  position: relative;
-  overflow: hidden;
-  margin-bottom: 10px;
-  padding: 18px 18px 18px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 26px;
-  background:
-    linear-gradient(145deg, rgba(7, 34, 58, 0.28) 0%, rgba(255, 255, 255, 0.1) 100%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.08) 100%);
-  box-shadow: 0 18px 40px rgba(11, 35, 58, 0.16);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
-
-.destinations-copy::after {
-  content: "";
-  position: absolute;
-  inset: auto -28px -44px auto;
-  width: 132px;
-  height: 132px;
-  border-radius: 999px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0) 72%);
-  pointer-events: none;
-}
-
 .destinations-copy h1 {
   font-size: clamp(1.85rem, 4.9vw, 2.45rem);
-  line-height: 1.02;
-  text-wrap: balance;
 }
 
 .destinations-copy p {
   max-width: 38rem;
-  line-height: 1.55;
 }
 
 .destinations-selector {
@@ -322,18 +290,115 @@ ion-card-content {
   letter-spacing: -0.03em;
 }
 
+.points-card {
+  --background: color-mix(in srgb, var(--ion-color-light) 92%, transparent);
+  box-shadow: 0 12px 28px rgba(7, 26, 47, 0.16);
+}
+
+.points-card ion-card-header {
+  padding-bottom: 8px;
+}
+
+.points-copy {
+  margin: 6px 0 0;
+  color: var(--card-text-medium);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.points-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.point-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 14px;
+  border: 1px solid rgba(104, 151, 189, 0.16);
+  border-radius: 18px;
+  background:
+    linear-gradient(145deg, rgba(97, 168, 209, 0.12) 0%, rgba(255, 255, 255, 0.7) 100%);
+  box-shadow: 0 10px 24px rgba(7, 26, 47, 0.08);
+  color: inherit;
+  text-decoration: none;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.point-item:active {
+  transform: scale(0.985);
+}
+
+.point-item:hover {
+  transform: translateY(-1px);
+  border-color: rgba(88, 133, 171, 0.3);
+  box-shadow: 0 16px 28px rgba(7, 26, 47, 0.12);
+}
+
+.point-icon-shell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(150deg, rgba(60, 129, 179, 0.96), rgba(106, 176, 205, 0.9));
+  color: var(--ion-color-light);
+  box-shadow: 0 10px 20px rgba(36, 92, 137, 0.24);
+}
+
+.point-icon-shell ion-icon {
+  font-size: 1.2rem;
+}
+
+.point-body {
+  min-width: 0;
+}
+
+.point-highlight,
+.point-cta {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.point-highlight {
+  margin-bottom: 8px;
+  color: var(--ion-color-secondary);
+}
+
+.point-body h3 {
+  margin: 0 0 6px;
+  color: var(--card-text-strong);
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.point-body p {
+  margin: 0;
+  color: var(--card-text-medium);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.point-cta {
+  margin-top: 12px;
+  color: var(--ion-color-primary);
+}
+
 @media (min-width: 640px) {
-  .destinations-page {
-    padding-left: 18px;
-    padding-right: 18px;
-  }
-
-  .destinations-copy {
-    padding-inline: 24px;
-  }
-
   .cards {
     gap: 12px;
+  }
+
+  .points-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -351,13 +416,7 @@ ion-card-content {
   }
 }
 
-@media (min-width: 900px) {
-  .destinations-page {
-    max-width: 940px;
-    padding-left: 24px;
-    padding-right: 24px;
-  }
-
+@media (min-width: 1024px) {
   .cards {
     grid-template-columns: 1fr 1fr;
     align-items: stretch;
@@ -369,6 +428,21 @@ ion-card-content {
 
   .sun-grid {
     align-self: stretch;
+  }
+
+  .points-card {
+    grid-column: 1 / -1;
+  }
+
+  .points-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .points-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   }
 }
 
@@ -410,6 +484,31 @@ ion-card-content {
   background: rgba(56, 94, 130, 0.34);
 }
 
+:host-context(.ion-palette-dark) .points-card {
+  --background: rgba(16, 37, 58, 0.82);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.32);
+}
+
+:host-context(.ion-palette-dark) .point-item {
+  border-color: rgba(126, 169, 200, 0.16);
+  background:
+    linear-gradient(145deg, rgba(29, 68, 98, 0.76) 0%, rgba(11, 28, 44, 0.88) 100%);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.24);
+}
+
+:host-context(.ion-palette-dark) .point-item:hover {
+  border-color: rgba(168, 204, 230, 0.28);
+}
+
+:host-context(.ion-palette-dark) .point-icon-shell {
+  background: linear-gradient(150deg, rgba(55, 117, 162, 0.96), rgba(89, 145, 187, 0.92));
+}
+
+:host-context(.ion-palette-dark) .point-highlight,
+:host-context(.ion-palette-dark) .point-cta {
+  color: rgba(170, 208, 234, 0.94);
+}
+
 :host-context(.ion-palette-dark) .forecast-day,
 :host-context(.ion-palette-dark) .forecast-min,
 :host-context(.ion-palette-dark) .forecast-empty {
@@ -420,14 +519,6 @@ ion-card-content {
   --card-text-strong: rgba(219, 231, 243, 0.96);
   --card-text-medium: rgba(199, 214, 229, 0.9);
   --card-text-soft: rgba(178, 195, 212, 0.84);
-}
-
-:host-context(.ion-palette-dark) .destinations-copy {
-  border-color: rgba(180, 205, 228, 0.12);
-  background:
-    linear-gradient(145deg, rgba(6, 29, 49, 0.8) 0%, rgba(14, 44, 68, 0.46) 100%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
-  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.24);
 }
 
 :host-context(.ion-palette-dark) .hero-weather-card {
@@ -454,8 +545,8 @@ ion-card-content {
 
 @media (max-height: 760px) {
   .destinations-page {
-    padding-top: 8px;
-    padding-bottom: max(6px, env(safe-area-inset-bottom));
+    padding-top: 12px;
+    padding-bottom: calc(14px + var(--ion-safe-area-bottom, 0px));
   }
 
   .cards {
