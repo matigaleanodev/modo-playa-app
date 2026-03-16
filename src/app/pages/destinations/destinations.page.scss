@@ -2,7 +2,7 @@ ion-content.destinations-content {
   --background: transparent;
   --padding-top: 0;
   --padding-bottom: 0;
-  --overflow: hidden;
+  --overflow: auto;
 }
 
 .weather-backdrop,
@@ -347,6 +347,7 @@ ion-card-content {
 .points-grid {
   display: grid;
   gap: 10px;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .point-item {
@@ -479,6 +480,21 @@ ion-card-content {
 
   .sun-grid {
     align-self: stretch;
+  }
+
+  .points-card {
+    grid-column: 1 / -1;
+  }
+
+  .points-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .points-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   }
 }
 
