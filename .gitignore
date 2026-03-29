@@ -74,4 +74,6 @@ testem.log
 .DS_Store
 Thumbs.db
 agents.md
+AGENTS.md
 roadmap.md
+Roadmap.md
