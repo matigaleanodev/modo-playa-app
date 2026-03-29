@@ -116,6 +116,17 @@ describe('DestinationsPage', () => {
     expect(component.error()).toBeNull();
   });
 
+  it('deberia recargar destinos al hacer pull to refresh', async () => {
+    const completeSpy = jasmine.createSpy('complete').and.resolveTo(undefined);
+
+    await component.onRefresh({
+      target: { complete: completeSpy },
+    } as never);
+
+    expect(destinationsService.getDestinations).toHaveBeenCalled();
+    expect(completeSpy).toHaveBeenCalled();
+  });
+
   it('deberia mantener seleccion actual si el destino sigue disponible', async () => {
     component.selectedDestinationId.set('pampas');
     destinationsService.getContextByDestinationId.and.returnValue(

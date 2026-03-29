@@ -7,6 +7,14 @@
 </ion-header>
 
 <ion-content class="favorites-content" appScrollHeader>
+  <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
+    <ion-refresher-content
+      pullingText="Desliza para actualizar"
+      refreshingSpinner="crescent"
+      refreshingText="Actualizando favoritos..."
+    ></ion-refresher-content>
+  </ion-refresher>
+
   <div class="page-backdrop" aria-hidden="true"></div>
   <div class="page-overlay" aria-hidden="true"></div>
   <section class="page favorites-page app-shell-page">

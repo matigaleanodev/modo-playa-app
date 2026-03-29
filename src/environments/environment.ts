@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   API_URL: 'http://localhost:3000/api',
-  appVersion: '1.0.3',
+  appVersion: '1.0.4',
   appStage: 'Desarrollo',
 };
 

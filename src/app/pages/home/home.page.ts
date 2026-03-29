@@ -1,5 +1,5 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import {
   IonBadge,
   IonButton,
@@ -13,6 +13,8 @@ import {
   IonLabel,
   IonMenuButton,
   IonRange,
+  IonRefresher,
+  IonRefresherContent,
   IonSearchbar,
   IonToolbar,
 } from '@ionic/angular/standalone';
@@ -28,6 +30,7 @@ import { LodgingsResourceService } from 'src/app/lodgings/services/lodgings-reso
 import { LodgingCardSkeletonComponent } from 'src/app/lodgings/components/lodging-card-skeleton/lodging-card-skeleton.component';
 import {
   InfiniteScrollCustomEvent,
+  RefresherCustomEvent,
   RangeCustomEvent,
   SearchbarCustomEvent,
 } from '@ionic/angular';
@@ -90,6 +93,8 @@ import {
     IonInfiniteScrollContent,
     IonLabel,
     IonRange,
+    IonRefresher,
+    IonRefresherContent,
     IonSearchbar,
     ScrollHeaderDirective,
     LodgingAvailabilityCalendarComponent,
@@ -106,6 +111,7 @@ export class HomePage {
   private clickSuppressionCleanup: (() => void) | null = null;
   private filtersSheetCloseTimeoutId: number | null = null;
   private readonly lodgingsResource = inject(LodgingsResourceService);
+  private readonly infiniteScroll = viewChild(IonInfiniteScroll);
 
   readonly lodgingsRaw = computed(() => this.lodgingsResource.lodgings());
   readonly favoriteIds = computed(() => this.lodgingsResource.favoriteIds());
@@ -114,6 +120,7 @@ export class HomePage {
   readonly hasMore = computed(() => this.lodgingsResource.hasMore());
   readonly error = computed(() => this.lodgingsResource.error());
   readonly searchTerm = signal('');
+  readonly isInfiniteScrollMounted = signal(true);
   readonly isFiltersOpen = signal(false);
   readonly isFiltersClosing = signal(false);
   readonly isDraggingFiltersSheet = signal(false);
@@ -155,6 +162,9 @@ export class HomePage {
     const count = this.activeFiltersCount();
     return count > 0 ? `Filtros (${count})` : 'Filtros';
   });
+  readonly isInfiniteScrollDisabled = computed(
+    () => !this.hasMore() || this.isLoading() || this.isLoadingMore(),
+  );
   readonly filtersSheetTransform = computed(
     () => `translateY(${this.filtersSheetOffset()}px)`,
   );
@@ -168,13 +178,18 @@ export class HomePage {
       trashOutline,
     });
     registerLodgingAmenityIcons();
+
+    effect(() => {
+      this.lodgingsFiltered().length;
+      this.syncInfiniteScrollState();
+    });
   }
 
   async ionViewWillEnter(): Promise<void> {
     await this.lodgingsResource.loadFavorites();
 
     if (this.lodgingsRaw().length === 0) {
-      await this.lodgingsResource.loadInitialLodgings(this.searchTerm());
+      await this.reloadInitialCatalog(this.searchTerm());
     }
   }
 
@@ -199,11 +214,20 @@ export class HomePage {
     }
 
     this.searchTerm.set(nextTerm);
-    await this.lodgingsResource.setSearch(nextTerm);
+    await this.reloadSearch(nextTerm);
   }
 
   async retry(): Promise<void> {
-    await this.lodgingsResource.loadInitialLodgings(this.searchTerm());
+    await this.reloadInitialCatalog(this.searchTerm());
+  }
+
+  async onRefresh(event: RefresherCustomEvent): Promise<void> {
+    try {
+      await this.lodgingsResource.loadFavorites(true);
+      await this.reloadInitialCatalog(this.searchTerm());
+    } finally {
+      await event.target.complete();
+    }
   }
 
   openFilters(): void {
@@ -369,7 +393,7 @@ export class HomePage {
   async resetSearchAndFilters(): Promise<void> {
     this.clearFilters();
     this.searchTerm.set('');
-    await this.lodgingsResource.setSearch('');
+    await this.reloadSearch('');
   }
 
   removeFilter(chip: ActiveFilterChip): void {
@@ -384,8 +408,8 @@ export class HomePage {
     try {
       await this.lodgingsResource.loadNextLodgingsPage();
     } finally {
-      event.target.disabled = !this.hasMore();
       await event.target.complete();
+      this.syncInfiniteScrollState();
     }
   }
 
@@ -462,5 +486,41 @@ export class HomePage {
     }
 
     return parsedValue;
+  }
+
+  private syncInfiniteScrollState(): void {
+    queueMicrotask(() => {
+      const infiniteScroll = this.infiniteScroll();
+
+      if (!infiniteScroll) {
+        return;
+      }
+
+      infiniteScroll.disabled = this.isInfiniteScrollDisabled();
+    });
+  }
+
+  private async reloadSearch(search: string): Promise<void> {
+    await this.lodgingsResource.setSearch(search);
+    await this.resetInfiniteScroll();
+  }
+
+  private async reloadInitialCatalog(search: string): Promise<void> {
+    await this.lodgingsResource.loadInitialLodgings(search);
+    await this.resetInfiniteScroll();
+  }
+
+  private async resetInfiniteScroll(): Promise<void> {
+    this.isInfiniteScrollMounted.set(false);
+    await this.waitForNextFrame();
+    this.isInfiniteScrollMounted.set(true);
+    await this.waitForNextFrame();
+    this.syncInfiniteScrollState();
+  }
+
+  private waitForNextFrame(): Promise<void> {
+    return new Promise<void>((resolve) => {
+      requestAnimationFrame(() => resolve());
+    });
   }
 }

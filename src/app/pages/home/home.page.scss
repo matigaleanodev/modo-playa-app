@@ -45,8 +45,9 @@ ion-content.home-content {
   gap: 10px;
   align-items: stretch;
   margin-bottom: 12px;
-  width: min(100%, 25rem);
-  padding: 0;
+  width: 100%;
+  max-width: clamp(0px, 100%, 34rem);
+  padding: 6px;
   border: 1px solid color-mix(in srgb, var(--ion-color-primary) 10%, white 42%);
   border-radius: 22px;
   background: color-mix(in srgb, var(--ion-background-color) 88%, white 12%);
@@ -106,6 +107,18 @@ ion-content.home-content {
   --border-radius: 22px;
   --box-shadow: 0 14px 28px rgba(23, 53, 88, 0.18);
   align-self: stretch;
+}
+
+@media (min-width: 768px) {
+  .search-panel {
+    max-width: 32rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .search-panel {
+    max-width: 30rem;
+  }
 }
 
 .filters-button::part(native) {

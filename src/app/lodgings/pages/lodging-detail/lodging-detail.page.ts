@@ -1,5 +1,5 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, ElementRef, inject, input, signal, viewChild } from '@angular/core';
 import {
   IonBackButton,
   IonButton,
@@ -15,6 +15,9 @@ import {
 import { addIcons } from 'ionicons';
 import {
   carSportOutline,
+  caretBackOutline,
+  caretForwardOutline,
+  close,
   flameOutline,
   heart,
   heartOutline,
@@ -82,8 +85,14 @@ type LodgingDetailInput = Lodging & {
 export class LodgingDetailPage {
   private readonly lodgingsResource = inject(LodgingsResourceService);
   private readonly fallbackImage = 'assets/icons/icon-256.webp';
+  private readonly galleryTrack = viewChild<ElementRef<HTMLElement>>('galleryTrack');
+  private readonly galleryViewerTrack = viewChild<ElementRef<HTMLElement>>('galleryViewerTrack');
 
   readonly lodging = input.required<LodgingDetailInput>();
+  readonly activeGalleryCardIndex = signal(0);
+  readonly galleryViewerImageRatios = signal<Record<string, number>>({});
+  readonly isGalleryViewerOpen = signal(false);
+  readonly activeGalleryImageIndex = signal(0);
 
   readonly facilities = computed<LodgingFacility[]>(() =>
     this.lodging()
@@ -128,10 +137,13 @@ export class LodgingDetailPage {
   constructor() {
     addIcons({
       homeOutline,
+      close,
       heart,
       heartOutline,
       informationCircleOutline,
       waterOutline,
+      caretBackOutline,
+      caretForwardOutline,
       leafOutline,
       carSportOutline,
       wifiOutline,
@@ -229,8 +241,119 @@ export class LodgingDetailPage {
     return labels[priceUnit] ?? 'Precio';
   });
 
+  readonly galleryViewerCounter = computed(() => {
+    const totalImages = this.galleryImages().length;
+
+    if (totalImages === 0) {
+      return '';
+    }
+
+    return `${this.activeGalleryImageIndex() + 1} / ${totalImages}`;
+  });
+  readonly galleryViewerAspectRatio = computed(() => {
+    const activeImage = this.galleryImages()[this.activeGalleryImageIndex()];
+
+    if (!activeImage) {
+      return 4 / 3;
+    }
+
+    return this.galleryViewerImageRatios()[activeImage] ?? 4 / 3;
+  });
+  readonly canShowPreviousGalleryCard = computed(
+    () => this.activeGalleryCardIndex() > 0,
+  );
+  readonly canShowNextGalleryCard = computed(
+    () => this.activeGalleryCardIndex() < this.galleryImages().length - 1,
+  );
+
   async toggleFavorite(): Promise<void> {
     await this.lodgingsResource.toggleFavorite(this.lodging());
+  }
+
+  openGalleryViewer(index: number): void {
+    const images = this.galleryImages();
+
+    if (images.length === 0 || index < 0 || index >= images.length) {
+      return;
+    }
+
+    this.activeGalleryImageIndex.set(index);
+    this.isGalleryViewerOpen.set(true);
+    this.scrollGalleryViewerTo(index, 'auto');
+  }
+
+  closeGalleryViewer(): void {
+    this.isGalleryViewerOpen.set(false);
+  }
+
+  showPreviousGalleryImage(): void {
+    this.moveGalleryViewerBy(-1);
+  }
+
+  showNextGalleryImage(): void {
+    this.moveGalleryViewerBy(1);
+  }
+
+  showPreviousGalleryCard(): void {
+    this.moveGalleryCardBy(-1);
+  }
+
+  showNextGalleryCard(): void {
+    this.moveGalleryCardBy(1);
+  }
+
+  onGalleryScroll(event: Event): void {
+    const target = event.target;
+
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+
+    this.activeGalleryCardIndex.set(this.getClosestGalleryCardIndex(target));
+  }
+
+  onGalleryViewerScroll(event: Event): void {
+    const target = event.target;
+
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+
+    this.activeGalleryImageIndex.set(this.getClosestGalleryViewerIndex(target));
+  }
+
+  onGalleryViewerImageLoad(image: string, event: Event): void {
+    const target = event.target;
+
+    if (!(target instanceof HTMLImageElement)) {
+      return;
+    }
+
+    const naturalWidth = target.naturalWidth;
+    const naturalHeight = target.naturalHeight;
+
+    if (naturalWidth <= 0 || naturalHeight <= 0) {
+      return;
+    }
+
+    const nextRatio = naturalWidth / naturalHeight;
+    const currentRatio = this.galleryViewerImageRatios()[image];
+
+    if (currentRatio === nextRatio) {
+      return;
+    }
+
+    this.galleryViewerImageRatios.update((ratios) => ({
+      ...ratios,
+      [image]: nextRatio,
+    }));
+
+    if (
+      this.isGalleryViewerOpen() &&
+      this.galleryImages()[this.activeGalleryImageIndex()] === image
+    ) {
+      this.scrollGalleryViewerTo(this.activeGalleryImageIndex(), 'auto');
+    }
   }
 
   private mapAmenity(amenity: LodgingAmenity): LodgingFacility | null {
@@ -246,5 +369,111 @@ export class LodgingDetailPage {
             ? 'Mascotas permitidas'
             : presentation.label,
     };
+  }
+
+  private moveGalleryCardBy(offset: -1 | 1): void {
+    const nextIndex = this.activeGalleryCardIndex() + offset;
+    const lastIndex = this.galleryImages().length - 1;
+
+    if (nextIndex < 0 || nextIndex > lastIndex) {
+      return;
+    }
+
+    this.activeGalleryCardIndex.set(nextIndex);
+    this.scrollGalleryTo(nextIndex, 'smooth');
+  }
+
+  private moveGalleryViewerBy(offset: -1 | 1): void {
+    const images = this.galleryImages();
+
+    if (images.length === 0) {
+      return;
+    }
+
+    const nextIndex =
+      (this.activeGalleryImageIndex() + offset + images.length) % images.length;
+
+    this.activeGalleryImageIndex.set(nextIndex);
+    this.scrollGalleryViewerTo(nextIndex, 'smooth');
+  }
+
+  private getClosestGalleryViewerIndex(track: HTMLElement): number {
+    const slides = Array.from(track.children).filter(
+      (child): child is HTMLElement => child instanceof HTMLElement,
+    );
+
+    if (slides.length === 0) {
+      return 0;
+    }
+
+    let closestIndex = 0;
+    let closestDistance = Number.POSITIVE_INFINITY;
+
+    slides.forEach((slide, index) => {
+      const distance = Math.abs(slide.offsetLeft - track.scrollLeft);
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    return closestIndex;
+  }
+
+  private getClosestGalleryCardIndex(track: HTMLElement): number {
+    const slides = Array.from(track.children).filter(
+      (child): child is HTMLElement => child instanceof HTMLElement,
+    );
+
+    if (slides.length === 0) {
+      return 0;
+    }
+
+    let closestIndex = 0;
+    let closestDistance = Number.POSITIVE_INFINITY;
+
+    slides.forEach((slide, index) => {
+      const distance = Math.abs(slide.offsetLeft - track.scrollLeft);
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    return closestIndex;
+  }
+
+  private scrollGalleryTo(index: number, behavior: ScrollBehavior): void {
+    requestAnimationFrame(() => {
+      const galleryTrack = this.galleryTrack()?.nativeElement;
+      const slide = galleryTrack?.children.item(index);
+
+      if (!galleryTrack || !(slide instanceof HTMLElement)) {
+        return;
+      }
+
+      galleryTrack.scrollTo({
+        left: slide.offsetLeft,
+        behavior,
+      });
+    });
+  }
+
+  private scrollGalleryViewerTo(index: number, behavior: ScrollBehavior): void {
+    requestAnimationFrame(() => {
+      const galleryViewerTrack = this.galleryViewerTrack()?.nativeElement;
+      const slide = galleryViewerTrack?.children.item(index);
+
+      if (!galleryViewerTrack || !(slide instanceof HTMLElement)) {
+        return;
+      }
+
+      galleryViewerTrack.scrollTo({
+        left: slide.offsetLeft,
+        behavior,
+      });
+    });
   }
 }
