@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { HomePage } from './home.page';
@@ -236,6 +237,25 @@ describe('HomePage', () => {
       'mar azul',
     );
     expect(completeSpy).toHaveBeenCalled();
+  });
+
+  it('deberia reactivar el infinite scroll despues del refresh si todavia hay mas resultados', async () => {
+    lodgingsResourceMock.hasMore.set(true);
+    fixture.detectChanges();
+
+    const completeSpy = jasmine.createSpy('complete').and.resolveTo(undefined);
+
+    await component.onRefresh({
+      target: { complete: completeSpy },
+    } as never);
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const infiniteScroll = fixture.debugElement.query(
+      By.css('ion-infinite-scroll'),
+    ).nativeElement as HTMLIonInfiniteScrollElement;
+
+    expect(infiniteScroll.disabled).toBeFalse();
   });
 
   it('no deberia disparar busqueda si el termino no cambia', async () => {

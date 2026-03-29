@@ -180,13 +180,7 @@ export class HomePage {
 
     effect(() => {
       this.lodgingsFiltered().length;
-      const infiniteScroll = this.infiniteScroll();
-
-      if (!infiniteScroll) {
-        return;
-      }
-
-      infiniteScroll.disabled = this.isInfiniteScrollDisabled();
+      this.syncInfiniteScrollState();
     });
   }
 
@@ -232,6 +226,7 @@ export class HomePage {
       await this.lodgingsResource.loadInitialLodgings(this.searchTerm());
     } finally {
       await event.target.complete();
+      this.syncInfiniteScrollState();
     }
   }
 
@@ -414,6 +409,7 @@ export class HomePage {
       await this.lodgingsResource.loadNextLodgingsPage();
     } finally {
       await event.target.complete();
+      this.syncInfiniteScrollState();
     }
   }
 
@@ -490,5 +486,17 @@ export class HomePage {
     }
 
     return parsedValue;
+  }
+
+  private syncInfiniteScrollState(): void {
+    queueMicrotask(() => {
+      const infiniteScroll = this.infiniteScroll();
+
+      if (!infiniteScroll) {
+        return;
+      }
+
+      infiniteScroll.disabled = this.isInfiniteScrollDisabled();
+    });
   }
 }
