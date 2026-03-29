@@ -198,7 +198,6 @@ describe('HomePage', () => {
     await component.onInfiniteScroll(event);
 
     expect(lodgingsResourceMock.loadNextLodgingsPage).toHaveBeenCalled();
-    expect(event.target.disabled).toBeTrue();
     expect(completeSpy).toHaveBeenCalled();
   });
 
@@ -221,6 +220,22 @@ describe('HomePage', () => {
     expect(lodgingsResourceMock.loadInitialLodgings).toHaveBeenCalledWith(
       'gesell',
     );
+  });
+
+  it('deberia refrescar favoritos y catalogo al hacer pull to refresh', async () => {
+    const completeSpy = jasmine.createSpy('complete').and.resolveTo(undefined);
+
+    component.searchTerm.set('mar azul');
+
+    await component.onRefresh({
+      target: { complete: completeSpy },
+    } as never);
+
+    expect(lodgingsResourceMock.loadFavorites).toHaveBeenCalledWith(true);
+    expect(lodgingsResourceMock.loadInitialLodgings).toHaveBeenCalledWith(
+      'mar azul',
+    );
+    expect(completeSpy).toHaveBeenCalled();
   });
 
   it('no deberia disparar busqueda si el termino no cambia', async () => {

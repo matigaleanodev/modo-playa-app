@@ -1,5 +1,5 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import {
   IonBadge,
   IonButton,
@@ -13,6 +13,8 @@ import {
   IonLabel,
   IonMenuButton,
   IonRange,
+  IonRefresher,
+  IonRefresherContent,
   IonSearchbar,
   IonToolbar,
 } from '@ionic/angular/standalone';
@@ -28,6 +30,7 @@ import { LodgingsResourceService } from 'src/app/lodgings/services/lodgings-reso
 import { LodgingCardSkeletonComponent } from 'src/app/lodgings/components/lodging-card-skeleton/lodging-card-skeleton.component';
 import {
   InfiniteScrollCustomEvent,
+  RefresherCustomEvent,
   RangeCustomEvent,
   SearchbarCustomEvent,
 } from '@ionic/angular';
@@ -90,6 +93,8 @@ import {
     IonInfiniteScrollContent,
     IonLabel,
     IonRange,
+    IonRefresher,
+    IonRefresherContent,
     IonSearchbar,
     ScrollHeaderDirective,
     LodgingAvailabilityCalendarComponent,
@@ -106,6 +111,7 @@ export class HomePage {
   private clickSuppressionCleanup: (() => void) | null = null;
   private filtersSheetCloseTimeoutId: number | null = null;
   private readonly lodgingsResource = inject(LodgingsResourceService);
+  private readonly infiniteScroll = viewChild(IonInfiniteScroll);
 
   readonly lodgingsRaw = computed(() => this.lodgingsResource.lodgings());
   readonly favoriteIds = computed(() => this.lodgingsResource.favoriteIds());
@@ -155,6 +161,9 @@ export class HomePage {
     const count = this.activeFiltersCount();
     return count > 0 ? `Filtros (${count})` : 'Filtros';
   });
+  readonly isInfiniteScrollDisabled = computed(
+    () => !this.hasMore() || this.isLoading() || this.isLoadingMore(),
+  );
   readonly filtersSheetTransform = computed(
     () => `translateY(${this.filtersSheetOffset()}px)`,
   );
@@ -168,6 +177,17 @@ export class HomePage {
       trashOutline,
     });
     registerLodgingAmenityIcons();
+
+    effect(() => {
+      this.lodgingsFiltered().length;
+      const infiniteScroll = this.infiniteScroll();
+
+      if (!infiniteScroll) {
+        return;
+      }
+
+      infiniteScroll.disabled = this.isInfiniteScrollDisabled();
+    });
   }
 
   async ionViewWillEnter(): Promise<void> {
@@ -204,6 +224,15 @@ export class HomePage {
 
   async retry(): Promise<void> {
     await this.lodgingsResource.loadInitialLodgings(this.searchTerm());
+  }
+
+  async onRefresh(event: RefresherCustomEvent): Promise<void> {
+    try {
+      await this.lodgingsResource.loadFavorites(true);
+      await this.lodgingsResource.loadInitialLodgings(this.searchTerm());
+    } finally {
+      await event.target.complete();
+    }
   }
 
   openFilters(): void {
@@ -384,7 +413,6 @@ export class HomePage {
     try {
       await this.lodgingsResource.loadNextLodgingsPage();
     } finally {
-      event.target.disabled = !this.hasMore();
       await event.target.complete();
     }
   }

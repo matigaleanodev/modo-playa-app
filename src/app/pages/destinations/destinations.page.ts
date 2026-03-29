@@ -14,12 +14,14 @@ import {
   IonIcon,
   IonLabel,
   IonMenuButton,
+  IonRefresher,
+  IonRefresherContent,
   IonRow,
   IonSegment,
   IonSegmentButton,
   IonToolbar,
 } from '@ionic/angular/standalone';
-import { SegmentCustomEvent } from '@ionic/angular';
+import { RefresherCustomEvent, SegmentCustomEvent } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
   businessOutline,
@@ -66,6 +68,8 @@ import {
     IonMenuButton,
     IonContent,
     ScrollHeaderDirective,
+    IonRefresher,
+    IonRefresherContent,
     IonSegment,
     IonSegmentButton,
     IonLabel,
@@ -185,6 +189,14 @@ export class DestinationsPage {
 
   async ionViewWillEnter(): Promise<void> {
     await this.loadDestinations();
+  }
+
+  async onRefresh(event: RefresherCustomEvent): Promise<void> {
+    try {
+      await this.loadDestinations();
+    } finally {
+      await event.target.complete();
+    }
   }
 
   async onDestinationChange(event: SegmentCustomEvent): Promise<void> {

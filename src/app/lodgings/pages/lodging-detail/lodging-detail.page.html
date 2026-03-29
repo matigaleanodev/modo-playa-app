@@ -80,7 +80,13 @@
         >
           @for (image of galleryImages(); track $index) {
           <figure class="carousel-item">
-            <img [src]="image" alt="Imagen del hospedaje" loading="lazy" />
+            <button
+              class="gallery-trigger"
+              type="button"
+              (click)="openGalleryViewer($index)"
+            >
+              <img [src]="image" alt="Imagen del hospedaje" loading="lazy" />
+            </button>
           </figure>
           }
         </div>
@@ -144,3 +150,72 @@
     </ion-toolbar>
   </ion-footer>
 </div>
+
+@if (isGalleryViewerOpen()) {
+<div class="gallery-viewer" (click)="closeGalleryViewer()">
+  <div class="gallery-viewer-backdrop" aria-hidden="true"></div>
+
+  <section
+    class="gallery-viewer-shell"
+    aria-label="Galeria ampliada"
+    (click)="$event.stopPropagation()"
+  >
+    <header class="gallery-viewer-header">
+      <span>{{ galleryViewerCounter() }}</span>
+
+      <button
+        class="gallery-viewer-close"
+        type="button"
+        aria-label="Cerrar galeria"
+        (click)="closeGalleryViewer()"
+      >
+        <ion-icon name="close" aria-hidden="true"></ion-icon>
+      </button>
+    </header>
+
+    <div class="gallery-viewer-stage">
+      <button
+        class="gallery-viewer-nav gallery-viewer-nav-prev"
+        type="button"
+        aria-label="Imagen anterior"
+        (click)="showPreviousGalleryImage()"
+      >
+        <ion-icon name="caret-back-outline" aria-hidden="true"></ion-icon>
+      </button>
+
+      <div
+        #galleryViewerTrack
+        class="gallery-viewer-track"
+        (scroll)="onGalleryViewerScroll($event)"
+      >
+        @for (image of galleryImages(); track image) {
+        <figure class="gallery-viewer-slide">
+          <img [src]="image" alt="Imagen ampliada del hospedaje" />
+        </figure>
+        }
+      </div>
+
+      <button
+        class="gallery-viewer-nav gallery-viewer-nav-next"
+        type="button"
+        aria-label="Imagen siguiente"
+        (click)="showNextGalleryImage()"
+      >
+        <ion-icon name="caret-forward-outline" aria-hidden="true"></ion-icon>
+      </button>
+    </div>
+
+    <div class="gallery-viewer-dots">
+      @for (image of galleryImages(); track image; let index = $index) {
+      <button
+        class="gallery-viewer-dot"
+        [class.is-active]="activeGalleryImageIndex() === index"
+        type="button"
+        [attr.aria-label]="'Ir a la imagen ' + (index + 1)"
+        (click)="openGalleryViewer(index)"
+      ></button>
+      }
+    </div>
+  </section>
+</div>
+}

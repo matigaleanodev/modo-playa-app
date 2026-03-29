@@ -7,6 +7,14 @@
 </ion-header>
 
 <ion-content class="home-content" appScrollHeader>
+  <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
+    <ion-refresher-content
+      pullingText="Desliza para actualizar"
+      refreshingSpinner="crescent"
+      refreshingText="Actualizando catalogo..."
+    ></ion-refresher-content>
+  </ion-refresher>
+
   <div class="page-backdrop" aria-hidden="true"></div>
   <div class="page-overlay" aria-hidden="true"></div>
   <section class="page home-page app-shell-page">
@@ -111,7 +119,7 @@
 
     <ion-infinite-scroll
       threshold="120px"
-      [disabled]="!hasMore()"
+      [disabled]="isInfiniteScrollDisabled()"
       (ionInfinite)="onInfiniteScroll($event)"
     >
       <ion-infinite-scroll-content

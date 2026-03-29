@@ -4,8 +4,11 @@ import {
   IonContent,
   IonHeader,
   IonMenuButton,
+  IonRefresher,
+  IonRefresherContent,
   IonToolbar,
 } from '@ionic/angular/standalone';
+import { RefresherCustomEvent } from '@ionic/angular';
 import { ScrollHeaderDirective } from '@shared/directives/scroll-header.directive';
 import { LodgingCardComponent } from 'src/app/lodgings/components/lodging-card/lodging-card.component';
 import { Lodging } from 'src/app/lodgings/models/lodging.model';
@@ -21,6 +24,8 @@ import { LodgingsResourceService } from 'src/app/lodgings/services/lodgings-reso
     IonButtons,
     IonMenuButton,
     IonContent,
+    IonRefresher,
+    IonRefresherContent,
     ScrollHeaderDirective,
     LodgingCardComponent,
   ],
@@ -33,6 +38,14 @@ export class FavoritesPage {
 
   async ionViewWillEnter(): Promise<void> {
     await this.lodgingsResource.loadFavorites();
+  }
+
+  async onRefresh(event: RefresherCustomEvent): Promise<void> {
+    try {
+      await this.lodgingsResource.loadFavorites(true);
+    } finally {
+      await event.target.complete();
+    }
   }
 
   toLodgingDetail(lodging: Lodging): void {

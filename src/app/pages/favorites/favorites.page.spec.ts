@@ -84,6 +84,17 @@ describe('FavoritesPage', () => {
     expect(lodgingsResourceMock.loadFavorites).toHaveBeenCalled();
   });
 
+  it('deberia recargar favoritos al hacer pull to refresh', async () => {
+    const completeSpy = jasmine.createSpy('complete').and.resolveTo(undefined);
+
+    await component.onRefresh({
+      target: { complete: completeSpy },
+    } as never);
+
+    expect(lodgingsResourceMock.loadFavorites).toHaveBeenCalledWith(true);
+    expect(completeSpy).toHaveBeenCalled();
+  });
+
   it('deberia delegar navegacion al detalle', () => {
     component.toLodgingDetail(lodgingMock);
 

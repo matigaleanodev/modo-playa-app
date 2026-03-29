@@ -11,6 +11,14 @@
   appScrollHeader
   [attr.data-weather-bg]="backgroundClass()"
 >
+  <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
+    <ion-refresher-content
+      pullingText="Desliza para actualizar"
+      refreshingSpinner="crescent"
+      refreshingText="Actualizando destinos..."
+    ></ion-refresher-content>
+  </ion-refresher>
+
   <div class="weather-backdrop" aria-hidden="true"></div>
   <div class="weather-overlay" aria-hidden="true"></div>
 

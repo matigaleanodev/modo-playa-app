@@ -82,6 +82,66 @@ describe('LodgingDetailPage', () => {
     );
   });
 
+  it('deberia abrir y cerrar el visor expandido de la galeria', () => {
+    component.openGalleryViewer(0);
+
+    expect(component.isGalleryViewerOpen()).toBeTrue();
+    expect(component.activeGalleryImageIndex()).toBe(0);
+
+    component.closeGalleryViewer();
+
+    expect(component.isGalleryViewerOpen()).toBeFalse();
+  });
+
+  it('deberia navegar entre imagenes en el visor expandido', () => {
+    fixture.componentRef.setInput('lodging', {
+      ...lodgingMock,
+      images: [
+        'https://example.com/1.webp',
+        'https://example.com/2.webp',
+        'https://example.com/main.webp',
+      ],
+    });
+    fixture.detectChanges();
+
+    component.openGalleryViewer(0);
+    component.showNextGalleryImage();
+
+    expect(component.activeGalleryImageIndex()).toBe(1);
+
+    component.showPreviousGalleryImage();
+
+    expect(component.activeGalleryImageIndex()).toBe(0);
+  });
+
+  it('deberia actualizar el indice activo segun el scroll del visor', () => {
+    fixture.componentRef.setInput('lodging', {
+      ...lodgingMock,
+      images: [
+        'https://example.com/1.webp',
+        'https://example.com/2.webp',
+        'https://example.com/main.webp',
+      ],
+    });
+    fixture.detectChanges();
+
+    const scrollContainer = document.createElement('div');
+    Object.defineProperty(scrollContainer, 'clientWidth', {
+      value: 320,
+      configurable: true,
+    });
+    Object.defineProperty(scrollContainer, 'scrollLeft', {
+      value: 320,
+      configurable: true,
+    });
+
+    component.onGalleryViewerScroll({
+      target: scrollContainer,
+    } as unknown as Event);
+
+    expect(component.activeGalleryImageIndex()).toBe(1);
+  });
+
   it('deberia consultar estado favorito para el alojamiento', () => {
     component.isFavorite();
 

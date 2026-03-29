@@ -1,5 +1,5 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, ElementRef, inject, input, signal, viewChild } from '@angular/core';
 import {
   IonBackButton,
   IonButton,
@@ -15,6 +15,9 @@ import {
 import { addIcons } from 'ionicons';
 import {
   carSportOutline,
+  caretBackOutline,
+  caretForwardOutline,
+  close,
   flameOutline,
   heart,
   heartOutline,
@@ -82,8 +85,11 @@ type LodgingDetailInput = Lodging & {
 export class LodgingDetailPage {
   private readonly lodgingsResource = inject(LodgingsResourceService);
   private readonly fallbackImage = 'assets/icons/icon-256.webp';
+  private readonly galleryViewerTrack = viewChild<ElementRef<HTMLElement>>('galleryViewerTrack');
 
   readonly lodging = input.required<LodgingDetailInput>();
+  readonly isGalleryViewerOpen = signal(false);
+  readonly activeGalleryImageIndex = signal(0);
 
   readonly facilities = computed<LodgingFacility[]>(() =>
     this.lodging()
@@ -128,10 +134,13 @@ export class LodgingDetailPage {
   constructor() {
     addIcons({
       homeOutline,
+      close,
       heart,
       heartOutline,
       informationCircleOutline,
       waterOutline,
+      caretBackOutline,
+      caretForwardOutline,
       leafOutline,
       carSportOutline,
       wifiOutline,
@@ -229,8 +238,54 @@ export class LodgingDetailPage {
     return labels[priceUnit] ?? 'Precio';
   });
 
+  readonly galleryViewerCounter = computed(() => {
+    const totalImages = this.galleryImages().length;
+
+    if (totalImages === 0) {
+      return '';
+    }
+
+    return `${this.activeGalleryImageIndex() + 1} / ${totalImages}`;
+  });
+
   async toggleFavorite(): Promise<void> {
     await this.lodgingsResource.toggleFavorite(this.lodging());
+  }
+
+  openGalleryViewer(index: number): void {
+    const images = this.galleryImages();
+
+    if (images.length === 0 || index < 0 || index >= images.length) {
+      return;
+    }
+
+    this.activeGalleryImageIndex.set(index);
+    this.isGalleryViewerOpen.set(true);
+    this.scrollGalleryViewerTo(index, 'auto');
+  }
+
+  closeGalleryViewer(): void {
+    this.isGalleryViewerOpen.set(false);
+  }
+
+  showPreviousGalleryImage(): void {
+    this.moveGalleryViewerBy(-1);
+  }
+
+  showNextGalleryImage(): void {
+    this.moveGalleryViewerBy(1);
+  }
+
+  onGalleryViewerScroll(event: Event): void {
+    const target = event.target;
+
+    if (!(target instanceof HTMLElement) || target.clientWidth === 0) {
+      return;
+    }
+
+    const nextIndex = Math.round(target.scrollLeft / target.clientWidth);
+    const lastIndex = Math.max(this.galleryImages().length - 1, 0);
+    this.activeGalleryImageIndex.set(Math.min(Math.max(nextIndex, 0), lastIndex));
   }
 
   private mapAmenity(amenity: LodgingAmenity): LodgingFacility | null {
@@ -246,5 +301,34 @@ export class LodgingDetailPage {
             ? 'Mascotas permitidas'
             : presentation.label,
     };
+  }
+
+  private moveGalleryViewerBy(offset: -1 | 1): void {
+    const images = this.galleryImages();
+
+    if (images.length === 0) {
+      return;
+    }
+
+    const nextIndex =
+      (this.activeGalleryImageIndex() + offset + images.length) % images.length;
+
+    this.activeGalleryImageIndex.set(nextIndex);
+    this.scrollGalleryViewerTo(nextIndex, 'smooth');
+  }
+
+  private scrollGalleryViewerTo(index: number, behavior: ScrollBehavior): void {
+    requestAnimationFrame(() => {
+      const galleryViewerTrack = this.galleryViewerTrack()?.nativeElement;
+
+      if (!galleryViewerTrack) {
+        return;
+      }
+
+      galleryViewerTrack.scrollTo({
+        left: galleryViewerTrack.clientWidth * index,
+        behavior,
+      });
+    });
   }
 }
