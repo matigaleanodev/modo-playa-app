@@ -120,6 +120,7 @@ export class HomePage {
   readonly hasMore = computed(() => this.lodgingsResource.hasMore());
   readonly error = computed(() => this.lodgingsResource.error());
   readonly searchTerm = signal('');
+  readonly isInfiniteScrollMounted = signal(true);
   readonly isFiltersOpen = signal(false);
   readonly isFiltersClosing = signal(false);
   readonly isDraggingFiltersSheet = signal(false);
@@ -188,7 +189,7 @@ export class HomePage {
     await this.lodgingsResource.loadFavorites();
 
     if (this.lodgingsRaw().length === 0) {
-      await this.lodgingsResource.loadInitialLodgings(this.searchTerm());
+      await this.reloadInitialCatalog(this.searchTerm());
     }
   }
 
@@ -213,20 +214,19 @@ export class HomePage {
     }
 
     this.searchTerm.set(nextTerm);
-    await this.lodgingsResource.setSearch(nextTerm);
+    await this.reloadSearch(nextTerm);
   }
 
   async retry(): Promise<void> {
-    await this.lodgingsResource.loadInitialLodgings(this.searchTerm());
+    await this.reloadInitialCatalog(this.searchTerm());
   }
 
   async onRefresh(event: RefresherCustomEvent): Promise<void> {
     try {
       await this.lodgingsResource.loadFavorites(true);
-      await this.lodgingsResource.loadInitialLodgings(this.searchTerm());
+      await this.reloadInitialCatalog(this.searchTerm());
     } finally {
       await event.target.complete();
-      this.syncInfiniteScrollState();
     }
   }
 
@@ -393,7 +393,7 @@ export class HomePage {
   async resetSearchAndFilters(): Promise<void> {
     this.clearFilters();
     this.searchTerm.set('');
-    await this.lodgingsResource.setSearch('');
+    await this.reloadSearch('');
   }
 
   removeFilter(chip: ActiveFilterChip): void {
@@ -497,6 +497,30 @@ export class HomePage {
       }
 
       infiniteScroll.disabled = this.isInfiniteScrollDisabled();
+    });
+  }
+
+  private async reloadSearch(search: string): Promise<void> {
+    await this.lodgingsResource.setSearch(search);
+    await this.resetInfiniteScroll();
+  }
+
+  private async reloadInitialCatalog(search: string): Promise<void> {
+    await this.lodgingsResource.loadInitialLodgings(search);
+    await this.resetInfiniteScroll();
+  }
+
+  private async resetInfiniteScroll(): Promise<void> {
+    this.isInfiniteScrollMounted.set(false);
+    await this.waitForNextFrame();
+    this.isInfiniteScrollMounted.set(true);
+    await this.waitForNextFrame();
+    this.syncInfiniteScrollState();
+  }
+
+  private waitForNextFrame(): Promise<void> {
+    return new Promise<void>((resolve) => {
+      requestAnimationFrame(() => resolve());
     });
   }
 }

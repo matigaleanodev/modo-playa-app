@@ -117,16 +117,18 @@
       }
     </div>
 
-    <ion-infinite-scroll
-      threshold="120px"
-      [disabled]="isInfiniteScrollDisabled()"
-      (ionInfinite)="onInfiniteScroll($event)"
-    >
-      <ion-infinite-scroll-content
-        loadingSpinner="crescent"
-        loadingText="Cargando alojamientos..."
-      ></ion-infinite-scroll-content>
-    </ion-infinite-scroll>
+    @if (isInfiniteScrollMounted()) {
+      <ion-infinite-scroll
+        threshold="120px"
+        [disabled]="isInfiniteScrollDisabled()"
+        (ionInfinite)="onInfiniteScroll($event)"
+      >
+        <ion-infinite-scroll-content
+          loadingSpinner="crescent"
+          loadingText="Cargando alojamientos..."
+        ></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    }
   </section>
 </ion-content>
 
