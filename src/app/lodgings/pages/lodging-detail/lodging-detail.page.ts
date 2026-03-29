@@ -85,9 +85,12 @@ type LodgingDetailInput = Lodging & {
 export class LodgingDetailPage {
   private readonly lodgingsResource = inject(LodgingsResourceService);
   private readonly fallbackImage = 'assets/icons/icon-256.webp';
+  private readonly galleryTrack = viewChild<ElementRef<HTMLElement>>('galleryTrack');
   private readonly galleryViewerTrack = viewChild<ElementRef<HTMLElement>>('galleryViewerTrack');
 
   readonly lodging = input.required<LodgingDetailInput>();
+  readonly activeGalleryCardIndex = signal(0);
+  readonly galleryViewerImageRatios = signal<Record<string, number>>({});
   readonly isGalleryViewerOpen = signal(false);
   readonly activeGalleryImageIndex = signal(0);
 
@@ -247,6 +250,21 @@ export class LodgingDetailPage {
 
     return `${this.activeGalleryImageIndex() + 1} / ${totalImages}`;
   });
+  readonly galleryViewerAspectRatio = computed(() => {
+    const activeImage = this.galleryImages()[this.activeGalleryImageIndex()];
+
+    if (!activeImage) {
+      return 4 / 3;
+    }
+
+    return this.galleryViewerImageRatios()[activeImage] ?? 4 / 3;
+  });
+  readonly canShowPreviousGalleryCard = computed(
+    () => this.activeGalleryCardIndex() > 0,
+  );
+  readonly canShowNextGalleryCard = computed(
+    () => this.activeGalleryCardIndex() < this.galleryImages().length - 1,
+  );
 
   async toggleFavorite(): Promise<void> {
     await this.lodgingsResource.toggleFavorite(this.lodging());
@@ -276,16 +294,66 @@ export class LodgingDetailPage {
     this.moveGalleryViewerBy(1);
   }
 
-  onGalleryViewerScroll(event: Event): void {
+  showPreviousGalleryCard(): void {
+    this.moveGalleryCardBy(-1);
+  }
+
+  showNextGalleryCard(): void {
+    this.moveGalleryCardBy(1);
+  }
+
+  onGalleryScroll(event: Event): void {
     const target = event.target;
 
-    if (!(target instanceof HTMLElement) || target.clientWidth === 0) {
+    if (!(target instanceof HTMLElement)) {
       return;
     }
 
-    const nextIndex = Math.round(target.scrollLeft / target.clientWidth);
-    const lastIndex = Math.max(this.galleryImages().length - 1, 0);
-    this.activeGalleryImageIndex.set(Math.min(Math.max(nextIndex, 0), lastIndex));
+    this.activeGalleryCardIndex.set(this.getClosestGalleryCardIndex(target));
+  }
+
+  onGalleryViewerScroll(event: Event): void {
+    const target = event.target;
+
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+
+    this.activeGalleryImageIndex.set(this.getClosestGalleryViewerIndex(target));
+  }
+
+  onGalleryViewerImageLoad(image: string, event: Event): void {
+    const target = event.target;
+
+    if (!(target instanceof HTMLImageElement)) {
+      return;
+    }
+
+    const naturalWidth = target.naturalWidth;
+    const naturalHeight = target.naturalHeight;
+
+    if (naturalWidth <= 0 || naturalHeight <= 0) {
+      return;
+    }
+
+    const nextRatio = naturalWidth / naturalHeight;
+    const currentRatio = this.galleryViewerImageRatios()[image];
+
+    if (currentRatio === nextRatio) {
+      return;
+    }
+
+    this.galleryViewerImageRatios.update((ratios) => ({
+      ...ratios,
+      [image]: nextRatio,
+    }));
+
+    if (
+      this.isGalleryViewerOpen() &&
+      this.galleryImages()[this.activeGalleryImageIndex()] === image
+    ) {
+      this.scrollGalleryViewerTo(this.activeGalleryImageIndex(), 'auto');
+    }
   }
 
   private mapAmenity(amenity: LodgingAmenity): LodgingFacility | null {
@@ -303,6 +371,18 @@ export class LodgingDetailPage {
     };
   }
 
+  private moveGalleryCardBy(offset: -1 | 1): void {
+    const nextIndex = this.activeGalleryCardIndex() + offset;
+    const lastIndex = this.galleryImages().length - 1;
+
+    if (nextIndex < 0 || nextIndex > lastIndex) {
+      return;
+    }
+
+    this.activeGalleryCardIndex.set(nextIndex);
+    this.scrollGalleryTo(nextIndex, 'smooth');
+  }
+
   private moveGalleryViewerBy(offset: -1 | 1): void {
     const images = this.galleryImages();
 
@@ -317,16 +397,81 @@ export class LodgingDetailPage {
     this.scrollGalleryViewerTo(nextIndex, 'smooth');
   }
 
+  private getClosestGalleryViewerIndex(track: HTMLElement): number {
+    const slides = Array.from(track.children).filter(
+      (child): child is HTMLElement => child instanceof HTMLElement,
+    );
+
+    if (slides.length === 0) {
+      return 0;
+    }
+
+    let closestIndex = 0;
+    let closestDistance = Number.POSITIVE_INFINITY;
+
+    slides.forEach((slide, index) => {
+      const distance = Math.abs(slide.offsetLeft - track.scrollLeft);
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    return closestIndex;
+  }
+
+  private getClosestGalleryCardIndex(track: HTMLElement): number {
+    const slides = Array.from(track.children).filter(
+      (child): child is HTMLElement => child instanceof HTMLElement,
+    );
+
+    if (slides.length === 0) {
+      return 0;
+    }
+
+    let closestIndex = 0;
+    let closestDistance = Number.POSITIVE_INFINITY;
+
+    slides.forEach((slide, index) => {
+      const distance = Math.abs(slide.offsetLeft - track.scrollLeft);
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    return closestIndex;
+  }
+
+  private scrollGalleryTo(index: number, behavior: ScrollBehavior): void {
+    requestAnimationFrame(() => {
+      const galleryTrack = this.galleryTrack()?.nativeElement;
+      const slide = galleryTrack?.children.item(index);
+
+      if (!galleryTrack || !(slide instanceof HTMLElement)) {
+        return;
+      }
+
+      galleryTrack.scrollTo({
+        left: slide.offsetLeft,
+        behavior,
+      });
+    });
+  }
+
   private scrollGalleryViewerTo(index: number, behavior: ScrollBehavior): void {
     requestAnimationFrame(() => {
       const galleryViewerTrack = this.galleryViewerTrack()?.nativeElement;
+      const slide = galleryViewerTrack?.children.item(index);
 
-      if (!galleryViewerTrack) {
+      if (!galleryViewerTrack || !(slide instanceof HTMLElement)) {
         return;
       }
 
       galleryViewerTrack.scrollTo({
-        left: galleryViewerTrack.clientWidth * index,
+        left: slide.offsetLeft,
         behavior,
       });
     });

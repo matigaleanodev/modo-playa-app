@@ -73,22 +73,52 @@
       @if (galleryImages().length) {
       <article class="detail-card gallery-card">
         <h2>Galeria</h2>
-        <div
-          class="image-carousel"
-          [class.is-single]="galleryImages().length === 1"
-          role="region"
-          aria-label="Galeria de imagenes"
-        >
-          @for (image of galleryImages(); track $index) {
-          <figure class="carousel-item">
+        <div class="gallery-carousel-shell">
+          @if (galleryImages().length > 1) {
+          <button
+            class="gallery-carousel-nav gallery-carousel-nav-prev"
+            type="button"
+            aria-label="Imagen anterior de la galeria"
+            [disabled]="!canShowPreviousGalleryCard()"
+            (click)="showPreviousGalleryCard()"
+          >
+            <ion-icon name="caret-back-outline" aria-hidden="true"></ion-icon>
+          </button>
+          }
+
+          <div
+            #galleryTrack
+            class="image-carousel"
+            [class.is-single]="galleryImages().length === 1"
+            role="region"
+            aria-label="Galeria de imagenes"
+            (scroll)="onGalleryScroll($event)"
+          >
+            @for (image of galleryImages(); track $index) {
             <button
-              class="gallery-trigger"
+              class="gallery-slide"
               type="button"
+              [attr.aria-label]="'Abrir imagen ' + ($index + 1) + ' de la galeria'"
               (click)="openGalleryViewer($index)"
             >
               <img [src]="image" alt="Imagen del hospedaje" loading="lazy" />
             </button>
-          </figure>
+            }
+          </div>
+
+          @if (galleryImages().length > 1) {
+          <button
+            class="gallery-carousel-nav gallery-carousel-nav-next"
+            type="button"
+            aria-label="Imagen siguiente de la galeria"
+            [disabled]="!canShowNextGalleryCard()"
+            (click)="showNextGalleryCard()"
+          >
+            <ion-icon
+              name="caret-forward-outline"
+              aria-hidden="true"
+            ></ion-icon>
+          </button>
           }
         </div>
       </article>
@@ -174,7 +204,10 @@
       </button>
     </header>
 
-    <div class="gallery-viewer-stage">
+    <div
+      class="gallery-viewer-stage"
+      [style.--gallery-viewer-image-ratio]="galleryViewerAspectRatio()"
+    >
       @if (galleryImages().length > 1) {
       <button
         class="gallery-viewer-nav gallery-viewer-nav-prev"
@@ -194,9 +227,11 @@
       >
         @for (image of galleryImages(); track image) {
         <figure class="gallery-viewer-slide">
-          <div class="gallery-viewer-image-shell">
-            <img [src]="image" alt="Imagen ampliada del hospedaje" />
-          </div>
+          <img
+            [src]="image"
+            alt="Imagen ampliada del hospedaje"
+            (load)="onGalleryViewerImageLoad(image, $event)"
+          />
         </figure>
         }
       </div>

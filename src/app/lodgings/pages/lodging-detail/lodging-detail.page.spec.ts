@@ -126,14 +126,21 @@ describe('LodgingDetailPage', () => {
     fixture.detectChanges();
 
     const scrollContainer = document.createElement('div');
-    Object.defineProperty(scrollContainer, 'clientWidth', {
-      value: 320,
-      configurable: true,
-    });
     Object.defineProperty(scrollContainer, 'scrollLeft', {
       value: 320,
       configurable: true,
     });
+    const firstSlide = document.createElement('figure');
+    const secondSlide = document.createElement('figure');
+    Object.defineProperty(firstSlide, 'offsetLeft', {
+      value: 0,
+      configurable: true,
+    });
+    Object.defineProperty(secondSlide, 'offsetLeft', {
+      value: 320,
+      configurable: true,
+    });
+    scrollContainer.append(firstSlide, secondSlide);
 
     component.onGalleryViewerScroll({
       target: scrollContainer,
