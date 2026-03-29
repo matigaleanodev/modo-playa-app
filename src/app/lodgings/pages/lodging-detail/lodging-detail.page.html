@@ -75,6 +75,7 @@
         <h2>Galeria</h2>
         <div
           class="image-carousel"
+          [class.is-single]="galleryImages().length === 1"
           role="region"
           aria-label="Galeria de imagenes"
         >
@@ -174,6 +175,7 @@
     </header>
 
     <div class="gallery-viewer-stage">
+      @if (galleryImages().length > 1) {
       <button
         class="gallery-viewer-nav gallery-viewer-nav-prev"
         type="button"
@@ -182,19 +184,24 @@
       >
         <ion-icon name="caret-back-outline" aria-hidden="true"></ion-icon>
       </button>
+      }
 
       <div
         #galleryViewerTrack
         class="gallery-viewer-track"
+        [class.is-single]="galleryImages().length === 1"
         (scroll)="onGalleryViewerScroll($event)"
       >
         @for (image of galleryImages(); track image) {
         <figure class="gallery-viewer-slide">
-          <img [src]="image" alt="Imagen ampliada del hospedaje" />
+          <div class="gallery-viewer-image-shell">
+            <img [src]="image" alt="Imagen ampliada del hospedaje" />
+          </div>
         </figure>
         }
       </div>
 
+      @if (galleryImages().length > 1) {
       <button
         class="gallery-viewer-nav gallery-viewer-nav-next"
         type="button"
@@ -203,8 +210,10 @@
       >
         <ion-icon name="caret-forward-outline" aria-hidden="true"></ion-icon>
       </button>
+      }
     </div>
 
+    @if (galleryImages().length > 1) {
     <div class="gallery-viewer-dots">
       @for (image of galleryImages(); track image; let index = $index) {
       <button
@@ -216,6 +225,7 @@
       ></button>
       }
     </div>
+    }
   </section>
 </div>
 }
