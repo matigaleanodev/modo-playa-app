@@ -74,6 +74,19 @@ testem.log
 .DS_Store
 Thumbs.db
 agents.md
-AGENTS.md
 roadmap.md
 Roadmap.md
+
+# Seguimiento privado fuera del repositorio
+/agents.md
+/agents.es.md
+/roadmap*.md
+/Roadmap*.md
+/context.md
+/status/
+/mentor/
+/mentor-notes.md
+/.tmp/
+
+# Instrucciones técnicas públicas de Codex
+!/AGENTS.md
